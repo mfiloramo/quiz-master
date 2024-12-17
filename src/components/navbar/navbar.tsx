@@ -20,13 +20,15 @@ export default function Navbar(): JSX.Element {
         <div className={ 'mt-2 flex float-left items-center ml-4' }>
 
           {/* APP LOGO */ }
-          <Image
-            className={ 'shadow-lg' }
-            src={ '/logos/logo-mini.png' }
-            width={ 160 }
-            height={ 45 }
-            alt={ 'QuizMaster logo' }
-          />
+          <Link href={ '/' }>
+            <Image
+              className={ 'shadow-lg' }
+              src={ '/logos/logo-mini.png' }
+              width={ 160 }
+              height={ 45 }
+              alt={ 'QuizMaster logo' }
+            />
+          </Link>
 
           {/* LEFT BUTTONS */}
           {
@@ -39,7 +41,6 @@ export default function Navbar(): JSX.Element {
             ))
           }
         </div>
-
 
         {/* RIGHT BUTTONS CONTAINER */ }
         <div className={ 'mt-4 flex float-right items-center mr-7' }>
