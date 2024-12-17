@@ -15,11 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-    <Navbar />
       <body
         className={`antialiased bg-white`}
       >
-        {children}
+        <Navbar />
+        { children }
       </body>
     </html>
   );
