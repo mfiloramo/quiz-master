@@ -31,12 +31,12 @@ app.use(cors(corsOptions));
 // SERVER ROUTES
 app
   .use('/api/auth', authRouter)
-  .use('/api/user', userRouter)
-  .use('/api/quiz', quizRouter)
-  .use('/api/question', questionRouter)
-  .use('/api/session', sessionRouter)
-  .use('/api/player', playerRouter)
-  .use('/ws/session/:id', websocketRouter)
+  .use('/api/users', userRouter)
+  .use('/api/quizzes', quizRouter)
+  .use('/api/questions', questionRouter)
+  .use('/api/sessions', sessionRouter)
+  .use('/api/players', playerRouter)
+  .use('/ws/sessions/:id', websocketRouter)
 
 // HANDLE PREFLIGHT REQUESTS
 app.options('*', cors(corsOptions));
