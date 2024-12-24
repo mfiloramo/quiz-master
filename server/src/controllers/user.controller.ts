@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import axios from 'axios';
 
 
-export class UsersController {
+export class UserController {
   static async register(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('AuthController register successful!');

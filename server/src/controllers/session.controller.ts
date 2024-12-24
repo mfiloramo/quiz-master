@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import axios from 'axios';
 
 
-export const questionsController = async (req: Request, res: Response): Promise<void> => {
+export const sessionController = async (req: Request, res: Response): Promise<void> => {
   try {
     res.status(200).send('Controller response successful!');
   } catch (error) {

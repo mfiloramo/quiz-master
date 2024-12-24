@@ -5,11 +5,11 @@ import * as http from "node:http";
 
 // ROUTE IMPORTS
 import { authRouter } from "./routers/auth.router";
-import { usersRouter } from "./routers/users.router";
-import { quizzesRouter } from "./routers/quizzes.router";
-import { questionsRouter } from "./routers/questions.router";
-import { sessionsRouter } from "./routers/sessions.router";
-import { playersRouter } from "./routers/players.router";
+import { userRouter } from "./routers/user.router";
+import { quizRouter } from "./routers/quiz.router";
+import { questionRouter } from "./routers/question.router";
+import { sessionRouter } from "./routers/session.router";
+import { playerRouter } from "./routers/player.router";
 import { websocketRouter } from "./routers/websocket.router";
 
 // GLOBAL VARIABLES
@@ -31,12 +31,12 @@ app.use(cors(corsOptions));
 // SERVER ROUTES
 app
   .use('/api/auth', authRouter)
-  .use('/api/users', usersRouter)
-  .use('/api/quizzes', quizzesRouter)
-  .use('/api/questions', questionsRouter)
-  .use('/api/sessions', sessionsRouter)
-  .use('/api/players', playersRouter)
-  .use('/ws/sessions/:id', websocketRouter)
+  .use('/api/user', userRouter)
+  .use('/api/quiz', quizRouter)
+  .use('/api/question', questionRouter)
+  .use('/api/session', sessionRouter)
+  .use('/api/player', playerRouter)
+  .use('/ws/session/:id', websocketRouter)
 
 // HANDLE PREFLIGHT REQUESTS
 app.options('*', cors(corsOptions));
