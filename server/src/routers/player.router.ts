@@ -1,12 +1,12 @@
 import express, { Router } from 'express';
-import { sessionController } from "../controllers/session.controller";
+import { PlayerController } from "../controllers/player.controller";
 
 
 const router: Router = express.Router();
 
-router.post('/:id/join', sessionController);
-router.post('/:id/answer', sessionController);
-router.get('/:id/leaderboard', sessionController);
+router.post('/:id/join', PlayerController.joinSession);
+router.post('/:id/answer', PlayerController.submitAnswer);
+router.get('/:id/leaderboard', PlayerController.getLeaderboard);
 
 
 export const playerRouter: Router = router;

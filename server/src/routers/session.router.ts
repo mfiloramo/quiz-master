@@ -1,14 +1,14 @@
 import express, { Router } from 'express';
-import { sessionController } from "../controllers/session.controller";
+import { SessionController } from "../controllers/session.controller";
 
 
 const router: Router = express.Router();
 
-router.post('/', sessionController);
-router.get('/:id/start', sessionController);
-router.get('/:id/next', sessionController);
-router.put('/:id', sessionController);
-router.delete('/:id', sessionController);
+router.post('/', SessionController.createSession);
+router.get('/:id', SessionController.getSession);
+router.put('/:id/start', SessionController.startSession);
+router.put('/:id/next', SessionController.moveToNext);
+router.delete('/:id/end', SessionController.endSession);
 
 
 export const sessionRouter: Router = router;
