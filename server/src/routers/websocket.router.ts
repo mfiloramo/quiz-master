@@ -1,10 +1,19 @@
-import express, { Router } from 'express';
-import { websocketController } from "../controllers/websocket.controller";
+import { Server, Socket } from "socket.io";
+import { WebSocketController } from "../controllers/websocket.controller";
 
+export const webSocketRouter = (io: Server) => {
+  const controller = new WebSocketController();
 
-const router: Router = express.Router();
+  io.on("connection", (socket: Socket) => {
+    console.log(`Socket connected: ${socket.id}`);
 
-router.post('/', websocketController);
+    // Event handlers
+    socket.on("join-session", (data) => controller.joinSession(socket, data));
+    socket.on("start-session", (data) => controller.startSession(socket, data));
+    socket.on("submit-answer", (data) => controller.submitAnswer(socket, data));
+    socket.on("end-session", (data) => controller.endSession(socket, data));
 
-
-export const websocketRouter: Router = router;
+    // Handle disconnection
+    socket.on("disconnect", () => controller.disconnect(socket));
+  });
+};
