@@ -12,6 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      backgroundImage: {
+        'stub-background-home': "url('/backgrounds/stub-background-home.png')"
+      }
     },
   },
   plugins: [],
