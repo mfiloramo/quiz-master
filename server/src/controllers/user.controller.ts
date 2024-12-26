@@ -19,8 +19,7 @@ export class UserController {
     }
   }
 
-  static async updateUser(req: Request, res:
-    Response): Promise<void> {
+  static async updateUser(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('UserController updateUser successful!');
     } catch (error) {
@@ -28,8 +27,7 @@ export class UserController {
     }
   }
 
-  static async deleteUser(req: Request, res:
-    Response): Promise<void> {
+  static async deleteUser(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('UserController deleteUser successful!');
     } catch (error) {

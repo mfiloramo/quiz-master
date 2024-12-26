@@ -19,8 +19,7 @@ export class QuizController {
     }
   }
 
-  static async getQuizById(req: Request, res:
-    Response): Promise<void> {
+  static async getQuizById(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuizController getQuizById successful!');
     } catch (error) {
@@ -28,8 +27,7 @@ export class QuizController {
     }
   }
 
-  static async updateQuiz(req: Request, res:
-    Response): Promise<void> {
+  static async updateQuiz(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuizController updateQuiz successful!');
     } catch (error) {
@@ -37,8 +35,7 @@ export class QuizController {
     }
   }
 
-  static async deleteQuiz(req: Request, res:
-    Response): Promise<void> {
+  static async deleteQuiz(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuizController deleteQuiz successful!');
     } catch (error) {

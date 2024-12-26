@@ -63,7 +63,7 @@ export class SessionController {
     }
   }
 
-  // MOVE TO NEXT (PLACEHOLDER)
+  // MOVE TO NEXT QUESTION (PLACEHOLDER)
   static async moveToNext(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;

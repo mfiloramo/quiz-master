@@ -19,8 +19,7 @@ export class PlayerController {
     }
   }
 
-  static async getLeaderboard(req: Request, res:
-    Response): Promise<void> {
+  static async getLeaderboard(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('PlayerController getLeaderboard successful!');
     } catch (error) {

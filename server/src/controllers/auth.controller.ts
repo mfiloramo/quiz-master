@@ -19,8 +19,7 @@ export class AuthController {
     }
   }
 
-  static async logout(req: Request, res:
-    Response): Promise<void> {
+  static async logout(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('AuthController logout successful!');
     } catch (error) {

@@ -19,8 +19,7 @@ export class QuestionController {
     }
   }
 
-  static async getQuestionById(req: Request, res:
-    Response): Promise<void> {
+  static async getQuestionById(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuestionController getQuestionById successful!');
     } catch (error) {
@@ -28,8 +27,7 @@ export class QuestionController {
     }
   }
 
-  static async updateQuestion(req: Request, res:
-    Response): Promise<void> {
+  static async updateQuestion(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuestionController updateQuestion successful!');
     } catch (error) {
@@ -37,8 +35,7 @@ export class QuestionController {
     }
   }
 
-  static async deleteQuestion(req: Request, res:
-    Response): Promise<void> {
+  static async deleteQuestion(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuestionController deleteQuestion successful!');
     } catch (error) {
