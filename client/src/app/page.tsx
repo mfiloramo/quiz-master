@@ -1,4 +1,5 @@
 import { JSX } from "react";
+import DisplayBanner from "@/components/display- banner/display-banner";
 
 export default function Home(): JSX.Element {
   return (
@@ -9,6 +10,9 @@ export default function Home(): JSX.Element {
         </div>
         <div className="mt-2 text-2xl max-w-3xl mx-auto">
           A dynamic and fun way to create an engaging learning environment among students
+        </div>
+        <div className={ 'mt-8 mx-5' }>
+          <DisplayBanner />
         </div>
       </div>
     </div>

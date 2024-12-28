@@ -1,1 +1,11 @@
-
+-- STORED PROCEDURE TO FETCH ALL QUESTIONS FOR A SPECIFIC QUIZ
+CREATE PROCEDURE GetQuestionsByQuizId
+    @QuizId INT
+AS
+BEGIN
+    -- SELECT ALL QUESTIONS LINKED TO THE SPECIFIED QUIZ
+    SELECT id, question, options, correct
+    FROM Questions
+    WHERE quiz_id = @QuizId;
+END;
+GO

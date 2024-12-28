@@ -1,0 +1,11 @@
+-- STORED PROCEDURE TO FETCH A USER PROFILE BY ID
+CREATE PROCEDURE GetUserById
+    @UserId INT
+AS
+BEGIN
+    -- RETRIEVE USER DETAILS BASED ON ID
+    SELECT id, username, email, created_at
+    FROM Users
+    WHERE id = @UserId;
+END;
+GO
