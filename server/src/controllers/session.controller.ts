@@ -9,7 +9,7 @@ export class SessionController {
   static async createSession(req: Request, res: Response): Promise<void> {
     try {
       const { quizId, hostUserId } = req.body;
-      const sessionId = uuidv4();
+      const sessionId: string  = uuidv4();
       sessions[sessionId] = {
         sessionId,
         quizId,
