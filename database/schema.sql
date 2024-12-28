@@ -1,9 +1,9 @@
 -- CREATE DATABASE
-CREATE DATABASE EdTechAppDB;
+CREATE DATABASE QuizMasterApp;
 GO
 
 -- USE THE DATABASE
-USE EdTechAppDB;
+USE QuizMasterApp;
 GO
 
 -- CREATE USERS TABLE
@@ -21,7 +21,7 @@ CREATE TABLE Quizzes (
     id INT PRIMARY KEY IDENTITY(1,1),
     user_id INT NOT NULL,
     title NVARCHAR(100) NOT NULL,
-    description TEXT NULL,
+    description NVARCHAR(MAX) NULL,
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );
@@ -45,8 +45,8 @@ CREATE TABLE Sessions (
     host_user_id INT NOT NULL,
     status NVARCHAR(20) NOT NULL DEFAULT 'created', -- Enum-like behavior: 'created', 'ongoing', 'ended'
     created_at DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (quiz_id) REFERENCES Quizzes(id) ON DELETE CASCADE,
-    FOREIGN KEY (host_user_id) REFERENCES Users(id) ON DELETE CASCADE
+    FOREIGN KEY (quiz_id) REFERENCES Quizzes(id),
+    FOREIGN KEY (host_user_id) REFERENCES Users(id)
 );
 GO
 
@@ -61,7 +61,7 @@ CREATE TABLE Player_Answers (
     score INT DEFAULT 0, -- Defaults to 0
     FOREIGN KEY (session_id) REFERENCES Sessions(id) ON DELETE CASCADE,
     FOREIGN KEY (player_id) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE
+    FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE NO ACTION -- Removed cascading delete
 );
 GO
 

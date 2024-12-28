@@ -1,5 +1,5 @@
 -- SWITCH TO THE CORRECT DATABASE
-USE EdTechAppDB;
+USE QuizMasterApp;
 GO
 
 -- INSERT USERS
@@ -21,12 +21,12 @@ GO
 -- INSERT QUESTIONS
 INSERT INTO Questions (quiz_id, question, options, correct)
 VALUES
-    (1, 'What is 2 + 2?', '[4, 3, 5, 6]', 0),
-    (1, 'What is 10 / 2?', '[5, 4, 6, 7]', 0),
+    (1, 'What is 2 + 2?', '["4", "3", "5", "6"]', 0),
+    (1, 'What is 10 / 2?', '["5", "4", "6", "7"]', 0),
     (2, 'What planet is closest to the sun?', '["Mercury", "Venus", "Earth", "Mars"]', 0),
     (2, 'What is the chemical symbol for water?', '["H2O", "CO2", "O2", "N2"]', 0),
     (3, 'Who discovered America?', '["Christopher Columbus", "George Washington", "Napoleon", "Einstein"]', 0),
-    (3, 'When was the Declaration of Independence signed?', '[1776, 1789, 1800, 1754]', 0);
+    (3, 'When was the Declaration of Independence signed?', '["1776", "1789", "1800", "1754"]', 0);
 GO
 
 -- INSERT SESSIONS
