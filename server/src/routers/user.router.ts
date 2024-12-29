@@ -5,9 +5,9 @@ import { UserController } from "../controllers/user.controller";
 const router: Router = express.Router();
 
 router.get('/', UserController.getAllUsers);
-router.get('/:id', UserController.getUserById);
-router.put('/:id', UserController.updateUser);
-router.delete('/:id', UserController.deleteUser);
+router.get('/:userId', UserController.getUserById);
+router.put('/:userId', UserController.updateUser);
+router.delete('/:userId', UserController.deleteUser);
 
 
 export const userRouter: Router = router;

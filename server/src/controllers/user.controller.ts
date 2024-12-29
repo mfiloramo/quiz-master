@@ -20,7 +20,7 @@ export class UserController {
     try {
       const user: any = await sequelize.query('EXECUTE GetUserById :userId', {
         replacements: {
-          userId: req.params.id
+          userId: req.params.userId
         }
       })
       res.send(user[0][0]);

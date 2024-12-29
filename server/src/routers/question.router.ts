@@ -5,8 +5,9 @@ import { QuestionController } from "../controllers/question.controller";
 const router: Router = express.Router();
 
 router.post('/:questionId', QuestionController.addQuestion);
-router.get('/', QuestionController.getQuestions);
+router.get('/', QuestionController.getAllQuestions);
 router.get('/:questionId', QuestionController.getQuestionById);
+router.get('/:quizId/:questionId/', QuestionController.getQuestionsByQuizId);
 router.put('/:questionId', QuestionController.updateQuestion);
 router.delete('/:questionId', QuestionController.deleteQuestion);
 
