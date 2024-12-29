@@ -4,6 +4,7 @@ import { sequelize } from "../config/sequelize";
 
 
 export class QuestionController {
+  // ADD NEW QUESTION TO DATABASE
   static async addQuestion(req: Request, res: Response): Promise<void> {
     try {
       const { quizId, question, options, correct } = req.body;
@@ -18,6 +19,7 @@ export class QuestionController {
     }
   }
 
+  // GET ALL QUESTIONS FROM DATABASE
   static async getAllQuestions(req: Request, res: Response): Promise<void> {
     try {
       const questions: any = await sequelize.query('EXECUTE GetAllQuestions');
@@ -28,6 +30,7 @@ export class QuestionController {
     }
   }
 
+  // GET EXISTING QUESTION BY ID
   static async getQuestionById(req: Request, res: Response): Promise<void> {
     try {
       const { questionId } = req.params;
@@ -42,6 +45,7 @@ export class QuestionController {
     }
   }
 
+  // GET ALL QUESTIONS BY QUIZ ID
   static async getQuestionsByQuizId(req: Request, res: Response): Promise<void> {
     try {
       const { questionId, quizId } = req.params;
@@ -56,6 +60,7 @@ export class QuestionController {
     }
   }
 
+  // UPDATE EXISTING QUESTION
   static async updateQuestion(req: Request, res: Response): Promise<void> {
     try {
       const { questionId, question, options, correct } = req.body;
@@ -70,10 +75,10 @@ export class QuestionController {
     }
   }
 
+  // DELETE EXISTING QUESTION
   static async deleteQuestion(req: Request, res: Response): Promise<void> {
     try {
       const { questionId }  = req.body;
-
       await sequelize.query('EXECUTE DeleteQuestion :questionId',
         {
           replacements: { questionId }
