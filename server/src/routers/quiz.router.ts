@@ -6,9 +6,9 @@ const router: Router = express.Router();
 
 router.post('/', QuizController.createQuiz);
 router.get('/', QuizController.getAllQuizzes);
-router.get('/:id', QuizController.getQuizById);
-router.put('/:id', QuizController.updateQuiz);
-router.delete('/:id', QuizController.deleteQuiz);
+router.get('/:quizId', QuizController.getQuizById);
+router.put('/:quizId', QuizController.updateQuiz);
+router.delete('/:quizId', QuizController.deleteQuiz);
 
 
 export const quizRouter: Router = router;

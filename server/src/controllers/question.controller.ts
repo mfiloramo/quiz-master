@@ -22,7 +22,7 @@ export class QuestionController {
   // GET ALL QUESTIONS FROM DATABASE
   static async getAllQuestions(req: Request, res: Response): Promise<void> {
     try {
-      const questions: any = await sequelize.query('EXECUTE GetAllQuestions');
+      const questions: any[] = await sequelize.query('EXECUTE GetAllQuestions');
       res.send(questions[0]);
     } catch (error: any) {
       console.error('Error executing Stored Procedure:', error.message);
@@ -52,7 +52,7 @@ export class QuestionController {
       const questions: any[] = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId',
         {
           replacements: { quizId }
-        })
+        });
       res.send(questions[0]);
     } catch (error: any) {
       console.error('Error executing Stored Procedure:', error.message);
@@ -90,5 +90,3 @@ export class QuestionController {
     }
   }
 }
-
-
