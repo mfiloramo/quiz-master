@@ -1,0 +1,8 @@
+-- STORED PROCEDURE TO SELECT ALL USERS
+CREATE PROCEDURE GetAllUsers
+AS
+BEGIN
+    SELECT id, username, email
+    FROM Users;
+END;
+GO

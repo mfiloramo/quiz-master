@@ -6,7 +6,7 @@ export class QuizController {
   static async createQuiz(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuizController createQuiz successful!');
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).send('Internal server error');
     }
   }
@@ -14,7 +14,7 @@ export class QuizController {
   static async getAllQuizzes(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuizController getAllQuizzes successful!');
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).send('Internal server error');
     }
   }
@@ -22,7 +22,7 @@ export class QuizController {
   static async getQuizById(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuizController getQuizById successful!');
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).send('Internal server error');
     }
   }
@@ -30,7 +30,7 @@ export class QuizController {
   static async updateQuiz(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuizController updateQuiz successful!');
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).send('Internal server error');
     }
   }
@@ -38,7 +38,7 @@ export class QuizController {
   static async deleteQuiz(req: Request, res: Response): Promise<void> {
     try {
       res.status(200).send('QuizController deleteQuiz successful!');
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).send('Internal server error');
     }
   }

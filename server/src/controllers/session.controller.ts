@@ -20,7 +20,7 @@ export class SessionController {
       };
 
       res.status(201).json({ sessionId, message: "Session created successfully" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating session:", error);
       res.status(500).send("Internal server error");
     }
@@ -38,7 +38,7 @@ export class SessionController {
       }
 
       res.status(200).json(session);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error retrieving session:", error);
       res.status(500).send("Internal server error");
     }
@@ -57,7 +57,7 @@ export class SessionController {
 
       session.status = "ongoing";
       res.status(200).json({ sessionId: id, message: "Session started" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error starting session:", error);
       res.status(500).send("Internal server error");
     }
@@ -68,7 +68,7 @@ export class SessionController {
     try {
       const { id } = req.params;
       res.status(200).json({ sessionId: id, message: "Moved to next question" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error moving to next:", error);
       res.status(500).send("Internal server error");
     }
@@ -87,7 +87,7 @@ export class SessionController {
 
       session.status = "ended";
       res.status(200).json({ sessionId: id, message: "Session ended" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error ending session:", error);
       res.status(500).send("Internal server error");
     }
