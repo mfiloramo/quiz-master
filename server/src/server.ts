@@ -68,7 +68,7 @@ const startServer = async (): Promise<void> => {
 
     // START THE SERVER
     server.listen(PORT, (): void => {
-      console.log(`Server listening on port: ${PORT}...`);
+      console.log(`Server listening on port: ${ PORT }...`);
     });
   } catch (error) {
     console.error('Unable to connect to the database:', error);

@@ -4,6 +4,7 @@ import { sequelize } from "../config/sequelize";
 
 
 export class QuizController {
+  // CREATE NEW QUIZ
   static async createQuiz(req: Request, res: Response): Promise<void> {
     try {
       const { userId, title, description } = req.body;
@@ -17,6 +18,7 @@ export class QuizController {
     }
   }
 
+  // GET ALL QUIZZES
   static async getAllQuizzes(req: Request, res: Response): Promise<void> {
     try {
       const quizzes: any[] = await sequelize.query('EXECUTE GetAllQuizzes');
@@ -27,6 +29,7 @@ export class QuizController {
     }
   }
 
+  // GET QUIZ BY ID
   static async getQuizById(req: Request, res: Response): Promise<void> {
     try {
       const { quizId }  = req.params;
@@ -41,6 +44,7 @@ export class QuizController {
     }
   }
 
+  // UPDATE QUIZ BY ID
   static async updateQuiz(req: Request, res: Response): Promise<void> {
     try {
       const { quizId, title, description } = req.body;
@@ -55,6 +59,7 @@ export class QuizController {
     }
   }
 
+  // DELETE QUIZ BY ID
   static async deleteQuiz(req: Request, res: Response): Promise<void> {
     try {
       const { quizId } = req.body;

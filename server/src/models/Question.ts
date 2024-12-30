@@ -1,16 +1,10 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from "../config/sequelize";
 import Quiz from './Quiz';
-
-interface QuestionAttributes {
-  id: number;
-  quiz_id: number;
-  question: string;
-  options: string; // JSON-like format
-  correct: number;
-}
+import { QuestionAttributes } from "../interfaces/QuestionAttributes.interface";
 
 type QuestionCreationAttributes = Optional<QuestionAttributes, 'id'>;
+
 
 class Question extends Model<QuestionAttributes, QuestionCreationAttributes> implements QuestionAttributes {
   public id!: number;

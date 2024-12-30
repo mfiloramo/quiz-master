@@ -1,15 +1,9 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from "../config/sequelize";
-
-interface UserAttributes {
-  id: number;
-  username: string;
-  email: string;
-  password: string;
-  created_at?: Date;
-}
+import { UserAttributes } from "../interfaces/UserAttributes.interface";
 
 type UserCreationAttributes = Optional<UserAttributes, 'id' | 'created_at'>;
+
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;

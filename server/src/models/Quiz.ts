@@ -1,16 +1,10 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from "../config/sequelize";
 import User from './User';
-
-interface QuizAttributes {
-  id: number;
-  user_id: number;
-  title: string;
-  description?: string;
-  created_at?: Date;
-}
+import { QuizAttributes } from "../interfaces/QuizAttributes.interface";
 
 type QuizCreationAttributes = Optional<QuizAttributes, 'id' | 'description' | 'created_at'>;
+
 
 class Quiz extends Model<QuizAttributes, QuizCreationAttributes> implements QuizAttributes {
   public id!: number;

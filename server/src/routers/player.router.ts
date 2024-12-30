@@ -4,6 +4,9 @@ import { PlayerController } from "../controllers/player.controller";
 
 const router: Router = express.Router();
 
+// PROTECT ALL ROUTES WITH JWT VERIFICATION MIDDLEWARE
+// router.use(authenticateJWT);
+
 router.post('/:id/join', PlayerController.joinSession);
 router.post('/:id/answer', PlayerController.submitAnswer);
 router.get('/:id/leaderboard', PlayerController.getLeaderboard);

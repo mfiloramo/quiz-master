@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { WebSocketController } from "../controllers/websocket.controller";
 
-export const webSocketRouter = (io: Server) => {
+export const webSocketRouter = (io: Server): void => {
   const controller = new WebSocketController();
 
   io.on("connection", (socket: Socket) => {

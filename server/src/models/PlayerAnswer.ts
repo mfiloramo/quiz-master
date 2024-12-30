@@ -3,18 +3,10 @@ import { sequelize } from "../config/sequelize";
 import Session from './Session';
 import User from './User';
 import Question from './Question';
-
-interface PlayerAnswerAttributes {
-  id: number;
-  session_id: number;
-  player_id: number;
-  question_id: number;
-  answer: number;
-  is_correct: boolean;
-  score: number;
-}
+import { PlayerAnswerAttributes } from "../interfaces/PlayerAnswerAttributes.interface";
 
 type PlayerAnswerCreationAttributes = Optional<PlayerAnswerAttributes, 'id' | 'score'>;
+
 
 class PlayerAnswer extends Model<PlayerAnswerAttributes, PlayerAnswerCreationAttributes> implements PlayerAnswerAttributes {
   public id!: number;
