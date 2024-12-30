@@ -68,7 +68,7 @@ export class AuthController {
       }
 
       // ADD THE TOKEN TO THE BLACKLIST
-      blacklistedTokens.add(token);
+      // ...
 
       return res.status(200).send('User logged out successfully');
     } catch (error: any) {
