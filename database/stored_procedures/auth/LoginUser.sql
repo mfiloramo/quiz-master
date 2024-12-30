@@ -5,7 +5,7 @@ CREATE PROCEDURE LoginUser
 AS
 BEGIN
     -- FETCH THE USER WITH THE PROVIDED EMAIL AND PASSWORD
-    SELECT id, username, email
+    SELECT id, username, email, password
     FROM Users
     WHERE email = @Email AND password = @Password;
 END;
