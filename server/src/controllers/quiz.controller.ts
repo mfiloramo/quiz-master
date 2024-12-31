@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import axios from 'axios';
 import { sequelize } from "../config/sequelize";
 
 
@@ -48,7 +47,7 @@ export class QuizController {
   static async updateQuiz(req: Request, res: Response): Promise<void> {
     try {
       const { quizId, title, description } = req.body;
-      await sequelize.query('EXECUTE UpdateQuiz :quizid, :title, :description',
+      await sequelize.query('EXECUTE UpdateQuiz :quizId, :title, :description',
         {
           replacements: { quizId, title, description }
         });

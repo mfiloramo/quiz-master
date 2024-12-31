@@ -22,7 +22,7 @@ export class AuthController {
 
       return res.status(201).send(`Username ${ username } created successfully`);
     } catch (error: any) {
-      console.error('ERROR EXECUTING STORED PROCEDURE:', error.message);
+      console.error('Error registering user:', error.message);
       return res.status(500).send('Internal server error');
     }
   }
@@ -43,7 +43,8 @@ export class AuthController {
       }
 
       // VALIDATE PASSWORD AGAINST DATABASE
-      const isPasswordValid: boolean = await bcrypt.compare(password, user[0].password).then(((response: boolean) => response));
+      const isPasswordValid: boolean = await bcrypt.compare(password, user[0].password)
+        .then((response: boolean) => response);
 
       if (!isPasswordValid) {
         return res.status(401).send('Invalid email or password');
@@ -54,7 +55,7 @@ export class AuthController {
 
       return res.status(200).json({ token });
     } catch (error: any) {
-      console.error('Error executing Stored Procedure:', error.message);
+      console.error('Error logging in user:', error.message);
       return res.status(500).send('Internal server error');
     }
   }
@@ -62,12 +63,12 @@ export class AuthController {
   // LOGOUT USER
   static async logout(req: Request, res: Response): Promise<any> {
     try {
-      const token = req.headers.authorization?.split(' ')[1];
+      const token: string | undefined = req.headers.authorization?.split(' ')[1];
       if (!token) {
         return res.status(400).send('No token provided');
       }
 
-      // ADD THE TOKEN TO THE BLACKLIST
+      // ADD TOKEN TO BLACKLIST OR EXPIRE IT
       // ...
 
       return res.status(200).send('User logged out successfully');
