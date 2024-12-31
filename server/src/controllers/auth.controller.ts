@@ -17,7 +17,11 @@ export class AuthController {
       // INSERT NEW USER INTO DATABASE
       await sequelize.query(
         'EXECUTE RegisterUser :username, :email, :password',
-        { replacements: { username, email, password: hashedPassword } }
+        {
+          replacements: {
+            username, email, password: hashedPassword
+          }
+        }
       );
 
       return res.status(201).send(`Username ${ username } created successfully`);
@@ -68,7 +72,8 @@ export class AuthController {
         return res.status(400).send('No token provided');
       }
 
-      // ADD TOKEN TO BLACKLIST OR EXPIRE IT
+      // TODO: ADD TOKEN TO BLACKLIST OR EXPIRE IT
+      // TODO: CONSIDER IMPLEMENTING EXPRESS-SESSION
       // ...
 
       return res.status(200).send('User logged out successfully');
