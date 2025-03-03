@@ -8,18 +8,20 @@ export default function Navbar(): JSX.Element {
     { path: '/', label: 'Home' },
     { path: '/students', label: 'Students' },
     { path: '/teachers', label: 'Teachers' },
+    { path: '/dashboard', label: 'Dashboard' }
   ];
 
   // RENDER COMPONENT
   return (
     <>
       {/* NAVBAR MAIN CONTAINER */ }
-      <div className={ 'h-16 bg-gradient-to-b from-sky-800 to-sky-600 shadow-2xl  flow-root' }>
+      <div
+        className="fixed top-0 left-0 w-full h-16 bg-gradient-to-b from-sky-800 to-sky-600 shadow-2xl flow-root z-50">
 
         {/* LEFT BUTTONS CONTAINER */ }
         <div className={ 'mt-2 flex float-left items-center ml-4' }>
 
-          {/* APP LOGO */ }
+        {/* APP LOGO */ }
           <Link href={ '/' }>
             <Image
               className={ 'shadow-lg' }
@@ -30,7 +32,7 @@ export default function Navbar(): JSX.Element {
             />
           </Link>
 
-          {/* LEFT BUTTONS */}
+          {/* LEFT BUTTONS */ }
           {
             navLinksLeft.map((button: NavLinkInterface): ReactElement => (
               <Link
