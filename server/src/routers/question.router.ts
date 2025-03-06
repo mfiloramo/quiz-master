@@ -10,6 +10,7 @@ const router: Router = express.Router();
 router.post('/:questionId', QuestionController.addQuestion);
 router.get('/', QuestionController.getAllQuestions);
 router.get('/:questionId', QuestionController.getQuestionById);
+// TODO: MAKE ROUTE MORE INTUITIVE; ONE PARAM NOT USED IN CONTROLLER; CONSIDER ADDING LONGER PATH
 router.get('/:quizId/:questionId/', QuestionController.getQuestionsByQuizId);
 router.put('/:questionId', QuestionController.updateQuestion);
 router.delete('/:questionId', QuestionController.deleteQuestion);
