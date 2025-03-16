@@ -3,7 +3,7 @@ import { ReactElement } from "react";
 export default function Dashboard(): ReactElement {
   return (
     // MAIN CONTAINER
-    <div className='min-h-[calc(100vh-4rem)] text-black bg-gradient-to-b from-sky-300 to-sky-800 flex'>
+    <div className='min-h-[calc(100vh-4rem)] text-black bg-gradient-to-b from-sky-300 to-sky-800 flex caret-transparent '>
 
       {/* SIDE NAVBAR */ }
       <div className={ 'h-[calc(100vh-4rem)] w-56 bg-slate-700 overflow-y-auto' }>

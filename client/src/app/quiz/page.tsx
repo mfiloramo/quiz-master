@@ -6,12 +6,13 @@ import { QuizQuestion } from "@/interfaces/QuizQuestion";
 export default function QuizTest(): ReactElement {
   // COMPONENT STATE
   const [ questionData, setQuestionData ] = useState<QuizQuestion | null>(null);
+  const [ answer, setAnswer ] = useState<any>(null)
   const [ loading, setLoading ] = useState(false);
   const [ error, setError ] = useState<string | null>(null);
   const [ questionNumber, setQuestionNumber ] = useState(1);
 
   // FETCH QUIZ QUESTION
-  const fetchQuizQuestion = async (): Promise<void> => {
+  const fetchQuizQuestion = async () => {
     setLoading(true);
     setError(null);
 
@@ -36,10 +37,15 @@ export default function QuizTest(): ReactElement {
     }
   };
 
+  // SUBMIT QUESTION
+  const submitQuestion = async (question: any): Promise<any> => {
+    console.log(question);
+  }
+
   // RENDER COMPONENT
   return (
     <div
-      className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center text-black bg-gradient-to-b from-blue-300 to-blue-800 p-6">
+      className='min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center text-black bg-gradient-to-b from-blue-300 to-blue-800 p-6 caret-transparent'>
 
       {/* FETCH QUESTIONS BUTTON */}
       <button
@@ -59,7 +65,7 @@ export default function QuizTest(): ReactElement {
           <h2 className='text-xl font-bold mb-4'>{ questionData.question }</h2>
           <ul className='space-y-3'>
             { questionData.options.map((option, index) => (
-              <li key={ index } className='p-3 bg-gray-200 rounded-lg hover:bg-gray-300 cursor-pointer'>
+              <li key={ index } onClick={ submitQuestion } className='p-3 bg-gray-200 rounded-lg hover:bg-gray-300 active:bg-gray-400 cursor-pointer'>
                 { option }
               </li>
             )) }
