@@ -24,10 +24,12 @@ export default function QuizTest(): ReactElement {
       const formattedData: QuizQuestion = {
         question: data.question,
         options: Array.isArray(data.options) ? data.options : JSON.parse(data.options),
+        correct: data.correct
       };
 
       setQuestionData(formattedData);
       setQuestionNumber(questionNumber + 1);
+      setAnswer(data.correct);
 
       if (questionNumber > 5) setQuestionNumber(1);
     } catch (err: any) {
@@ -38,8 +40,15 @@ export default function QuizTest(): ReactElement {
   };
 
   // SUBMIT QUESTION
-  const submitQuestion = async (question: any): Promise<any> => {
-    console.log(question);
+  const submitQuestion = async (selectedOption: string): Promise<any> => {
+    if (selectedOption === answer) {
+      console.log(selectedOption, answer);
+      console.log('The answer is correct!');
+      await fetchQuizQuestion()
+    } else {
+      console.log(selectedOption, answer);
+      console.log('Incorrect option. Please try again.');
+    }
   }
 
   // RENDER COMPONENT
@@ -65,7 +74,11 @@ export default function QuizTest(): ReactElement {
           <h2 className='text-xl font-bold mb-4'>{ questionData.question }</h2>
           <ul className='space-y-3'>
             { questionData.options.map((option, index) => (
-              <li key={ index } onClick={ submitQuestion } className='p-3 bg-gray-200 rounded-lg hover:bg-gray-300 active:bg-gray-400 cursor-pointer'>
+              <li
+                key={ index }
+                onClick={ () => submitQuestion(option) } // PASS SELECTED OPTION
+                className='p-3 bg-gray-200 rounded-lg hover:bg-gray-300 active:bg-gray-400 cursor-pointer'
+              >
                 { option }
               </li>
             )) }
