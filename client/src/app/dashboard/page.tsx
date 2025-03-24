@@ -10,7 +10,7 @@ export default function Dashboard(): ReactElement {
 
         {/* MOCK SIDENAV CONTENT */ }
         <ul className="pt-1 space-y-1">
-          { Array.from({ length: 20 }, (_, i) => (
+          { Array.from({ length: 5 }, (_, i) => (
             <li key={ i }
                 className="px-3 py-2 text-slate-100 hover:bg-slate-600 active:bg-slate-500 transition cursor-pointer">
               Item { i + 1 }

@@ -13,8 +13,17 @@ export default {
         foreground: "var(--foreground)",
       },
       backgroundImage: {
-        'stub-background-home': "url('/backgrounds/stub-background-home.png')"
-      }
+        'stub-background-home': "url('/backgrounds/stub-background-home.png')",
+      },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 20s linear infinite',
+      },
     },
   },
   plugins: [],
