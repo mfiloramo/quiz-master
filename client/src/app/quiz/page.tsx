@@ -15,6 +15,8 @@ export default function QuizTest(): ReactElement {
   const [ quizzes, setQuizzes ] = useState([]);
   const [ quizTitle, setQuizTitle ] = useState<string>('');
 
+  // SET CURRENT QUIZ QUESTION
+  const currentQuestion: QuizQuestion = quizQuestions[currentQuestionIndex];
 
   // FETCH QUIZ DATA
   useEffect(() => {
@@ -53,7 +55,9 @@ export default function QuizTest(): ReactElement {
       // FORMAT QUESTION DATA
       const formattedQuestions = data.map((question: any) => ({
         ...question,
-        options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
+        options: typeof question.options === 'string'
+          ? JSON.parse(question.options)
+          : question.options,
       }));
 
       // UPDATE STATE WITH QUIZ DATA
@@ -62,7 +66,7 @@ export default function QuizTest(): ReactElement {
       setQuizStarted(true);
 
     } catch (err: any) {
-      setError(err.message);
+      displayError(`There was an issue with your request. Please try again. Error: ${ err }`, 5000);
     } finally {
       setLoading(false);
     }
@@ -85,11 +89,28 @@ export default function QuizTest(): ReactElement {
       }
     } else {
       console.log('Incorrect option. Please try again.');
+      displayError('Incorrect option. Please try again.', 2000);
     }
-
   }
 
-  const currentQuestion: QuizQuestion = quizQuestions[currentQuestionIndex];
+  // SET / UNSET QUIZ METADATA
+  const setQuiz = (quiz: Quiz): any => {
+    if (!selectedQuiz && !quizTitle) {
+      setSelectedQuiz(quiz.id);
+      setQuizTitle(quiz.title);
+    } else {
+      setSelectedQuiz(null);
+      setQuizTitle('');
+    }
+  }
+
+  // TEMPORARILY DISPLAY ERROR MESSAGE
+  const displayError = (message: string, duration: number): any => {
+    setError(message);
+    setTimeout(() => {
+      setError('');
+    }, duration);
+  };
 
   // RENDER COMPONENT
   return (
@@ -111,10 +132,7 @@ export default function QuizTest(): ReactElement {
             <button
               key={ index }
               className={ 'h-12 m-4 px-4 w-fit bg-amber-300 hover:bg-amber-200 active:bg-amber-400 rounded-lg transition cursor-pointer' }
-              onClick={ () => {
-                setSelectedQuiz(quiz.id)
-                setQuizTitle(quiz.title)
-              } }
+              onClick={ () => setQuiz(quiz) }
             >
               { quiz.title }
             </button>
@@ -132,7 +150,9 @@ export default function QuizTest(): ReactElement {
       </button>
 
       {/* DISPLAY ERROR MESSAGE */ }
-      { error && <p className='text-red-300 font-bold'>{ 'There was an error with your request. Please try again.' }</p> }
+      { error && (
+        <p className='text-red-300 text-center font-bold'>{ error }</p>
+      )}
 
       {/* DISPLAY QUESTION AND OPTIONS */ }
       { quizStarted && currentQuestion && (
