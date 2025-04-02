@@ -1,12 +1,7 @@
-import { QuizQuestion } from "@/types/Quiz.types";
+import { QuizModuleProps } from "@/types/Quiz.types";
 import { motion } from "framer-motion";
 
-type QuizModuleProps = {
-  question: QuizQuestion;
-  questionNumber: number;
-  totalQuestions: number;
-  onSubmit: (option: string) => void;
-};
+
 
 export default function QuizModule({ question, questionNumber, totalQuestions, onSubmit }: QuizModuleProps) {
   return (

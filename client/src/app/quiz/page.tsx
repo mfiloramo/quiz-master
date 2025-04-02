@@ -132,9 +132,8 @@ export default function QuizTest(): ReactElement {
       </button>
 
       {/* DISPLAY ERROR MESSAGE */ }
-      { error && <p className='text-red-500'>{ error }</p> }
+      { error && <p className='text-red-300 font-bold'>{ 'There was an error with your request. Please try again.' }</p> }
 
-      {/* TODO: MAKE THIS INTO A COMPONENT */ }
       {/* DISPLAY QUESTION AND OPTIONS */ }
       { quizStarted && currentQuestion && (
         <QuizModule
