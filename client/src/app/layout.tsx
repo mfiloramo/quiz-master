@@ -19,8 +19,8 @@ export default function RootLayout({ children }: Readonly<{
   return (
     <html lang="en" className={ poppins_heavy.className } suppressHydrationWarning>
     <body className="antialiased bg-white">
-    <Navbar/>
-    <div className="pt-16">{children}</div>
+    <Navbar />
+    <div className="pt-16">{ children }</div>
     </body>
     </html>
   );

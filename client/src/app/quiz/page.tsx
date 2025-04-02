@@ -29,14 +29,14 @@ export default function QuizTest(): ReactElement {
   }, []);
 
   // SIMULATE LOAD / RATE LIMIT
-  const simulateLoad = async (ms: number) => {
+  const simulateLoad = async (ms: number): Promise<void> => {
     setLoading(true);
     await new Promise((resolve: any) => setTimeout(resolve, ms));
     return setLoading(false);
   }
 
   // FETCH ALL QUIZ QUESTIONS ONCE
-  const fetchQuizQuestions = async () => {
+  const fetchQuizQuestions = async (): Promise<void> => {
     setLoading(true);
     setError(null);
     setQuizStarted(false);
@@ -65,8 +65,9 @@ export default function QuizTest(): ReactElement {
       setCurrentQuestionIndex(0);
       setQuizStarted(true);
 
-    } catch (err: any) {
-      displayError(`There was an issue with your request. Please try again. Error: ${ err }`, 5000);
+    } catch (error: unknown) {
+      displayError('There was an issue with your request. Please try again.', 5000);
+      console.error(error)
     } finally {
       setLoading(false);
     }
@@ -95,7 +96,7 @@ export default function QuizTest(): ReactElement {
 
   // SET / UNSET QUIZ METADATA
   const setQuiz = (quiz: Quiz): any => {
-    if (!selectedQuiz && !quizTitle) {
+    if (!selectedQuiz || selectedQuiz !== quiz.id) {
       setSelectedQuiz(quiz.id);
       setQuizTitle(quiz.title);
     } else {
