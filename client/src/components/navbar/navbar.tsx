@@ -1,10 +1,10 @@
 import { JSX, ReactElement } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { NavLinkInterface } from "@/interfaces/NavLinkInterface";
+import { NavLinkTypes } from "@/types/NavLink.types";
 
 export default function Navbar(): JSX.Element {
-  const navLinksLeft: NavLinkInterface[] = [
+  const navLinksLeft: NavLinkTypes[] = [
     { path: '/', label: 'Home' },
     // { path: '/students', label: 'Students' },
     // { path: '/teachers', label: 'Teachers' },
@@ -35,7 +35,7 @@ export default function Navbar(): JSX.Element {
 
           {/* LEFT BUTTONS */ }
           {
-            navLinksLeft.map((button: NavLinkInterface): ReactElement => (
+            navLinksLeft.map((button: NavLinkTypes): ReactElement => (
               <Link
                 className={ 'text-sky-100 ml-5 transition hover:text-white active:text-sky-100' }
                 href={ button.path }

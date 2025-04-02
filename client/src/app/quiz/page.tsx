@@ -1,7 +1,7 @@
 'use client';
-import { ReactElement, useState } from "react";
-import { QuizQuestion } from "@/interfaces/QuizQuestion";
-import { motion } from 'framer-motion'
+import { ReactElement, useEffect, useState } from "react";
+import { Quiz, QuizQuestion } from "@/types/Quiz.types";
+import QuizModule from "@/components/quiz-module/quiz-module";
 
 
 export default function QuizTest(): ReactElement {
@@ -11,25 +11,39 @@ export default function QuizTest(): ReactElement {
   const [ loading, setLoading ] = useState(false);
   const [ error, setError ] = useState<string | null>(null);
   const [ quizStarted, setQuizStarted ] = useState<boolean>(false);
+  const [ selectedQuiz, setSelectedQuiz ] = useState<number | null>(null);
+  const [ quizzes, setQuizzes ] = useState([]);
+  const [ quizTitle, setQuizTitle ] = useState<string>('');
 
-  // SIMULATE LOAD (ALSO RATE LIMIT)
-  const simulateLoad = (ms: number) => {
+
+  // FETCH QUIZ DATA
+  useEffect(() => {
+    const fetchQuizzes: any = async () => {
+      const response: Response = await fetch(`http://localhost:3030/api/quizzes`);
+      const json = await response.json();
+      setQuizzes(json);
+    }
+    fetchQuizzes();
+  }, []);
+
+  // SIMULATE LOAD / RATE LIMIT
+  const simulateLoad = async (ms: number) => {
     setLoading(true);
-    return new Promise((resolve) => setTimeout(resolve, ms)).then(() => setLoading(false));
+    await new Promise((resolve: any) => setTimeout(resolve, ms));
+    return setLoading(false);
   }
 
   // FETCH ALL QUIZ QUESTIONS ONCE
-  const fetchQuizQuestion = async () => {
+  const fetchQuizQuestions = async () => {
     setLoading(true);
     setError(null);
     setQuizStarted(false);
 
     try {
-
       // DELAY BEFORE STARTING THE FETCH
-      await simulateLoad(1000);
+      await simulateLoad(750);
 
-      const response: Response = await fetch(`http://localhost:3030/api/questions/1/1`);
+      const response: Response = await fetch(`http://localhost:3030/api/questions/${ selectedQuiz }/1`);
       const data: QuizQuestion[] = await response.json();
 
       if (!Array.isArray(data)) {
@@ -37,9 +51,9 @@ export default function QuizTest(): ReactElement {
       }
 
       // FORMAT QUESTION DATA
-      const formattedQuestions = data.map((q: any) => ({
-        ...q,
-        options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options,
+      const formattedQuestions = data.map((question: any) => ({
+        ...question,
+        options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
       }));
 
       // UPDATE STATE WITH QUIZ DATA
@@ -61,7 +75,7 @@ export default function QuizTest(): ReactElement {
 
     if (selectedOption === currentQuestion.correct) {
       console.log('The answer is correct!');
-      await simulateLoad(1000);
+      await simulateLoad(750);
 
       if (currentQuestionIndex < quizQuestions.length - 1) {
         setCurrentQuestionIndex((prev: number) => prev + 1);
@@ -83,9 +97,34 @@ export default function QuizTest(): ReactElement {
     <div
       className='min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center text-black bg-gradient-to-b from-blue-300 to-blue-800 p-6 caret-transparent'>
 
-      {/* START / RESTART BUTTON */}
+      {/* SELECTED QUIZ INDICATOR */ }
+      { quizTitle && (
+        <div className={ 'w-fit p-2 h-fit text-2xl font-bold' }>
+          { quizTitle }
+        </div>
+      ) }
+
+      {/* QUIZ SELECTION BUTTONS */ }
+      { quizzes && (
+        <div>
+          { quizzes.map((quiz: Quiz, index: number) => (
+            <button
+              key={ index }
+              className={ 'h-12 m-4 px-4 w-fit bg-amber-300 hover:bg-amber-200 active:bg-amber-400 rounded-lg transition cursor-pointer' }
+              onClick={ () => {
+                setSelectedQuiz(quiz.id)
+                setQuizTitle(quiz.title)
+              } }
+            >
+              { quiz.title }
+            </button>
+          )) }
+        </div>
+      ) }
+
+      {/* START / RESTART BUTTON */ }
       <button
-        onClick={ fetchQuizQuestion }
+        onClick={ fetchQuizQuestions }
         disabled={ loading }
         className='px-6 py-3 mb-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-600 transition disabled:opacity-50'
       >
@@ -98,27 +137,12 @@ export default function QuizTest(): ReactElement {
       {/* TODO: MAKE THIS INTO A COMPONENT */ }
       {/* DISPLAY QUESTION AND OPTIONS */ }
       { quizStarted && currentQuestion && (
-        <div className='bg-white p-6 rounded-lg shadow-lg w-full max-w-xl'>
-          <h2 className='text-xl font-bold mb-4'>
-            Question { currentQuestionIndex + 1 } of { quizQuestions.length }
-          </h2>
-          <p className={ 'mb-6 text=lg' }>{ currentQuestion.question }</p>
-          <motion.ul
-            className='space-y-3'>
-            { currentQuestion.options.map((option, index) => (
-              <motion.li
-                key={ index }
-                whileHover={ { scale: 1.03 } }
-                whileTap={ { scale: 0.99 } }
-                transition={ { duration: 0.001 } }
-                onClick={ () => submitQuestion(option) }
-                className='p-3 bg-gray-200 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition cursor-pointer'
-              >
-                { option }
-              </motion.li>
-            )) }
-          </motion.ul>
-        </div>
+        <QuizModule
+          question={ currentQuestion }
+          questionNumber={ currentQuestionIndex + 1 }
+          totalQuestions={ quizQuestions.length }
+          onSubmit={ submitQuestion }
+        />
       ) }
     </div>
   );

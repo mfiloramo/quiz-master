@@ -20,13 +20,13 @@ export default function Home(): JSX.Element {
         <div className="mt-2 text-2xl max-w-3xl mx-auto">
           A dynamic and fun way to create an engaging learning environment among students
         </div>
-        <div className={ 'mt-8 mx-5' }>
+        <div className={ 'my-8 mx-5' }>
           <DisplayBanner/>
         </div>
 
+        {/* SCROLLING MARQUEE */}
         <div className="relative w-full h-12 overflow-hidden bg-blue-800">
           <div className="flex whitespace-nowrap animate-marquee align-middle">
-            {/* Duplicate content twice back-to-back */ }
             { [ ...items, ...items ].map((item, index) => (
               <span
                 key={ index }
