@@ -132,7 +132,7 @@ export default function QuizTest(): ReactElement {
           { quizzes.map((quiz: Quiz, index: number) => (
             <button
               key={ index }
-              className={ 'h-12 m-4 px-4 w-fit bg-amber-300 hover:bg-amber-200 active:bg-amber-400 rounded-lg transition cursor-pointer' }
+              className={ 'h-12 m-4 px-4 w-fit bg-amber-300 hover:bg-amber-200 active:bg-amber-400 rounded-lg shadow-xl transition cursor-pointer' }
               onClick={ () => setQuiz(quiz) }
             >
               { quiz.title }

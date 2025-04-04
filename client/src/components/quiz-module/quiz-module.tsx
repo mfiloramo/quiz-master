@@ -18,7 +18,7 @@ export default function QuizModule({ question, questionNumber, totalQuestions, o
             whileTap={ { scale: 0.99 } }
             transition={ { duration: 0.001 } }
             onClick={ () => onSubmit(option) }
-            className="p-3 bg-gray-200 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition cursor-pointer"
+            className="p-3 bg-gray-200 rounded-lg hover:bg-gray-300 hover:shadow-lg active:bg-gray-400 transition cursor-pointer"
           >
             { option }
           </motion.li>

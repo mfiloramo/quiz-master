@@ -1,9 +1,11 @@
-import { ReactElement } from "react";
 import { DashboardItem } from "@/interfaces/DashboardItem";
-import Link from "next/link";
 import SideNavbar from "@/components/side-navbar/side-navbar";
 
-export default function Dashboard(): ReactElement {
+type DashboardLinks = {
+  children: any;
+}
+
+export default function Dashboard({ children }: any): DashboardLinks {
   const dashboardLinks: DashboardItem[] = [
     { path: '/', label: '🏠 Home' },
     { path: '/discover', label: '🧭 Discover' },
@@ -20,7 +22,7 @@ export default function Dashboard(): ReactElement {
       <SideNavbar dashboardLinks={ dashboardLinks }/>
 
       {/* MAIN CONTENT */ }
-      <></>
+      <div>{ children }</div>
 
     </div>
   );
