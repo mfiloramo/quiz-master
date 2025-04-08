@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import DisplayBanner from "@/components/display- banner/display-banner";
+import DisplayBanner from "@/components/display-banner/display-banner";
 
 export default function Home(): JSX.Element {
   const items = [

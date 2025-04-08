@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
 
-export default function Students(): ReactElement {
+export default function StudentsPage(): ReactElement {
   return <></>;
 }

@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
 
-export default function SignupPage(): ReactElement {
+export default function DiscoverPage(): ReactElement {
   return <></>;
 }

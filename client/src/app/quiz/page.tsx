@@ -4,7 +4,7 @@ import { Quiz, QuizQuestion } from "@/types/Quiz.types";
 import QuizModule from "@/components/quiz-module/quiz-module";
 
 
-export default function QuizTest(): ReactElement {
+export default function QuizPage(): ReactElement {
   // COMPONENT STATE
   const [ quizQuestions, setQuizQuestions ] = useState<QuizQuestion[]>([]);
   const [ currentQuestionIndex, setCurrentQuestionIndex ] = useState<number>(0);
