@@ -1,7 +1,11 @@
-import { JSX } from "react";
+"use client";
+import { JSX, useEffect } from "react";
 import DashboardCard from "@/components/dashboard-card/dashboard-card";
+import { useRouter } from "next/navigation";
 
 export default function DashboardHome(): JSX.Element {
+  const router = useRouter();
+
   const DashboardCards: object[] = [
     {
       label: "🧭 Discover",
@@ -19,6 +23,14 @@ export default function DashboardHome(): JSX.Element {
       description: "Manage your profile and preferences.",
     },
   ];
+
+  // CHECK IF USER IS LOGGED IN
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    }
+  }, [router]);
 
   return (
     <div className="flex flex-col gap-6">
