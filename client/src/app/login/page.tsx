@@ -1,20 +1,96 @@
-import { ReactElement } from "react";
+"use client";
+
+import React, { ReactElement, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext"; // ✅ IMPORT AUTH CONTEXT
 
 export default function LoginPage(): ReactElement {
+  // PAGE STATE
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  // ROUTER INSTANCE FOR REDIRECTION
+  const router = useRouter();
+
+  // AUTH CONTEXT HOOK
+  const { login } = useAuth();
+
+  // HANDLE LOGIN
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      // SEND LOGIN REQUEST TO SERVER
+      const res = await fetch("http://localhost:3030/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // HANDLE INVALID RESPONSE
+      if (!res.ok) throw new Error("Invalid email or password");
+
+      // PARSE TOKEN RESPONSE FROM SERVER
+      const data = await res.json();
+
+      // SET TOKEN USING AUTH CONTEXT (UPDATES STATE & LOCAL STORAGE)
+      login(data.token);
+
+      // REDIRECT TO DASHBOARD UPON SUCCESSFUL LOGIN
+      router.push("/dashboard");
+    } catch (err: any) {
+      // HANDLE ERROR STATE
+      setError(err.message || "Login failed");
+    }
+  };
+
   // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div
-      className={
-        "flex h-screen items-center justify-center bg-gradient-to-b from-sky-300 to-sky-100"
-      }
-    >
+    <div className="flex h-screen items-center justify-center bg-gradient-to-b from-sky-300 to-sky-100">
       {/* LOGIN CARD */}
-      <div
-        className={
-          "relative -top-16 h-[50vh] w-[40vw] content-center rounded-xl bg-sky-50 p-6 shadow-2xl"
-        }
-      ></div>
+      <div className="relative -top-16 w-[90%] max-w-md content-center rounded-xl bg-sky-50 p-8 shadow-2xl">
+        {/* TITLE */}
+        <h2 className="mb-6 text-center text-2xl font-bold text-sky-800">
+          Log In
+        </h2>
+
+        {/* DISPLAY ERROR */}
+        {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
+
+        {/* LOGIN FORM */}
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          {/* EMAIL INPUT */}
+          <input
+            type="text"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="rounded-lg border border-gray-300 p-3 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          />
+
+          {/* PASSWORD INPUT */}
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="rounded-lg border border-gray-300 p-3 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          />
+
+          {/* SUBMIT BUTTON */}
+          <button
+            type="submit"
+            className="rounded-lg bg-sky-600 py-3 text-white transition hover:bg-sky-700"
+          >
+            Log In
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
