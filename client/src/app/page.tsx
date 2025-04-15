@@ -10,34 +10,30 @@ export default function Home(): JSX.Element {
     "💡 Keep shipping",
   ];
 
-
   return (
     <div className="h-screen bg-stub-background-home text-center text-black">
-      <div className="pt-12 px-2">
-        <div className="font-bold text-7xl max-w-5xl mx-auto">
+      <div className="px-2 pt-12">
+        <div className="mx-auto max-w-5xl text-7xl font-bold">
           Build quizzes for your entire classroom
         </div>
-        <div className="mt-2 text-2xl max-w-3xl mx-auto">
-          A dynamic and fun way to create an engaging learning environment among students
+        <div className="mx-auto mt-2 max-w-3xl text-2xl">
+          A dynamic and fun way to create an engaging learning environment among
+          students
         </div>
-        <div className={ 'my-8 mx-5' }>
-          <DisplayBanner/>
+        <div className={"mx-5 my-8"}>
+          <DisplayBanner />
         </div>
 
         {/* SCROLLING MARQUEE */}
-        <div className="relative w-full h-12 overflow-hidden bg-blue-800">
-          <div className="flex whitespace-nowrap animate-marquee align-middle">
-            { [ ...items, ...items ].map((item, index) => (
-              <span
-                key={ index }
-                className="mx-8 text-white text-lg shrink-0"
-              >
-            { item }
-          </span>
-            )) }
+        <div className="relative h-12 w-full overflow-hidden bg-blue-800">
+          <div className="flex animate-marquee whitespace-nowrap align-middle">
+            {[...items, ...items].map((item, index) => (
+              <span key={index} className="mx-8 shrink-0 text-lg text-white">
+                {item}
+              </span>
+            ))}
           </div>
         </div>
-
       </div>
     </div>
   );
