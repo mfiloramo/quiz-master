@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import React, { ReactElement, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext"; // ✅ IMPORT AUTH CONTEXT
+import React, { ReactElement, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import Image from 'next/image'; // ✅ IMPORT AUTH CONTEXT
 
 export default function LoginPage(): ReactElement {
   // PAGE STATE
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   // ROUTER INSTANCE FOR REDIRECTION
@@ -23,16 +24,16 @@ export default function LoginPage(): ReactElement {
 
     try {
       // SEND LOGIN REQUEST TO SERVER
-      const res = await fetch("http://localhost:3030/api/auth/login", {
-        method: "POST",
+      const res = await fetch('http://localhost:3030/api/auth/login', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
 
       // HANDLE INVALID RESPONSE
-      if (!res.ok) throw new Error("Invalid email or password");
+      if (!res.ok) throw new Error('Invalid email or password');
 
       // PARSE TOKEN RESPONSE FROM SERVER
       const data = await res.json();
@@ -41,23 +42,30 @@ export default function LoginPage(): ReactElement {
       login(data.token);
 
       // REDIRECT TO DASHBOARD UPON SUCCESSFUL LOGIN
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (err: any) {
       // HANDLE ERROR STATE
-      setError(err.message || "Login failed");
+      setError(err.message || 'Login failed');
     }
   };
 
   // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div className="flex h-screen items-center justify-center bg-gradient-to-b from-sky-300 to-sky-100">
+    <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-b from-sky-300 to-sky-100">
+      {/* APP LOGO */}
+      <Image
+        src="/logos/logo-main.png"
+        alt="app-logo"
+        width={762}
+        height={634}
+        className="-mt-24 h-auto w-48 max-w-full sm:w-48 md:w-64 lg:w-72"
+      />
+
       {/* LOGIN CARD */}
-      <div className="relative -top-16 w-[90%] max-w-md content-center rounded-xl bg-sky-50 p-8 shadow-2xl">
+      <div className="relative mt-8 w-[90%] max-w-md content-center rounded-xl bg-sky-50 p-8 shadow-2xl">
         {/* TITLE */}
-        <h2 className="mb-6 text-center text-2xl font-bold text-sky-800">
-          Log In
-        </h2>
+        <h2 className="mb-6 text-center text-2xl font-bold text-sky-800">Log In</h2>
 
         {/* DISPLAY ERROR */}
         {error && <p className="mb-4 text-sm text-red-500">{error}</p>}

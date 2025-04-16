@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { JSX, ReactElement } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { NavLinkTypes } from "@/types/NavLink.types";
-import { useAuth } from "@/context/AuthContext";
+import { JSX, ReactElement } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { NavLinkTypes } from '@/types/NavLink.types';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar(): JSX.Element {
   // USE AUTH CONTEXT FOR LOGIN STATE AND LOGOUT ACTION
   const { isLoggedIn, logout } = useAuth();
 
   const navLinksLeft: NavLinkTypes[] = [
-    { path: "/", label: "Home" },
+    { path: '/', label: 'Home' },
     // { path: '/students', label: 'Students' },
     // { path: '/teachers', label: 'Teachers' },
-    { path: "/dashboard", label: "Dashboard" },
-    { path: "/quiz", label: "Quiz" },
+    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/quiz', label: 'Quiz' },
   ];
 
   // RENDER COMPONENT
@@ -26,13 +26,13 @@ export default function Navbar(): JSX.Element {
         {/* LEFT BUTTONS CONTAINER */}
         <div className="float-left ml-4 mt-2 flex items-center">
           {/* APP LOGO */}
-          <Link href={"/"}>
+          <Link href={'/'}>
             <Image
               className="shadow-lg"
-              src={"/logos/logo-mini.png"}
+              src={'/logos/logo-mini.png'}
               width={160}
               height={45}
-              alt={"QuizMaster logo"}
+              alt={'QuizMaster logo'}
             />
           </Link>
 
@@ -46,7 +46,7 @@ export default function Navbar(): JSX.Element {
               >
                 {button.label}
               </Link>
-            ),
+            )
           )}
         </div>
 
@@ -55,10 +55,10 @@ export default function Navbar(): JSX.Element {
           {/* RIGHT BUTTONS */}
           <Link
             className="ml-4 rounded-lg bg-green-600 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-[#1BB755] active:bg-green-600"
-            href={"/signup"}
-            key={"signup"}
+            href={'/signup'}
+            key={'signup'}
           >
-            {"Sign Up"}
+            {'Sign Up'}
           </Link>
 
           {isLoggedIn ? (
@@ -71,10 +71,10 @@ export default function Navbar(): JSX.Element {
           ) : (
             <Link
               className="ml-4 text-sky-100 transition hover:text-white active:text-sky-100"
-              href={"/login"}
-              key={"login"}
+              href={'/login'}
+              key={'login'}
             >
-              {"Log In"}
+              {'Log In'}
             </Link>
           )}
         </div>

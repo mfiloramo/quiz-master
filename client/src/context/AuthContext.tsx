@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   // PROVIDER STATE
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const router = useRouter(); // ✅ MOVED HERE
+  const router = useRouter();
 
   // CHECK TOKEN IN LOCAL STORAGE
   useEffect(() => {
