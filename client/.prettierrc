@@ -3,6 +3,7 @@
   "bracketSpacing": true,
   "arrayBracketSpacing": true,
   "jsxBracketSameLine": false,
+  "jsxSingleQuote": true,
   "semi": true,
   "singleQuote": true,
   "tabWidth": 2,

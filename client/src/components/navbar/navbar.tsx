@@ -22,13 +22,13 @@ export default function Navbar(): JSX.Element {
   return (
     <>
       {/* NAVBAR MAIN CONTAINER */}
-      <div className="fixed left-0 top-0 z-50 flow-root h-16 w-full bg-gradient-to-b from-sky-800 to-sky-600 shadow-2xl">
+      <div className='fixed left-0 top-0 z-50 flow-root h-16 w-full bg-gradient-to-b from-sky-800 to-sky-600 shadow-2xl'>
         {/* LEFT BUTTONS CONTAINER */}
-        <div className="float-left ml-4 mt-2 flex items-center">
+        <div className='float-left ml-4 mt-2 flex items-center'>
           {/* APP LOGO */}
           <Link href={'/'}>
             <Image
-              className="shadow-lg"
+              className='shadow-lg'
               src={'/logos/logo-mini.png'}
               width={160}
               height={45}
@@ -40,7 +40,7 @@ export default function Navbar(): JSX.Element {
           {navLinksLeft.map(
             (button: NavLinkTypes): ReactElement => (
               <Link
-                className="ml-5 text-sky-100 transition hover:text-white active:text-sky-100"
+                className='ml-5 text-sky-100 transition hover:text-white active:text-sky-100'
                 href={button.path}
                 key={button.label}
               >
@@ -51,10 +51,10 @@ export default function Navbar(): JSX.Element {
         </div>
 
         {/* RIGHT BUTTONS CONTAINER */}
-        <div className="float-right mr-7 mt-4 flex items-center">
+        <div className='float-right mr-7 mt-4 flex items-center'>
           {/* RIGHT BUTTONS */}
           <Link
-            className="ml-4 rounded-lg bg-green-600 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-[#1BB755] active:bg-green-600"
+            className='ml-4 rounded-lg bg-green-600 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-[#1BB755] active:bg-green-600'
             href={'/signup'}
             key={'signup'}
           >
@@ -64,13 +64,13 @@ export default function Navbar(): JSX.Element {
           {isLoggedIn ? (
             <button
               onClick={logout}
-              className="ml-4 text-sky-100 transition hover:text-white active:text-sky-100"
+              className='ml-4 text-sky-100 transition hover:text-white active:text-sky-100'
             >
               Log Out
             </button>
           ) : (
             <Link
-              className="ml-4 text-sky-100 transition hover:text-white active:text-sky-100"
+              className='ml-4 text-sky-100 transition hover:text-white active:text-sky-100'
               href={'/login'}
               key={'login'}
             >

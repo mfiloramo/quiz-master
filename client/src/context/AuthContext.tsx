@@ -1,19 +1,8 @@
-"use client";
+'use client';
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-import { useRouter } from "next/navigation";
-
-type AuthContextType = {
-  isLoggedIn: boolean;
-  login: (token: string) => void;
-  logout: () => void;
-};
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { AuthContextType } from '@/types/AuthContext.types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -24,33 +13,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // CHECK TOKEN IN LOCAL STORAGE
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
   }, []);
 
   // HANDLE LOGIN
   const login = (token: string) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem('token', token);
     setIsLoggedIn(true);
   };
 
   // HANDLE LOGOUT
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setIsLoggedIn(false);
-    router.push("/");
+    router.push('/');
   };
 
   // RENDER PROVIDER
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>{children}</AuthContext.Provider>
   );
 }
 
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }
