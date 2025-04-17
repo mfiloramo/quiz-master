@@ -51,48 +51,48 @@ export default function LoginPage(): ReactElement {
   // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div className="flex h-screen flex-col items-center justify-center bg-gradient-to-b from-sky-300 to-sky-100">
+    <div className='flex h-screen flex-col items-center justify-center bg-gradient-to-b from-sky-300 to-sky-100'>
       {/* APP LOGO */}
       <Image
-        src="/logos/logo-main.png"
-        alt="app-logo"
+        src='/logos/logo-main.png'
+        alt='app-logo'
         width={762}
         height={634}
-        className="-mt-24 h-auto w-48 max-w-full sm:w-48 md:w-64 lg:w-72"
+        className='-mt-24 h-auto w-48 max-w-full sm:w-48 md:w-64 lg:w-72'
       />
 
       {/* LOGIN CARD */}
-      <div className="relative mt-8 w-[90%] max-w-md content-center rounded-xl bg-sky-50 p-8 shadow-2xl">
+      <div className='relative mt-8 w-[90%] max-w-md content-center rounded-xl bg-sky-50 p-8 shadow-2xl'>
         {/* TITLE */}
-        <h2 className="mb-6 text-center text-2xl font-bold text-sky-800">Log In</h2>
+        <h2 className='mb-6 text-center text-2xl font-bold text-sky-800'>Log In</h2>
 
         {/* DISPLAY ERROR */}
-        {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
+        {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
 
         {/* LOGIN FORM */}
-        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+        <form onSubmit={handleLogin} className='flex flex-col gap-4'>
           {/* EMAIL INPUT */}
           <input
-            type="text"
-            placeholder="Email"
+            type='text'
+            placeholder='Email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-lg border border-gray-300 p-3 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className='rounded-lg border border-gray-300 p-3 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500'
           />
 
           {/* PASSWORD INPUT */}
           <input
-            type="password"
-            placeholder="Password"
+            type='password'
+            placeholder='Password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-lg border border-gray-300 p-3 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className='rounded-lg border border-gray-300 p-3 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500'
           />
 
           {/* SUBMIT BUTTON */}
           <button
-            type="submit"
-            className="rounded-lg bg-sky-600 py-3 text-white transition hover:bg-sky-700"
+            type='submit'
+            className='rounded-lg bg-sky-600 py-3 text-white transition hover:bg-sky-700'
           >
             Log In
           </button>
