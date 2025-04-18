@@ -1,28 +1,24 @@
 'use client';
 
 import { ReactElement, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Quiz } from '@/types/Quiz.types';
+import { useQuiz } from '@/context/QuizContext';
 
 export default function LibraryPage(): ReactElement {
   // COMPONENT STATE
-  const [quizzes, setQuizzes] = useState<any[]>([]);
-  const [quizTitle, setQuizTitle] = useState<string>('');
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
 
-  // SET / UNSET QUIZ METADATA
-  const setQuiz = (quiz: Quiz): any => {
-    if (!selectedQuiz || selectedQuiz !== quiz.id) {
-      setSelectedQuiz(quiz.id);
-      setQuizTitle(quiz.title);
-    } else {
-      setSelectedQuiz(null);
-      setQuizTitle('');
-    }
-  };
+  // QUIZ CONTEXT
+  const { selectedQuiz, setSelectedQuiz } = useQuiz();
 
-  // FETCH USER'S QUIZZES
+  // ROUTER INSTANCE
+  const router = useRouter();
+
+  // FETCH ALL USER QUIZZES ON LOAD
   useEffect(() => {
-    const fetchQuizzes: any = async () => {
-      const response: Response = await fetch('http://localhost:3030/api/quizzes');
+    const fetchQuizzes = async () => {
+      const response = await fetch('http://localhost:3030/api/quizzes');
       const json = await response.json();
       setQuizzes(json);
     };
@@ -30,26 +26,46 @@ export default function LibraryPage(): ReactElement {
     fetchQuizzes();
   }, []);
 
-  // RENDER PAGE
+  // HANDLE QUIZ SELECTION TO CONTEXT
+  const handleSelectQuiz = (quiz: Quiz) => {
+    setSelectedQuiz(quiz);
+  };
+
+  // NAVIGATE TO QUIZ GAME PAGE
+  const navToQuiz = () => {
+    if (!selectedQuiz) {
+      alert('Please select a quiz to start!');
+      return;
+    }
+
+    router.push('/dashboard/library/quiz');
+  };
+
+  // RENDER COMPONENT
   return (
-    // MAIN CONTAINER
-    <div className={'text-center'}>
-      {/* QUIZ SELECTION BUTTONS */}
-      {quizzes && (
-        <>
-          {quizzes.map((quiz: Quiz, index: number) => (
-            <button
-              key={index}
-              className={
-                'm-4 h-24 w-48 cursor-pointer rounded-lg bg-amber-300 px-4 shadow-xl transition hover:bg-amber-200 active:bg-amber-400'
-              }
-              onClick={(): void => setQuiz(quiz)}
-            >
-              {quiz.title}
-            </button>
-          ))}
-        </>
-      )}
+    <div className='text-center'>
+      {/* DISPLAY ALL USER QUIZZES */}
+      {quizzes.map((quiz: Quiz) => (
+        <button
+          key={quiz.id}
+          className={`m-4 h-24 w-48 rounded-lg px-4 shadow-xl transition ${
+            selectedQuiz?.id === quiz.id
+              ? 'bg-blue-500 text-white'
+              : 'bg-amber-300 hover:bg-amber-200 active:bg-amber-400'
+          }`}
+          onClick={() => handleSelectQuiz(quiz)}
+        >
+          {quiz.title}
+        </button>
+      ))}
+
+      {/* START QUIZ BUTTON */}
+      <button
+        className='m-4 h-24 w-48 rounded-lg bg-green-500 px-4 font-bold text-white shadow-xl transition hover:bg-green-400 active:bg-green-600'
+        onClick={navToQuiz}
+      >
+        START GAME
+      </button>
     </div>
   );
 }

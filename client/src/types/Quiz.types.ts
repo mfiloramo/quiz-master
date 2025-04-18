@@ -16,3 +16,11 @@ export type QuizModuleProps = {
   totalQuestions: number;
   onSubmit: (option: string) => void;
 };
+
+export type QuizContextType = {
+  selectedQuiz: Quiz | null;
+  setSelectedQuiz: (quiz: any | null) => void;
+  currentIndex: number;
+  setCurrentIndex: (index: number) => void;
+  resetQuiz: () => void;
+};

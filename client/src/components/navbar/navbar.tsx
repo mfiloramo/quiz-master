@@ -15,7 +15,6 @@ export default function Navbar(): JSX.Element {
     // { path: '/students', label: 'Students' },
     // { path: '/teachers', label: 'Teachers' },
     { path: '/dashboard', label: 'Dashboard' },
-    { path: '/quiz', label: 'Quiz' },
   ];
 
   // RENDER COMPONENT
