@@ -43,23 +43,25 @@ export default function LibraryPage(): ReactElement {
 
   // RENDER COMPONENT
   return (
-    <div className='text-center'>
-      {/* DISPLAY ALL USER QUIZZES */}
-      {quizzes.map((quiz: Quiz) => (
-        <button
-          key={quiz.id}
-          className={`m-4 h-24 w-48 rounded-lg px-4 shadow-xl transition ${
-            selectedQuiz?.id === quiz.id
-              ? 'bg-blue-500 text-white'
-              : 'bg-amber-300 hover:bg-amber-200 active:bg-amber-400'
-          }`}
-          onClick={() => handleSelectQuiz(quiz)}
-        >
-          {quiz.title}
-        </button>
-      ))}
+    <div className='flex flex-col items-center'>
+      {/* QUIZ BUTTONS ROW */}
+      <div className='flex justify-center'>
+        {quizzes.map((quiz: Quiz) => (
+          <button
+            key={quiz.id}
+            className={`m-4 h-24 w-48 rounded-lg px-4 shadow-xl transition ${
+              selectedQuiz?.id === quiz.id
+                ? 'bg-blue-500 text-white'
+                : 'bg-amber-300 hover:bg-amber-200 active:bg-amber-400'
+            }`}
+            onClick={() => handleSelectQuiz(quiz)}
+          >
+            {quiz.title}
+          </button>
+        ))}
+      </div>
 
-      {/* START QUIZ BUTTON */}
+      {/* START GAME BUTTON */}
       <button
         className='m-4 h-24 w-48 rounded-lg bg-green-500 px-4 font-bold text-white shadow-xl transition hover:bg-green-400 active:bg-green-600'
         onClick={navToQuiz}

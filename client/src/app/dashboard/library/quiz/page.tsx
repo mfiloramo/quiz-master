@@ -88,12 +88,6 @@ export default function QuizPage(): ReactElement {
         <div className='mb-4 text-2xl font-bold text-white'>{selectedQuiz.title}</div>
       )}
 
-      {/* DISPLAY LOADING STATE */}
-      {loading && <p className='text-white'>Loading...</p>}
-
-      {/* DISPLAY ERROR */}
-      {error && <p className='mb-4 text-red-200'>{error}</p>}
-
       {/* DISPLAY QUESTION */}
       {quizStarted && questions[currentIndex] && (
         <QuizModule
@@ -103,6 +97,12 @@ export default function QuizPage(): ReactElement {
           onSubmit={submitAnswer}
         />
       )}
+
+      {/* DISPLAY LOADING STATE */}
+      {loading && <p className='mt-4 text-white'>Loading...</p>}
+
+      {/* DISPLAY ERROR */}
+      {error && <p className='mt-4 text-red-200'>{error}</p>}
     </div>
   );
 }
