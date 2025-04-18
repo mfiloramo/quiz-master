@@ -2,7 +2,7 @@
 
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuiz } from '@/context/QuizContext';
+import { useQuiz } from '@/contexts/QuizContext';
 import { QuizQuestion } from '@/types/Quiz.types';
 import QuizModule from '@/components/quiz-module/quiz-module';
 

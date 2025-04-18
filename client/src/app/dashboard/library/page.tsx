@@ -3,7 +3,7 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Quiz } from '@/types/Quiz.types';
-import { useQuiz } from '@/context/QuizContext';
+import { useQuiz } from '@/contexts/QuizContext';
 
 export default function LibraryPage(): ReactElement {
   // COMPONENT STATE

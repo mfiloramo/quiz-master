@@ -1,6 +1,6 @@
 import SideNavbar from '@/components/side-navbar/side-navbar';
 import { DashboardItem } from '@/types/DashboardItem.types';
-import { QuizProvider } from '@/context/QuizContext';
+import { QuizProvider } from '@/contexts/QuizContext';
 
 const dashboardLinks: DashboardItem[] = [
   { path: '/', label: '🏠 Home' },

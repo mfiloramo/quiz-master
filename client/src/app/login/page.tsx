@@ -1,7 +1,7 @@
 'use client';
 import React, { ReactElement, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image'; // ✅ IMPORT AUTH CONTEXT
 
 export default function LoginPage(): ReactElement {
