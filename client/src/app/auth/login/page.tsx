@@ -42,9 +42,9 @@ export default function LoginPage(): ReactElement {
 
       // REDIRECT TO DASHBOARD UPON SUCCESSFUL LOGIN
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (error: any) {
       // HANDLE ERROR STATE
-      setError(err.message || 'Login failed');
+      setError(error.message || 'Login failed');
     }
   };
 
