@@ -1,4 +1,4 @@
-import { DashboardItemTypes } from '@/types/DashboardItem.types';
+import { DashboardItemTypes } from '@/types/DashboardItem.type';
 import Link from 'next/link';
 import { ReactElement } from 'react';
 

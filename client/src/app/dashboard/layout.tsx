@@ -1,5 +1,5 @@
 import SideNavbar from '@/components/side-navbar/side-navbar';
-import { DashboardItem } from '@/types/DashboardItem.types';
+import { DashboardItem } from '@/types/DashboardItem.type';
 import { QuizProvider } from '@/contexts/QuizContext';
 
 const dashboardLinks: DashboardItem[] = [

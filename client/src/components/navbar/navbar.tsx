@@ -3,18 +3,18 @@
 import { JSX, ReactElement } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { NavLinkTypes } from '@/types/NavLink.types';
+import { NavLinkType } from '@/types/NavLink.type';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navbar(): JSX.Element {
   // USE AUTH CONTEXT FOR LOGIN STATE AND LOGOUT ACTION
   const { isLoggedIn, logout } = useAuth();
 
-  const navLinksLeft: NavLinkTypes[] = [
+  const navLinksLeft: NavLinkType[] = [
     { path: '/', label: 'Home' },
-    // { path: '/students', label: 'Students' },
-    // { path: '/teachers', label: 'Teachers' },
     { path: '/dashboard', label: 'Dashboard' },
+    { path: '/students', label: 'Students' },
+    { path: '/teachers', label: 'Teachers' },
   ];
 
   // RENDER COMPONENT
@@ -37,7 +37,7 @@ export default function Navbar(): JSX.Element {
 
           {/* LEFT BUTTONS */}
           {navLinksLeft.map(
-            (button: NavLinkTypes): ReactElement => (
+            (button: NavLinkType): ReactElement => (
               <Link
                 className='ml-5 text-sky-100 transition hover:text-white active:text-sky-100'
                 href={button.path}
@@ -54,8 +54,8 @@ export default function Navbar(): JSX.Element {
           {/* RIGHT BUTTONS */}
           <Link
             className='ml-4 rounded-lg bg-green-600 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-[#1BB755] active:bg-green-600'
-            href={'/signup'}
-            key={'signup'}
+            href={'/auth/register'}
+            key={'register'}
           >
             {'Sign Up'}
           </Link>
@@ -70,7 +70,7 @@ export default function Navbar(): JSX.Element {
           ) : (
             <Link
               className='ml-4 text-sky-100 transition hover:text-white active:text-sky-100'
-              href={'/login'}
+              href={'/auth/login'}
               key={'login'}
             >
               {'Log In'}
