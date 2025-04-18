@@ -28,7 +28,7 @@ export default function DashboardHome(): JSX.Element {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      router.push('/login');
+      router.push('/auth/login');
     }
   }, [router]);
 

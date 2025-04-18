@@ -26,17 +26,18 @@ export default function RegisterUsernamePage(): ReactElement {
   // RENDER COMPONENT
   return (
     <div className={'flex flex-col items-center pt-8'}>
+      <h1 className={'mb-4 text-2xl font-bold text-black'}>Enter Username</h1>
       <form
         onSubmit={handleSubmit}
-        className='flex h-fit w-fit flex-col items-center gap-4 rounded-xl bg-cyan-100 p-4 pt-6 shadow-xl'
+        className='flex w-full max-w-md flex-col items-center gap-4 rounded-xl bg-cyan-100 p-6 shadow-xl'
       >
         <input
           type='text'
           name='username'
-          placeholder='Choose a username'
+          placeholder='Enter username'
           value={usernameInput}
           onChange={(e) => setUsernameInput(e.target.value)}
-          className='rounded-xl border border-gray-300 p-3 text-black placeholder-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className='w-full max-w-md rounded-xl border border-gray-300 p-3 text-black placeholder-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
         />
         <button
           type='submit'
