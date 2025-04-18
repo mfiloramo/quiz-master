@@ -4,7 +4,7 @@ import { JSX, ReactElement } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { NavLinkTypes } from '@/types/NavLink.types';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navbar(): JSX.Element {
   // USE AUTH CONTEXT FOR LOGIN STATE AND LOGOUT ACTION

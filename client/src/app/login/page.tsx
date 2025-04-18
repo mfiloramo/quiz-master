@@ -51,7 +51,7 @@ export default function LoginPage(): ReactElement {
   // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div className='flex h-screen flex-col items-center justify-center bg-gradient-to-b from-sky-300 to-sky-100'>
+    <div className='flex h-screen flex-col items-center justify-center bg-gradient-to-b from-sky-300 to-sky-400'>
       {/* APP LOGO */}
       <Image
         src='/logos/logo-main.png'
