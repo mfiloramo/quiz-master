@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Quiz } from '@/types/Quiz.types';
+import MainQuizCard from '@/components/quiz-card/quiz-card';
 
 export default function LibraryPage(): ReactElement {
   // COMPONENT STATE
@@ -22,6 +23,7 @@ export default function LibraryPage(): ReactElement {
   // FETCH ALL USER QUIZZES ON LOAD
   useEffect(() => {
     const fetchQuizzes = async () => {
+      // TODO: UPDATE ENDPOINT TO REFLECT USER BASED ON AUTHCONTEXT
       const response = await fetch('http://localhost:3030/api/quizzes');
       const json = await response.json();
       setQuizzes(json);
@@ -47,21 +49,16 @@ export default function LibraryPage(): ReactElement {
 
   // RENDER COMPONENT
   return (
-    <div className='flex flex-col items-center'>
-      {/* QUIZ BUTTONS ROW */}
-      <div className='flex justify-center'>
-        {quizzes.map((quiz: Quiz) => (
-          <button
+    <>
+      {/* QUIZ CARD LIST */}
+      <div className='flex flex-col items-start'>
+        {quizzes.map((quiz) => (
+          <MainQuizCard
             key={quiz.id}
-            className={`m-4 h-24 w-48 rounded-lg px-4 shadow-xl transition ${
-              selectedQuiz?.id === quiz.id
-                ? 'bg-blue-500 text-white'
-                : 'bg-amber-300 hover:bg-amber-200 active:bg-amber-400'
-            }`}
-            onClick={() => handleSelectQuiz(quiz)}
-          >
-            {quiz.title}
-          </button>
+            quiz={quiz}
+            onSelect={handleSelectQuiz}
+            selected={selectedQuiz?.id === quiz.id}
+          />
         ))}
       </div>
 
@@ -72,6 +69,6 @@ export default function LibraryPage(): ReactElement {
       >
         START GAME
       </button>
-    </div>
+    </>
   );
 }
