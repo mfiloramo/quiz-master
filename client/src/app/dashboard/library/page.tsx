@@ -2,12 +2,16 @@
 
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Quiz } from '@/types/Quiz.types';
 import { useQuiz } from '@/contexts/QuizContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { Quiz } from '@/types/Quiz.types';
 
 export default function LibraryPage(): ReactElement {
   // COMPONENT STATE
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+
+  // AUTH CONTEXT
+  const { user } = useAuth();
 
   // QUIZ CONTEXT
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
