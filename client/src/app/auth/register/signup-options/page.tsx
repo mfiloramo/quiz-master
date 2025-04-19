@@ -15,13 +15,13 @@ export default function RegisterSignupOptionsPage(): ReactElement {
 
     try {
       // SEND POST REQUEST TO BACKEND
-      const res = await fetch('http://localhost:3030/api/auth/register', {
+      const response = await fetch('http://localhost:3030/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ accountType, username, email, password }),
       });
 
-      if (!res.ok) throw new Error('Error with user input. Please try again.');
+      if (!response.ok) throw new Error('Error with user input. Please try again.');
 
       // MANUALLY RESET STATE BEFORE REDIRECT
       reset();

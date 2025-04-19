@@ -1,6 +1,7 @@
 -- STORED PROCEDURE TO CREATE A NEW QUIZ
 CREATE PROCEDURE CreateQuiz
     @UserId INT,
+    @Username NVARCHAR (100),
     @Title NVARCHAR(100),
     @Description TEXT
 AS
