@@ -2,40 +2,59 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthContextType } from '@/types/AuthContext.type';
+import { jwtDecode } from 'jwt-decode';
+import { AuthContextType, DecodedUser } from '@/types/AuthContext.type';
 
+// CREATE CONTEXT
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// AUTH PROVIDER COMPONENT
 export function AuthProvider({ children }: { children: ReactNode }) {
   // PROVIDER STATE
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<DecodedUser | null>(null);
   const router = useRouter();
 
-  // CHECK TOKEN IN LOCAL STORAGE
+  // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token);
+    if (token) {
+      try {
+        const decoded = jwtDecode<DecodedUser>(token);
+        setUser(decoded);
+        setIsLoggedIn(true);
+      } catch (err) {
+        console.error('Invalid token', err);
+        localStorage.removeItem('token');
+      }
+    }
   }, []);
 
-  // HANDLE LOGIN
+  // LOGIN HANDLER
   const login = (token: string) => {
     localStorage.setItem('token', token);
+    const decoded = jwtDecode<DecodedUser>(token);
+    setUser(decoded);
     setIsLoggedIn(true);
   };
 
-  // HANDLE LOGOUT
+  // LOGOUT HANDLER
   const logout = () => {
     localStorage.removeItem('token');
+    setUser(null);
     setIsLoggedIn(false);
     router.push('/');
   };
 
   // RENDER PROVIDER
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 
+// CUSTOM HOOK
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within an AuthProvider');

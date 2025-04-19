@@ -43,6 +43,23 @@ export class QuizController {
     }
   }
 
+  // GET QUIZZES BY USER ID
+  static async getQuizzesByUserId(req: Request, res: Response): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const quizzes: any[] = await sequelize.query(
+        "EXECUTE GetQuizzesByUserId :userId",
+        {
+          replacements: { userId },
+        },
+      );
+      res.send(quizzes[0]);
+    } catch (error: any) {
+      console.error("Error executing Stored Procedure:", error.message);
+      res.status(500).send("Internal server error");
+    }
+  }
+
   // UPDATE QUIZ BY ID
   static async updateQuiz(req: Request, res: Response): Promise<void> {
     try {

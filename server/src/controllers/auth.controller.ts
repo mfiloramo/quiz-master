@@ -37,31 +37,35 @@ export class AuthController {
     try {
       const { email, password } = req.body;
 
-      // FIND USER BY EMAIL IN DATABASE
-      const [user]: any = await sequelize.query(
+      const [rows]: any = await sequelize.query(
         "EXECUTE GetUserByEmail :email",
-        {
-          replacements: { email },
-        },
+        { replacements: { email } },
       );
+
+      const user = rows[0];
 
       if (!user) {
         return res.status(401).send("Invalid email or password");
       }
 
-      // VALIDATE PASSWORD AGAINST DATABASE
-      const isPasswordValid: boolean = await bcrypt
-        .compare(password, user[0].password)
-        .then((response: boolean) => response);
-
+      const isPasswordValid: boolean = await bcrypt.compare(
+        password,
+        user.password,
+      );
       if (!isPasswordValid) {
         return res.status(401).send("Invalid email or password");
       }
 
-      // GENERATE JWT AND ISSUE TO USER
-      const token: string = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
-        expiresIn: "1h",
-      });
+      const token: string = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          created_at: user.created_at,
+        },
+        process.env.JWT_SECRET!,
+        { expiresIn: "1h" },
+      );
 
       return res.status(200).json({ token });
     } catch (error: any) {
