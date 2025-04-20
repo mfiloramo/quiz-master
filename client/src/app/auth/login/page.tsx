@@ -38,10 +38,11 @@ export default function LoginPage(): ReactElement {
       const data = await res.json();
 
       // SET TOKEN USING AUTH CONTEXT (UPDATES STATE & LOCAL STORAGE)
-      login(data.token);
-
+      const success: boolean = login(data.token);
       // REDIRECT TO DASHBOARD UPON SUCCESSFUL LOGIN
-      router.push('/dashboard');
+      if (success) {
+        router.push('/dashboard');
+      }
     } catch (error: any) {
       // HANDLE ERROR STATE
       setError(error.message || 'Login failed');
