@@ -18,15 +18,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode<DecodedUser>(token);
-        setUser(decoded);
-        setIsLoggedIn(true);
-      } catch (err) {
-        console.error('Invalid token', err);
-        localStorage.removeItem('token');
+    if (!token) return;
+
+    try {
+      const decoded: DecodedUser = jwtDecode(token);
+
+      if (!decoded.isActive) {
+        alert('Account is inactive');
+        return;
       }
+
+      setUser(decoded);
+      setIsLoggedIn(true);
+    } catch (err) {
+      console.error('Invalid or malformed token:', err);
+      localStorage.removeItem('token');
     }
   }, []);
 
@@ -34,8 +40,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (token: string) => {
     localStorage.setItem('token', token);
     const decoded = jwtDecode<DecodedUser>(token);
+
+    // CHECK IF ACCOUNT IS ACTIVE
+    if (!decoded.isActive) {
+      alert('Account is inactive');
+      localStorage.removeItem('token');
+      return false;
+    }
+
     setUser(decoded);
     setIsLoggedIn(true);
+    return true;
   };
 
   // LOGOUT HANDLER

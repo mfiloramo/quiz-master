@@ -3,6 +3,7 @@ export type DecodedUser = {
   id: number;
   username: string;
   email: string;
+  isActive: boolean;
   iat: number;
   exp: number;
 };
@@ -11,6 +12,6 @@ export type DecodedUser = {
 export type AuthContextType = {
   isLoggedIn: boolean;
   user: DecodedUser | null;
-  login: (token: string) => void;
+  login: (token: string) => boolean;
   logout: () => void;
 };

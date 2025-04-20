@@ -48,6 +48,7 @@ export class AuthController {
         return res.status(401).send("Invalid email or password");
       }
 
+      // CHECK PASSWORD VALIDITY
       const isPasswordValid: boolean = await bcrypt.compare(
         password,
         user.password,
@@ -56,12 +57,20 @@ export class AuthController {
         return res.status(401).send("Invalid email or password");
       }
 
+      // CHECK WHETHER ACCOUNT IS ACTIVE
+      // const isAccountActive: boolean = user.isActive;
+      //
+      // if (!isAccountActive) {
+      //   return res.status(401).send("Account is not active");
+      // }
+
       const token: string = jwt.sign(
         {
           id: user.id,
           username: user.username,
           email: user.email,
           created_at: user.created_at,
+          isActive: user.isActive,
         },
         process.env.JWT_SECRET!,
         { expiresIn: "1h" },
