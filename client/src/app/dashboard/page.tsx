@@ -35,8 +35,6 @@ export default function DashboardHome(): JSX.Element {
     } else {
       try {
         const decoded = jwtDecode(token);
-        console.log('Decoded JWT:', decoded);
-        // You can also store it in state or context here if needed
       } catch (err) {
         console.error('Invalid token:', err);
         router.push('/auth/login');

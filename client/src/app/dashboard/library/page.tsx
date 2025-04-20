@@ -23,10 +23,10 @@ export default function LibraryPage(): ReactElement {
   // FETCH ALL USER QUIZZES ON LOAD
   useEffect(() => {
     const fetchQuizzes = async () => {
-      // TODO: UPDATE ENDPOINT TO REFLECT USER BASED ON AUTHCONTEXT
-      const response = await fetch('http://localhost:3030/api/quizzes');
+      const response = await fetch(`http://localhost:3030/api/quizzes/user/${user!.id}`);
       const json = await response.json();
       setQuizzes(json);
+      console.log(user);
     };
 
     fetchQuizzes();
