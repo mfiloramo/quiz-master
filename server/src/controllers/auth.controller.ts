@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { sequelize } from "../config/sequelize";
 import jwt from "jsonwebtoken";
+import { CourierClient } from "@trycourier/courier";
+
 
 export class AuthController {
   // REGISTER NEW USER
@@ -58,11 +60,11 @@ export class AuthController {
       }
 
       // CHECK WHETHER ACCOUNT IS ACTIVE
-      // const isAccountActive: boolean = user.isActive;
-      //
-      // if (!isAccountActive) {
-      //   return res.status(401).send("Account is not active");
-      // }
+      const isAccountActive: boolean = user.isActive;
+
+      if (!isAccountActive) {
+        return res.status(401).send("Account is not active");
+      }
 
       const token: string = jwt.sign(
         {
@@ -101,5 +103,44 @@ export class AuthController {
       console.error("Error during logout:", error.message);
       return res.status(500).send("Internal server error");
     }
+  }
+
+  // SEND ACCOUNT CONFIRMATION LINK
+  static async sendConfirmEmail(req: Request, res: Response): Promise<void> {
+    const { userId, userName, userEmail } = req.body;
+
+    // CHECK FOR VALID SECRET_REGISTRATION_KEY
+    if (!process.env.SECRET_REGISTRATION_KEY) {
+      throw new Error('SECRET_REGISTRATION_KEY is not set');
+    }
+
+    // ISSUE JSON WEB TOKEN
+    const token: string = jwt.sign({ userId }, process.env.SECRET_REGISTRATION_KEY, { expiresIn: '1d' }
+    );
+
+    // SET END POINT FOR CONFIRMING USER ACCOUNT REGISTRATION
+    const activateAccountLink: string = `${ process.env.API_BASE_URL }/auth/activate/${ token }`;
+
+    console.log(activateAccountLink);
+
+    // SEND EMAIL NOTIFICATION TO USER
+    const courier: CourierClient = new CourierClient({ authorizationToken: process.env.COURIER_AUTH_TOKEN });
+
+    // SEND EMAIL NOTIFICATION TO USER
+    await courier.send({
+      message: {
+        to: { email: userEmail },
+        template: '57PER982K9405GJ632MWVJ8M2DWY',
+        data: { userName, activateAccountLink }
+      },
+    })
+      .then((response: any): void => {
+        console.log('Email notification successfully sent with requestId of:', response.requestId)
+      })
+      .catch((error: any): void => {
+        console.error(error)
+      });
+    res.json({ message: 'OK' });
+    return;
   }
 }
