@@ -4,8 +4,9 @@ import { QuizProvider } from '@/contexts/QuizContext';
 
 const dashboardLinks: DashboardItem[] = [
   { path: '/', label: '🏠 Home' },
+  { path: '/dashboard/create', label: '✨ Create' },
   { path: '/dashboard/discover', label: '🧭 Discover' },
-  { path: '/dashboard/library', label: '📚 Library' },
+  { path: '/dashboard/library', label: '📚 My Quizzes' },
   { path: '/dashboard/settings', label: '⚙️ Settings' },
 ];
 
