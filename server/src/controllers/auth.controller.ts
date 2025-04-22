@@ -2,30 +2,41 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { sequelize } from "../config/sequelize";
 import jwt from "jsonwebtoken";
+import { EmailService } from "../services/EmailService";
+
 
 export class AuthController {
   // REGISTER NEW USER
   static async register(req: Request, res: Response): Promise<any> {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, accountType } = req.body;
 
-      // HASH PASSWORD
       const saltRounds: number = 10;
       const hashedPassword: string = await bcrypt.hash(password, saltRounds);
 
-      // INSERT NEW USER INTO DATABASE
-      await sequelize.query(
-        "EXECUTE RegisterUser :username, :email, :password",
+      // INSERT NEW USER INTO DATABASE AND GET USER ID
+      const [result]: any = await sequelize.query(
+        "EXECUTE RegisterUser :username, :email, :password, :account_type",
         {
           replacements: {
             username,
             email,
             password: hashedPassword,
+            account_type: accountType
           },
-        },
+        }
       );
 
-      return res.status(201).send(`Username ${username} created successfully`);
+      const newUserId = result[0]?.id;
+
+      // Send confirmation email
+      await EmailService.sendConfirmationEmail({
+        userId: newUserId,
+        userName: username,
+        userEmail: email
+      });
+
+      return res.status(201).send(`Username ${username} created successfully. Please check your email to confirm your account.`);
     } catch (error: any) {
       console.error("Error registering user:", error.message);
       return res.status(500).send("Internal server error");
@@ -58,11 +69,11 @@ export class AuthController {
       }
 
       // CHECK WHETHER ACCOUNT IS ACTIVE
-      // const isAccountActive: boolean = user.isActive;
-      //
-      // if (!isAccountActive) {
-      //   return res.status(401).send("Account is not active");
-      // }
+      const isAccountActive: boolean = user.isActive;
+
+      if (!isAccountActive) {
+        return res.status(401).send("Account is not active");
+      }
 
       const token: string = jwt.sign(
         {
@@ -100,6 +111,38 @@ export class AuthController {
     } catch (error: any) {
       console.error("Error during logout:", error.message);
       return res.status(500).send("Internal server error");
+    }
+  }
+
+  // ACTIVATE USER ACCOUNT
+  static async activateUserAccount(req: Request, res: Response): Promise<any> {
+    try {
+      // CHECK FOR VALID SECRET_REGISTRATION_KEY
+      if (!process.env.SECRET_REGISTRATION_KEY) {
+        throw new Error('SECRET_REGISTRATION_KEY is not set');
+      }
+
+      // VERIFY JSON WEB TOKEN
+      const decoded: any = jwt.verify(req.params.token, process.env.SECRET_REGISTRATION_KEY!);
+      const userId: any = decoded.userId;
+
+      // ACTIVATE USER ACCOUNT
+      if (userId) {
+        await sequelize.query(
+          "EXECUTE ActivateUser :userId",
+          {
+            replacements: {
+              userId
+            },
+          },
+        ).then((response) => {
+          res.json({ message: 'Your account has been confirmed! You may close this window.' });
+          return
+        });
+      }
+    } catch (error: any) {
+      console.error(error);
+      return;
     }
   }
 }
