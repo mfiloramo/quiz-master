@@ -136,7 +136,8 @@ export class AuthController {
             },
           },
         ).then((response) => {
-          res.json({ message: 'Your account has been confirmed! You may close this window.' });
+          console.log(`${process.env.CLIENT_URL}/auth/login`);
+          res.redirect(`${process.env.CLIENT_URL}/auth/login`);
           return
         });
       }
