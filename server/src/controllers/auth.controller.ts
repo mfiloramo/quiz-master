@@ -9,19 +9,20 @@ export class AuthController {
   // REGISTER NEW USER
   static async register(req: Request, res: Response): Promise<any> {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, accountType } = req.body;
 
       const saltRounds: number = 10;
       const hashedPassword: string = await bcrypt.hash(password, saltRounds);
 
       // INSERT NEW USER INTO DATABASE AND GET USER ID
       const [result]: any = await sequelize.query(
-        "EXECUTE RegisterUser :username, :email, :password",
+        "EXECUTE RegisterUser :username, :email, :password, :account_type",
         {
           replacements: {
             username,
             email,
             password: hashedPassword,
+            account_type: accountType
           },
         }
       );

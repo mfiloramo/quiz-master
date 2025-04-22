@@ -1,5 +1,5 @@
 export type RegisterContextType = {
-  accountType: 'student' | 'teacher' | null;
+  account_type: 'student' | 'teacher' | null;
   username: string;
   email: string;
   password: string;
