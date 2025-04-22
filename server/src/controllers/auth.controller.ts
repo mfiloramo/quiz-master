@@ -26,7 +26,7 @@ export class AuthController {
         }
       );
 
-      const newUserId = result[0]?.id; // depends on your stored proc — adjust as needed
+      const newUserId = result[0]?.id;
 
       // Send confirmation email
       await EmailService.sendConfirmationEmail({
@@ -139,8 +139,6 @@ export class AuthController {
           return
         });
       }
-      res.json('ok');
-
     } catch (error: any) {
       console.error(error);
       return;
