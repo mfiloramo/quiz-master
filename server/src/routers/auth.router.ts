@@ -10,8 +10,7 @@ const router: Router = express.Router();
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
 router.post('/logout', AuthController.logout);
-router.post('/confirm', AuthController.sendConfirmEmail);
-router.post('/activate', AuthController.activateUserAccount);
+router.get('/activate/:token', AuthController.activateUserAccount);
 
 
 export const authRouter: Router = router;

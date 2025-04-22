@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { sequelize } from "../config/sequelize";
 import jwt from "jsonwebtoken";
-import { CourierClient } from "@trycourier/courier";
+import { EmailService } from "../services/EmailService";
 
 
 export class AuthController {
@@ -11,12 +11,11 @@ export class AuthController {
     try {
       const { username, email, password } = req.body;
 
-      // HASH PASSWORD
       const saltRounds: number = 10;
       const hashedPassword: string = await bcrypt.hash(password, saltRounds);
 
-      // INSERT NEW USER INTO DATABASE
-      await sequelize.query(
+      // INSERT NEW USER INTO DATABASE AND GET USER ID
+      const [result]: any = await sequelize.query(
         "EXECUTE RegisterUser :username, :email, :password",
         {
           replacements: {
@@ -24,10 +23,19 @@ export class AuthController {
             email,
             password: hashedPassword,
           },
-        },
+        }
       );
 
-      return res.status(201).send(`Username ${username} created successfully`);
+      const newUserId = result[0]?.id; // depends on your stored proc — adjust as needed
+
+      // Send confirmation email
+      await EmailService.sendConfirmationEmail({
+        userId: newUserId,
+        userName: username,
+        userEmail: email
+      });
+
+      return res.status(201).send(`Username ${username} created successfully. Please check your email to confirm your account.`);
     } catch (error: any) {
       console.error("Error registering user:", error.message);
       return res.status(500).send("Internal server error");
@@ -105,42 +113,37 @@ export class AuthController {
     }
   }
 
-  // SEND ACCOUNT CONFIRMATION LINK
-  static async sendConfirmEmail(req: Request, res: Response): Promise<void> {
-    const { userId, userName, userEmail } = req.body;
+  // ACTIVATE USER ACCOUNT
+  static async activateUserAccount(req: Request, res: Response): Promise<any> {
+    try {
+      // CHECK FOR VALID SECRET_REGISTRATION_KEY
+      if (!process.env.SECRET_REGISTRATION_KEY) {
+        throw new Error('SECRET_REGISTRATION_KEY is not set');
+      }
 
-    // CHECK FOR VALID SECRET_REGISTRATION_KEY
-    if (!process.env.SECRET_REGISTRATION_KEY) {
-      throw new Error('SECRET_REGISTRATION_KEY is not set');
+      // VERIFY JSON WEB TOKEN
+      const decoded: any = jwt.verify(req.params.token, process.env.SECRET_REGISTRATION_KEY!);
+      const userId: any = decoded.userId;
+
+      // ACTIVATE USER ACCOUNT
+      if (userId) {
+        await sequelize.query(
+          "EXECUTE ActivateUser :userId",
+          {
+            replacements: {
+              userId
+            },
+          },
+        ).then((response) => {
+          res.json({ message: 'Your account has been confirmed! You may close this window.' });
+          return
+        });
+      }
+      res.json('ok');
+
+    } catch (error: any) {
+      console.error(error);
+      return;
     }
-
-    // ISSUE JSON WEB TOKEN
-    const token: string = jwt.sign({ userId }, process.env.SECRET_REGISTRATION_KEY, { expiresIn: '1d' }
-    );
-
-    // SET END POINT FOR CONFIRMING USER ACCOUNT REGISTRATION
-    const activateAccountLink: string = `${ process.env.API_BASE_URL }/auth/activate/${ token }`;
-
-    console.log(activateAccountLink);
-
-    // SEND EMAIL NOTIFICATION TO USER
-    const courier: CourierClient = new CourierClient({ authorizationToken: process.env.COURIER_AUTH_TOKEN });
-
-    // SEND EMAIL NOTIFICATION TO USER
-    await courier.send({
-      message: {
-        to: { email: userEmail },
-        template: '57PER982K9405GJ632MWVJ8M2DWY',
-        data: { userName, activateAccountLink }
-      },
-    })
-      .then((response: any): void => {
-        console.log('Email notification successfully sent with requestId of:', response.requestId)
-      })
-      .catch((error: any): void => {
-        console.error(error)
-      });
-    res.json({ message: 'OK' });
-    return;
   }
 }
