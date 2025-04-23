@@ -11,6 +11,7 @@ export type Quiz = {
 // TYPES FOR INDIVIDUAL QUESTIONS
 export type QuizQuestion = {
   question: string;
+  description: string;
   options: string[];
   correct: string;
 };

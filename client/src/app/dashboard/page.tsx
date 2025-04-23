@@ -15,7 +15,7 @@ export default function DashboardHome(): JSX.Element {
       description: 'Find new quizzes curated just for you.',
     },
     {
-      label: '📚 Library',
+      label: '📚 My Quizzes',
       href: '/dashboard/library',
       description: 'Access all your saved and created quizzes.',
     },
