@@ -1,19 +1,44 @@
 'use client';
 
-import { ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Create(): ReactElement {
   // STATE HOOKS
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
+  // ROUTER INSTANCE FOR REDIRECTION
+  const router = useRouter();
+
+  // AUTH CONTEXT HOOK
+  const { user } = useAuth();
+
   // HANDLE FORM SUBMISSION
-  const handleSubmit: void = async (e: React.FormEvent) => {
+  const handleSubmit: (e: React.FormEvent) => Promise<void> = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       // SEND QUIZ TO SERVER
-      const response = await fetch(`${process.env.API_BASE_URL}/quiz/create`);
+      const response = await fetch(`http://localhost:3030/api/quizzes/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user!.id, username: user!.username, title, description }),
+      });
+
+      const data: any = await response.json();
+      console.log(data);
+
+      // HANDLE INVALID RESPONSE
+      if (!response.ok) {
+        throw new Error('Invalid email or password');
+      } else if (response.ok) {
+        // ROUTE USER TO EDIT PAGE IF RESPONSE IS OK
+        router.push('/dashboard/edit');
+      }
     } catch (error: any) {
       console.error(error);
     }
@@ -63,6 +88,15 @@ export default function Create(): ReactElement {
                 />
               </form>
             </div>
+            {/* SUBMIT BUTTON */}
+            <button
+              className={
+                'h-12 w-24 cursor-pointer rounded-lg bg-cyan-600 text-xl font-medium text-cyan-200 shadow transition hover:bg-cyan-500 active:bg-cyan-400'
+              }
+              onClick={handleSubmit}
+            >
+              Submit
+            </button>
           </div>
         </div>
       </div>

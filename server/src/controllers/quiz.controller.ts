@@ -6,12 +6,14 @@ export class QuizController {
   static async createQuiz(req: Request, res: Response): Promise<void> {
     try {
       const { userId, username, title, description } = req.body;
-      await sequelize.query(
+      const newQuizId: any = await sequelize.query(
         "EXECUTE CreateQuiz :userId, :username, :title, :description",
         {
           replacements: { userId, username, title, description },
         },
       );
+      // SEND NEW QUIZ ID
+      res.status(200).json({'newQuizId': newQuizId[0][0].id});
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");

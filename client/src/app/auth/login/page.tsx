@@ -2,10 +2,10 @@
 import React, { ReactElement, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import Image from 'next/image'; // ✅ IMPORT AUTH CONTEXT
+import Image from 'next/image';
 
 export default function LoginPage(): ReactElement {
-  // PAGE STATE
+  // STATE HOOKS
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
