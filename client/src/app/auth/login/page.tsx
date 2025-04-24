@@ -2,10 +2,10 @@
 import React, { ReactElement, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import Image from 'next/image'; // ✅ IMPORT AUTH CONTEXT
+import Image from 'next/image';
 
 export default function LoginPage(): ReactElement {
-  // PAGE STATE
+  // STATE HOOKS
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export default function LoginPage(): ReactElement {
 
     try {
       // SEND LOGIN REQUEST TO SERVER
-      const res = await fetch('http://localhost:3030/api/auth/login', {
+      const response = await fetch('http://localhost:3030/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,10 +32,10 @@ export default function LoginPage(): ReactElement {
       });
 
       // HANDLE INVALID RESPONSE
-      if (!res.ok) throw new Error('Invalid email or password');
+      if (!response.ok) throw new Error('Invalid email or password');
 
       // PARSE TOKEN RESPONSE FROM SERVER
-      const data = await res.json();
+      const data = await response.json();
 
       // SET TOKEN USING AUTH CONTEXT (UPDATES STATE & LOCAL STORAGE)
       const success: boolean = login(data.token);
