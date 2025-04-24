@@ -57,21 +57,21 @@ export default function Create(): ReactElement {
     // MAIN CONTAINER
     <div className={'m-3 flex flex-col'}>
       {/* PAGE TITLE */}
-      <div className={'flex flex-row text-5xl font-bold md:flex-col'}>Quiz Creator</div>
+      <div className={'flex flex-row text-5xl font-bold'}>Quiz Creator</div>
 
       {/* CONTENT CONTAINER */}
-      <div className={'my-3 flex flex-row rounded-xl'}>
+      <div className={'my-3 flex flex-col rounded-xl md:flex-row'}>
         {/* COVER IMAGE DROPBOX */}
         <div
           className={
-            'h-[45vh] w-[35vw] max-w-xl content-center rounded-lg bg-white text-center text-4xl'
+            'mx-auto mb-3 h-[45vh] w-full content-center rounded-lg bg-white p-3 text-center text-4xl sm:max-w-sm md:mb-0'
           }
         >
           Cover Image Module
         </div>
 
         {/* VERBIAGE CONTAINER */}
-        <div className={'mx-4 flex w-full flex-col items-start rounded-lg bg-slate-300 p-3'}>
+        <div className={'flex w-full flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'}>
           {/* TITLE SECTION */}
           <div className={'w-full text-2xl font-bold'}>
             <form className={'my-2'} onSubmit={handleSubmit}>
