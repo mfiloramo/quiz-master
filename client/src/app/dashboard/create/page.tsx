@@ -64,7 +64,7 @@ export default function Create(): ReactElement {
         {/* COVER IMAGE DROPBOX */}
         <div
           className={
-            'h-[30vh] w-[35vw] max-w-xl content-center rounded-lg bg-white text-center text-4xl'
+            'h-[45vh] w-[35vw] max-w-xl content-center rounded-lg bg-white text-center text-4xl'
           }
         >
           Cover Image Module

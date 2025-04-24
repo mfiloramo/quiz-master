@@ -11,12 +11,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // AUTH PROVIDER COMPONENT
 export function AuthProvider({ children }: { children: ReactNode }) {
   // PROVIDER STATE
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<DecodedUser | null>(null);
   const router = useRouter();
 
   // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
-  useEffect(() => {
+  useEffect((): void => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // LOGIN HANDLER
-  const login = (token: string) => {
+  const login = (token: string): boolean => {
     localStorage.setItem('token', token);
     const decoded = jwtDecode<DecodedUser>(token);
 
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // LOGOUT HANDLER
-  const logout = () => {
+  const logout = (): void => {
     localStorage.removeItem('token');
     setUser(null);
     setIsLoggedIn(false);
