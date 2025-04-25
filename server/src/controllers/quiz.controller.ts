@@ -82,7 +82,7 @@ export class QuizController {
   // DELETE QUIZ BY ID
   static async deleteQuiz(req: Request, res: Response): Promise<void> {
     try {
-      const { quizId } = req.body;
+      const { quizId } = req.params;
       await sequelize.query("EXECUTE DeleteQuiz :quizId", {
         replacements: { quizId },
       });

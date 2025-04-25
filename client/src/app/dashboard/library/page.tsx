@@ -8,85 +8,90 @@ import { Quiz } from '@/types/Quiz.types';
 import MainQuizCard from '@/components/quiz-card/quiz-card';
 
 export default function LibraryPage(): ReactElement {
-  // COMPONENT STATE
+  // STATE FOR ALL QUIZZES
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
 
-  // AUTH CONTEXT
+  // CONTEXTS
   const { user } = useAuth();
-
-  // QUIZ CONTEXT
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
 
-  // ROUTER INSTANCE
   const router = useRouter();
 
-  // FETCH ALL USER QUIZZES ON LOAD
+  // FETCH QUIZZES ON LOAD
   useEffect(() => {
     if (!user?.id) return;
+
     const fetchQuizzes = async () => {
-      const response = await fetch(`http://localhost:3030/api/quizzes/user/${user.id}`);
-      const json = await response.json();
-      setQuizzes(json);
+      try {
+        const response = await fetch(`http://localhost:3030/api/quizzes/user/${user.id}`);
+        const json = await response.json();
+        setQuizzes(json);
+      } catch (err) {
+        console.error('Error fetching quizzes:', err);
+      }
     };
 
     fetchQuizzes();
   }, [user]);
 
-  // HANDLE QUIZ SELECTION TO CONTEXT
+  // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz) => {
     setSelectedQuiz(quiz);
   };
 
-  // NAVIGATE TO QUIZ GAME PAGE
+  // HANDLE DELETING A QUIZ FROM UI AFTER DELETE
+  const handleDeleteQuiz = (quizId: number) => {
+    setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
+  };
+
+  // NAVIGATE TO PLAY PAGE
   const navToQuiz = () => {
     if (!selectedQuiz) {
       alert('Please select a quiz to start!');
       return;
     }
-
     router.push('/dashboard/library/quiz');
   };
 
-  // NAVIGATE TO EDIT QUIZ PAGE
+  // NAVIGATE TO EDIT PAGE
   const navToEdit = () => {
     if (!selectedQuiz) {
-      alert('Please select a quiz to start!');
+      alert('Please select a quiz to edit!');
       return;
     }
-
     router.push('/dashboard/edit');
   };
 
-  // RENDER COMPONENT
   return (
-    <>
-      {/* QUIZ CARD LIST */}
+    <div className='flex flex-col items-start'>
+      {/* QUIZ LIST */}
       <div className='flex flex-col items-start'>
         {quizzes.map((quiz) => (
           <MainQuizCard
             key={quiz.id}
             quiz={quiz}
-            onSelect={handleSelectQuiz}
             selected={selectedQuiz?.id === quiz.id}
+            onSelect={handleSelectQuiz}
+            onDelete={handleDeleteQuiz}
           />
         ))}
       </div>
 
-      {/* START GAME BUTTON */}
-      <button
-        className='m-4 h-24 w-48 rounded-lg bg-green-500 px-4 font-bold text-white shadow-xl transition hover:bg-green-400 active:bg-green-600'
-        onClick={navToQuiz}
-      >
-        START QUIZ
-      </button>
-
-      {/* EDIT QUIZ BUTTON */}
-      <button
-        className='m-4 h-24 w-48 rounded-lg bg-amber-500 px-4 font-bold text-white shadow-xl transition hover:bg-amber-400 active:bg-amber-600'
-        onClick={navToEdit}
-      >
-        EDIT QUIZ
-      </button>
-    </>
+      {/* ACTION BUTTONS */}
+      <div className='mt-8 flex gap-4'>
+        <button
+          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white hover:bg-green-400'
+          onClick={navToQuiz}
+        >
+          START QUIZ
+        </button>
+        <button
+          className='h-16 w-40 rounded-lg bg-amber-500 font-bold text-white hover:bg-amber-400'
+          onClick={navToEdit}
+        >
+          EDIT QUIZ
+        </button>
+      </div>
+    </div>
   );
 }

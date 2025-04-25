@@ -1,8 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { Quiz } from '@/types/Quiz.types';
-import { QuizContextType } from '@/types/Quiz.types';
+import { Quiz, QuizContextType } from '@/types/Quiz.types';
 
 // CREATE QUIZ CONTEXT
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
@@ -10,27 +9,28 @@ const QuizContext = createContext<QuizContextType | undefined>(undefined);
 // QUIZ CONTEXT PROVIDER
 export function QuizProvider({ children }: { children: ReactNode }) {
   // SELECTED QUIZ OBJECT
-  const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
+  const [selectedQuiz, setSelectedQuizState] = useState<Quiz | null>(null);
 
   // CURRENT QUESTION INDEX
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  // HOOK: PERSIST selectedQuiz
+  // ON LOAD, CHECK IF QUIZ IS SAVED IN LOCAL STORAGE
   useEffect(() => {
     const savedQuiz = localStorage.getItem('selectedQuiz');
     if (savedQuiz) {
-      setSelectedQuiz(JSON.parse(savedQuiz));
+      setSelectedQuizState(JSON.parse(savedQuiz));
     }
   }, []);
 
-  // LOCAL STORAGE PERSISTENCE
-  const persistSelectedQuiz = (quiz: Quiz | null) => {
+  // SET QUIZ IN BOTH STATE AND LOCAL STORAGE
+  const setSelectedQuiz = (quiz: Quiz | null) => {
+    setSelectedQuizState(quiz);
+
     if (quiz) {
       localStorage.setItem('selectedQuiz', JSON.stringify(quiz));
     } else {
       localStorage.removeItem('selectedQuiz');
     }
-    persistSelectedQuiz(quiz);
   };
 
   // RESET ALL QUIZ STATE
