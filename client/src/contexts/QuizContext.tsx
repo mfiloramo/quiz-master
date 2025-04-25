@@ -4,8 +4,10 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Quiz } from '@/types/Quiz.types';
 import { QuizContextType } from '@/types/Quiz.types';
 
+// CREATE QUIZ CONTEXT
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
+// QUIZ CONTEXT PROVIDER
 export function QuizProvider({ children }: { children: ReactNode }) {
   // SELECTED QUIZ OBJECT
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
@@ -19,6 +21,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     setCurrentIndex(0);
   };
 
+  // RENDER PROVIDER
   return (
     <QuizContext.Provider
       value={{ selectedQuiz, setSelectedQuiz, currentIndex, setCurrentIndex, resetQuiz }}
@@ -28,6 +31,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// CUSTOM HOOK TO ACCESS QUIZ CONTEXT
 export function useQuiz(): QuizContextType {
   const context = useContext(QuizContext);
   if (!context) {

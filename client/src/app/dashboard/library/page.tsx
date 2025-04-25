@@ -22,15 +22,15 @@ export default function LibraryPage(): ReactElement {
 
   // FETCH ALL USER QUIZZES ON LOAD
   useEffect(() => {
+    if (!user?.id) return;
     const fetchQuizzes = async () => {
-      const response = await fetch(`http://localhost:3030/api/quizzes/user/${user!.id}`);
+      const response = await fetch(`http://localhost:3030/api/quizzes/user/${user.id}`);
       const json = await response.json();
       setQuizzes(json);
-      console.log(user);
     };
 
     fetchQuizzes();
-  }, []);
+  }, [user]);
 
   // HANDLE QUIZ SELECTION TO CONTEXT
   const handleSelectQuiz = (quiz: Quiz) => {
@@ -45,6 +45,16 @@ export default function LibraryPage(): ReactElement {
     }
 
     router.push('/dashboard/library/quiz');
+  };
+
+  // NAVIGATE TO EDIT QUIZ PAGE
+  const navToEdit = () => {
+    if (!selectedQuiz) {
+      alert('Please select a quiz to start!');
+      return;
+    }
+
+    router.push('/dashboard/edit');
   };
 
   // RENDER COMPONENT
@@ -67,7 +77,15 @@ export default function LibraryPage(): ReactElement {
         className='m-4 h-24 w-48 rounded-lg bg-green-500 px-4 font-bold text-white shadow-xl transition hover:bg-green-400 active:bg-green-600'
         onClick={navToQuiz}
       >
-        START GAME
+        START QUIZ
+      </button>
+
+      {/* EDIT QUIZ BUTTON */}
+      <button
+        className='m-4 h-24 w-48 rounded-lg bg-amber-500 px-4 font-bold text-white shadow-xl transition hover:bg-amber-400 active:bg-amber-600'
+        onClick={navToEdit}
+      >
+        EDIT QUIZ
       </button>
     </>
   );

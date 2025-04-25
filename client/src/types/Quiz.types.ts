@@ -1,14 +1,14 @@
-// TYPES FOR QUIZ STRUCTURE
+// TYPES FOR A SINGLE QUIZ
 export type Quiz = {
-  id: number;
-  title: string;
-  description: string;
   author: string;
   created_date: string;
+  description: string;
+  id: number;
   questions: QuizQuestion[];
+  title: string;
 };
 
-// TYPES FOR INDIVIDUAL QUESTIONS
+// TYPES FOR AN INDIVIDUAL QUIZ QUESTION
 export type QuizQuestion = {
   question: string;
   description: string;
@@ -16,26 +16,26 @@ export type QuizQuestion = {
   correct: string;
 };
 
-// TYPES FOR QUIZ CARDS IN USER LIBRARY
+// TYPES FOR DISPLAYING A QUIZ CARD IN LIBRARY
 export type QuizCardProps = {
+  onSelect: (quiz: Quiz) => void;
   quiz: Quiz;
   selected: boolean;
-  onSelect: (quiz: Quiz) => void;
 };
 
-// TYPES FOR QUIZ MODULE PROPS (USED IN GAME)
+// TYPES FOR THE QUIZ MODULE (DURING GAMEPLAY)
 export type QuizModuleProps = {
+  onSubmit: (option: string) => void;
   question: QuizQuestion;
   questionNumber: number;
   totalQuestions: number;
-  onSubmit: (option: string) => void;
 };
 
-// TYPES FOR GLOBAL QUIZ CONTEXT
+// TYPES FOR QUIZ CONTEXT STATE
 export type QuizContextType = {
-  selectedQuiz: Quiz | null;
-  setSelectedQuiz: (quiz: Quiz | null) => void;
   currentIndex: number;
-  setCurrentIndex: (index: number) => void;
   resetQuiz: () => void;
+  selectedQuiz: Quiz | null;
+  setCurrentIndex: (index: number) => void;
+  setSelectedQuiz: (quiz: Quiz | null) => void;
 };

@@ -3,30 +3,27 @@
 import React, { ReactElement, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useQuiz } from '@/contexts/QuizContext';
 
-export default function Create(): ReactElement {
-  // STATE HOOKS
-  const [form, setForm] = useState<any>({ title: '', description: '' });
-  // const [title, setTitle] = useState<string>('');
-  // const [description, setDescription] = useState<string>('');
+export default function CreateQuiz(): ReactElement {
+  // FORM STATE
+  const [form, setForm] = useState({ title: '', description: '' });
 
-  // ROUTER INSTANCE FOR REDIRECTION
+  // ROUTER INSTANCE
   const router = useRouter();
 
-  // AUTH CONTEXT HOOK
+  // CONTEXT HOOKS
   const { user } = useAuth();
+  const { setSelectedQuiz } = useQuiz();
 
   // HANDLE FORM SUBMISSION
-  const handleSubmit: (e: React.FormEvent) => Promise<void> = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // SEND QUIZ TO SERVER
-      const response = await fetch(`http://localhost:3030/api/quizzes/create`, {
+      const response = await fetch('http://localhost:3030/api/quizzes/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user!.id,
           username: user!.username,
@@ -35,84 +32,79 @@ export default function Create(): ReactElement {
         }),
       });
 
-      const data: any = await response.json();
+      const data = await response.json();
 
-      // HANDLE INVALID RESPONSE
       if (!response.ok) {
-        throw new Error('Invalid email or password');
+        throw new Error('Failed to create quiz');
       }
 
+      // SET CREATED QUIZ IN CONTEXT
+      setSelectedQuiz({ ...data.newQuiz });
+
+      // REDIRECT TO EDIT PAGE
       router.push('/dashboard/edit');
     } catch (error: any) {
-      console.error(error);
+      console.error('Quiz creation failed:', error);
     }
   };
 
-  // HANDLE FORM CHANGES
+  // HANDLE INPUT CHANGES
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div className={'m-3 flex flex-col'}>
+    <div className='m-3 flex flex-col'>
       {/* PAGE TITLE */}
-      <div className={'flex flex-row text-5xl font-bold'}>Quiz Creator</div>
+      <div className='flex flex-row text-5xl font-bold'>Quiz Creator</div>
 
-      {/* CONTENT CONTAINER */}
-      <div className={'my-3 flex flex-col rounded-xl md:flex-row'}>
-        {/* COVER IMAGE DROPBOX */}
-        <div
-          className={
-            'mx-auto mb-3 h-[45vh] w-full content-center rounded-lg bg-white p-3 text-center text-4xl sm:max-w-sm md:mb-0'
-          }
-        >
+      {/* FORM AND IMAGE MODULE CONTAINER */}
+      <div className='my-3 flex flex-col rounded-xl md:flex-row'>
+        {/* IMAGE UPLOAD STUB */}
+        <div className='mx-auto mb-3 h-[45vh] w-full content-center rounded-lg bg-white p-3 text-center text-4xl sm:max-w-sm md:mb-0'>
           Cover Image Module
         </div>
 
-        {/* VERBIAGE CONTAINER */}
-        <div className={'flex w-full flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'}>
-          {/* TITLE SECTION */}
-          <div className={'w-full text-2xl font-bold'}>
-            <form className={'my-2'} onSubmit={handleSubmit}>
-              {/* TITLE INPUT */}
-              <div className={'w-full text-2xl font-bold'}>
-                Title (required)
-                <input
-                  name={'title'}
-                  type={'text'}
-                  placeholder={'Give your quiz a cool title...'}
-                  value={form.title}
-                  onChange={handleChange}
-                  className={'w-full rounded p-3'}
-                  required
-                />
-              </div>
+        {/* FORM SECTION */}
+        <div className='flex w-full flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'>
+          <form className='my-2 w-full' onSubmit={handleSubmit}>
+            {/* TITLE INPUT */}
+            <div className='w-full text-2xl font-bold'>
+              Title (required)
+              <input
+                name='title'
+                type='text'
+                placeholder='Give your quiz a cool title...'
+                value={form.title}
+                onChange={handleChange}
+                className='w-full rounded p-3'
+                required
+              />
+            </div>
 
-              {/* DESCRIPTION INPUT */}
-              <div className={'mt-5 w-full text-2xl font-bold'}>
-                Description
-                <input
-                  name={'description'}
-                  type={'text'}
-                  placeholder={'Tell us what your quiz will be about...'}
-                  value={form.description}
-                  onChange={handleChange}
-                  className={'h-[8vh] w-full rounded p-3'}
-                />
-              </div>
+            {/* DESCRIPTION INPUT */}
+            <div className='mt-5 w-full text-2xl font-bold'>
+              Description
+              <input
+                name='description'
+                type='text'
+                placeholder='Tell us what your quiz will be about...'
+                value={form.description}
+                onChange={handleChange}
+                className='h-[8vh] w-full rounded p-3'
+              />
+            </div>
 
-              {/* SUBMIT BUTTON */}
-              <button
-                type='submit'
-                className={
-                  'mt-3 h-12 w-24 cursor-pointer rounded-lg bg-cyan-600 text-xl font-medium text-cyan-200 shadow transition hover:bg-cyan-500 active:bg-cyan-400'
-                }
-              >
-                Submit
-              </button>
-            </form>
-          </div>
+            {/* SUBMIT BUTTON */}
+            <button
+              type='submit'
+              className='mt-3 h-12 w-24 cursor-pointer rounded-lg bg-cyan-600 text-xl font-medium text-cyan-200 shadow transition hover:bg-cyan-500 active:bg-cyan-400'
+            >
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </div>
