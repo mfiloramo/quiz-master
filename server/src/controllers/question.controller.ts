@@ -89,7 +89,7 @@ export class QuestionController {
   // DELETE EXISTING QUESTION
   static async deleteQuestion(req: Request, res: Response): Promise<void> {
     try {
-      const { questionId } = req.body;
+      const { questionId } = req.params;
       await sequelize.query("EXECUTE DeleteQuestion :questionId", {
         replacements: { questionId },
       });

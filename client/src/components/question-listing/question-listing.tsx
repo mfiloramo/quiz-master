@@ -20,11 +20,11 @@ export default function QuestionListing({
   // HANDLE DELETE CLICK
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:3030/api/questions/delete/${id}`, {
+      const response = await fetch(`http://localhost:3030/api/questions/${id}`, {
         method: 'DELETE',
       });
 
-      if (!res.ok) {
+      if (!response.ok) {
         throw new Error('Failed to delete question');
       }
 
