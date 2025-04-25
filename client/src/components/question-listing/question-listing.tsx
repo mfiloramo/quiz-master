@@ -10,26 +10,24 @@ export default function QuestionListing({
   options,
   correct,
   index,
-}: QuestionListingType & { index: number }): ReactElement {
-  // HANDLE EDIT CLICK (PLACEHOLDER)
-  const handleEdit = () => {
-    console.log(`Editing question ${id}`);
-    // TODO: OPEN MODAL TO EDIT QUESTION
+  onDelete,
+}: QuestionListingType & { index: number; onDelete: () => void }) {
+  // EDIT SELECTED QUESTION
+  const handleEdit = async (): Promise<void> => {
+    console.log('Edit Coming Soon!');
   };
 
-  // HANDLE DELETE CLICK
+  // DELETE SELECTED QUESTION
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:3030/api/questions/${id}`, {
         method: 'DELETE',
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to delete question');
-      }
+      if (!response.ok) throw new Error('Failed to delete question');
 
-      // OPTIONAL: TRIGGER STATE REFRESH IN PARENT COMPONENT
-      console.log(`Deleted question ${id}`);
+      // TRIGGER PARENT STATE UPDATE
+      onDelete();
     } catch (err) {
       console.error(err);
     }

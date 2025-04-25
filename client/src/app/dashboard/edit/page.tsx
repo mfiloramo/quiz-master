@@ -6,25 +6,27 @@ import QuestionListing from '@/components/question-listing/question-listing';
 import { useQuiz } from '@/contexts/QuizContext';
 
 export default function EditQuiz(): ReactElement {
-  // STATE TO STORE QUESTIONS FOR THE SELECTED QUIZ
+  // STATE HOOKS
   const [questions, setQuestions] = useState<QuestionListingType[]>([]);
+
+  // QUIZ CONTEXT (CONTAINS SELECTED QUIZ)
   const { selectedQuiz } = useQuiz();
 
-  // FETCH QUESTIONS ON PAGE LOAD
+  // FETCH QUESTIONS FOR THE CURRENT QUIZ
+  const fetchQuestions = async (): Promise<void> => {
+    if (!selectedQuiz?.id) return;
+
+    try {
+      const response = await fetch(`http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`);
+      const data = await response.json();
+      setQuestions(data);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    }
+  };
+
+  // EFFECT: TRIGGER FETCH ONCE SELECTED QUIZ IS AVAILABLE
   useEffect(() => {
-    if (!selectedQuiz) return;
-
-    const fetchQuestions = async () => {
-      try {
-        const response = await fetch(`http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`);
-        const data = await response.json();
-        console.log(data);
-        setQuestions(data);
-      } catch (error: any) {
-        console.error('Failed to fetch quiz questions:', error);
-      }
-    };
-
     fetchQuestions();
   }, [selectedQuiz]);
 
@@ -40,6 +42,9 @@ export default function EditQuiz(): ReactElement {
           options={question.options}
           correct={question.correct}
           index={index}
+          onDelete={() => {
+            setQuestions((prev) => prev.filter((q) => q.id !== question.id));
+          }}
         />
       ))}
     </div>
