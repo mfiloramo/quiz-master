@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { QuestionListingType } from '@/types/QuestionListing.type';
 import { Trash2, Pencil } from 'lucide-react';
 
