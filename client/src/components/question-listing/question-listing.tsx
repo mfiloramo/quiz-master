@@ -36,43 +36,32 @@ export default function QuestionListing({
           <Trash2 className='cursor-pointer text-red-500' onClick={handleDelete} />
         </div>
       </div>
+
+      <ul className='list-disc pl-5 text-gray-700'>
+        {options.map((option, idx) => {
+          const isCorrect = option === correct;
+          return (
+            <li key={idx} className={isCorrect ? 'font-bold text-green-600' : ''}>
+              {option}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
 
-{
-  /* OPTIONS DISPLAY */
-}
-{
-  /*<ul className='list-disc pl-5 text-gray-700'>*/
-}
-{
-  /*  {options.map((option, idx) => {*/
-}
-{
-  /*    const isCorrect = idx === correct;*/
-}
-{
-  /*    return (*/
-}
-{
-  /*      <li key={idx} className={isCorrect ? 'font-bold text-green-600' : ''}>*/
-}
-{
-  /*        {option}*/
-}
-{
-  /*      </li>*/
-}
-{
-  /*    );*/
-}
-{
-  /*  })}*/
-}
-{
-  /*</ul>*/
-}
+/* OPTIONS DISPLAY */
+/*<ul className='list-disc pl-5 text-gray-700'>*/
+/*  {options.map((option, idx) => {*/
+/*    const isCorrect = idx === correct;*/
+/*    return (*/
+/*      <li key={idx} className={isCorrect ? 'font-bold text-green-600' : ''}>*/
+/*        {option}*/
+/*      </li>*/
+/*    );*/
+/*  })}*/
+/*</ul>*/
 //     </div>
 //   );
 // }

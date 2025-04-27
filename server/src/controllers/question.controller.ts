@@ -69,6 +69,7 @@ export class QuestionController {
 
   // UPDATE EXISTING QUESTION
   static async updateQuestion(req: Request, res: Response): Promise<void> {
+    console.log(req.body);
     try {
       const { questionId, question, options, correct } = req.body;
       await sequelize.query(

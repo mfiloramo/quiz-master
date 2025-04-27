@@ -34,12 +34,12 @@ export default function MainQuizCard({ quiz, selected, onSelect, onDelete }: Pro
     // QUIZ CARD CONTAINER
     <div
       onClick={() => onSelect(quiz)}
-      className={`mb-4 w-full cursor-pointer rounded-lg p-4 shadow-md transition ${
+      className={`mb-4 cursor-pointer rounded-lg p-4 shadow-md transition ${
         selected ? 'bg-blue-500 text-white' : 'bg-white hover:bg-cyan-100'
       }`}
     >
       {/* HEADER (TITLE + ICONS) */}
-      <div className='mb-2 flex w-96 items-center justify-between'>
+      <div className='min-w-lg mb-2 flex w-[40vw] max-w-xl items-center justify-between'>
         <span className='font-semibold'>{quiz.title}</span>
         <div className='flex gap-2'>
           <Pencil

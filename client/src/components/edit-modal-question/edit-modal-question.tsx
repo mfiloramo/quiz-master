@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { QuestionListingType } from '@/types/QuestionListing.type';
 
 type EditModalProps = {
@@ -17,16 +17,16 @@ export default function EditModalQuestion({
   // LOCAL STATE FOR QUESTION EDITING
   const [editedQuestion, setEditedQuestion] = useState<string>(question.question);
   const [editedOptions, setEditedOptions] = useState<string[]>([...question.options]);
-  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number>(question.correct);
+  const [correctAnswer, setCorrectAnswer] = useState<any>(question.correct);
 
   // HANDLE SAVE
   const handleSave = async () => {
     try {
       const payload = {
-        questionId: question.id, // CORRECT ID
-        question: editedQuestion, // FROM LOCAL STATE
-        options: JSON.stringify(editedOptions), // STRINGIFY ARRAY
-        correct: editedOptions[correctAnswerIndex], // CORRECT ANSWER AS TEXT, not index
+        questionId: question.id,
+        question: editedQuestion,
+        options: JSON.stringify(editedOptions),
+        correct: correctAnswer,
       };
 
       const response = await fetch(`http://localhost:3030/api/questions/${question.id}`, {
@@ -43,15 +43,15 @@ export default function EditModalQuestion({
 
       console.log(`Question ${question.id} updated successfully`);
 
-      // UPDATE PARENT LIST AFTER SAVE
+      // UPDATE PARENT LISTING
       onSave({
         ...question,
         question: editedQuestion,
         options: editedOptions,
-        correct: correctAnswerIndex,
+        correct: correctAnswer,
       });
 
-      onClose(); // CLOSE MODAL
+      onClose();
     } catch (error) {
       console.error('Error updating question:', error);
     }
@@ -83,6 +83,7 @@ export default function EditModalQuestion({
               onChange={(e) => {
                 const updatedOptions = [...editedOptions];
                 updatedOptions[idx] = e.target.value;
+                console.log(updatedOptions[idx]);
                 setEditedOptions(updatedOptions);
               }}
               className={`rounded p-3 ${
@@ -103,12 +104,14 @@ export default function EditModalQuestion({
         <div className='mb-6'>
           <label className='mb-2 block font-bold'>Correct Answer</label>
           <select
-            value={correctAnswerIndex}
-            onChange={(e) => setCorrectAnswerIndex(Number(e.target.value))}
+            value={correctAnswer}
+            onChange={(e) => {
+              setCorrectAnswer(e.target.value);
+            }}
             className='w-full rounded border p-2'
           >
             {editedOptions.map((option, idx) => (
-              <option key={idx} value={idx}>
+              <option key={idx} value={option}>
                 {option ? option : `Option ${idx + 1}`}
               </option>
             ))}
