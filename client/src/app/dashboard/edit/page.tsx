@@ -7,12 +7,11 @@ import { useQuiz } from '@/contexts/QuizContext';
 import EditModalQuestion from '@/components/edit-modal-question/edit-modal-question';
 
 export default function EditQuiz(): ReactElement {
-  // STATE: ALL QUESTIONS
+  // STATE HOOKS
   const [questions, setQuestions] = useState<QuestionListingType[]>([]);
-
-  // STATE: WHICH QUESTION IS BEING EDITED
   const [editingQuestion, setEditingQuestion] = useState<QuestionListingType | null>(null);
 
+  // CONTEXT HOOKS
   const { selectedQuiz } = useQuiz();
 
   // FETCH ALL QUESTIONS FOR QUIZ

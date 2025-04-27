@@ -9,7 +9,7 @@ export default function DiscoverPage(): ReactElement {
   // STATE FOR ALL QUIZZES
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
 
-  // CONTEXTS
+  // CONTEXT HOOKS
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
 
   // FETCH ALL QUIZZES ON LOAD

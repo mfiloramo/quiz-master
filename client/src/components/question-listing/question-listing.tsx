@@ -50,18 +50,3 @@ export default function QuestionListing({
     </div>
   );
 }
-
-/* OPTIONS DISPLAY */
-/*<ul className='list-disc pl-5 text-gray-700'>*/
-/*  {options.map((option, idx) => {*/
-/*    const isCorrect = idx === correct;*/
-/*    return (*/
-/*      <li key={idx} className={isCorrect ? 'font-bold text-green-600' : ''}>*/
-/*        {option}*/
-/*      </li>*/
-/*    );*/
-/*  })}*/
-/*</ul>*/
-//     </div>
-//   );
-// }

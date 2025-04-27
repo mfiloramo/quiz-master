@@ -11,7 +11,7 @@ export default function LibraryPage(): ReactElement {
   // STATE FOR ALL QUIZZES
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
 
-  // CONTEXTS
+  // CONTEXT HOOKS
   const { user } = useAuth();
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
 
