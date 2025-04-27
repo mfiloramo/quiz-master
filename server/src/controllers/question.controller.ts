@@ -6,18 +6,29 @@ export class QuestionController {
   static async addQuestion(req: Request, res: Response): Promise<void> {
     try {
       const { quizId, question, options, correct } = req.body;
-      await sequelize.query(
+
+      const result: any = await sequelize.query(
         "EXECUTE AddQuestion :quizId, :question, :options, :correct",
         {
           replacements: { quizId, question, options, correct },
-        },
+        }
       );
-      res.status(200).send(`Question added to Quiz ID: ${quizId}.`);
+
+      const newQuestionId = result[0][0].id;
+
+      res.status(201).json({
+        id: newQuestionId,
+        quizId,
+        question,
+        options,
+        correct,
+      });
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");
     }
   }
+
 
   // GET ALL QUESTIONS FROM DATABASE
   static async getAllQuestions(req: Request, res: Response): Promise<void> {
@@ -69,7 +80,6 @@ export class QuestionController {
 
   // UPDATE EXISTING QUESTION
   static async updateQuestion(req: Request, res: Response): Promise<void> {
-    console.log(req.body);
     try {
       const { questionId, question, options, correct } = req.body;
       await sequelize.query(

@@ -10,6 +10,7 @@ export default function EditQuiz(): ReactElement {
   // STATE HOOKS
   const [questions, setQuestions] = useState<QuestionListingType[]>([]);
   const [editingQuestion, setEditingQuestion] = useState<QuestionListingType | null>(null);
+  const [modalMode, setModalMode] = useState<'edit' | 'add'>('edit');
 
   // CONTEXT HOOKS
   const { selectedQuiz } = useQuiz();
@@ -21,7 +22,7 @@ export default function EditQuiz(): ReactElement {
       const response = await fetch(`http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`);
       const data = await response.json();
 
-      // FORMAT EACH QUESTION'S OPTIONS
+      // FORMAT OPTIONS CORRECTLY
       const formattedData = data.map((question: any) => ({
         ...question,
         options:
@@ -41,17 +42,39 @@ export default function EditQuiz(): ReactElement {
 
   return (
     <div className='flex flex-col'>
-      {/* MODAL: EDIT QUESTION */}
+      {/* ADD QUESTION BUTTON */}
+      <button
+        className='m-4 h-24 w-32 rounded bg-blue-700 text-white'
+        onClick={() => {
+          setModalMode('add');
+          setEditingQuestion({
+            id: 0,
+            question: '',
+            options: ['', '', '', ''],
+            correct: '',
+          });
+        }}
+      >
+        Add Question
+      </button>
+
+      {/* MODAL: EDIT OR ADD */}
       {editingQuestion && (
         <EditModalQuestion
           question={editingQuestion}
           onClose={() => setEditingQuestion(null)}
           onSave={(updatedQuestion) => {
-            setQuestions((prev) =>
-              prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
-            );
+            if (modalMode === 'edit') {
+              setQuestions((prev) =>
+                prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
+              );
+            } else if (modalMode === 'add') {
+              setQuestions((prev) => [...prev, updatedQuestion]);
+            }
             setEditingQuestion(null);
           }}
+          mode={modalMode}
+          quizId={selectedQuiz!.id}
         />
       )}
 
@@ -64,7 +87,10 @@ export default function EditQuiz(): ReactElement {
           options={question.options}
           correct={question.correct}
           index={index}
-          onEdit={() => setEditingQuestion(question)}
+          onEdit={() => {
+            setModalMode('edit');
+            setEditingQuestion(question);
+          }}
           onDelete={() => {
             setQuestions((prev) => prev.filter((q) => q.id !== question.id));
           }}

@@ -6,7 +6,7 @@ const router: Router = express.Router();
 // PROTECT ALL ROUTES WITH JWT VERIFICATION MIDDLEWARE
 // router.use(authenticateJWT);
 
-router.post("/:questionId", QuestionController.addQuestion);
+router.post("/:quizId", QuestionController.addQuestion);
 router.get("/", QuestionController.getAllQuestions);
 router.get("/:questionId", QuestionController.getQuestionById);
 router.get("/quiz/:quizId/", QuestionController.getQuestionsByQuizId);
