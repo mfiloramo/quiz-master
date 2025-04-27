@@ -1,5 +1,61 @@
-import { ReactElement } from "react";
+'use client';
+
+import { ReactElement, useEffect, useState } from 'react';
+import { Quiz } from '@/types/Quiz.types';
+import { useQuiz } from '@/contexts/QuizContext';
+import MainQuizCard from '@/components/quiz-card/quiz-card';
 
 export default function DiscoverPage(): ReactElement {
-  return <></>;
+  // STATE FOR ALL QUIZZES
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+
+  // CONTEXTS
+  const { selectedQuiz, setSelectedQuiz } = useQuiz();
+
+  // FETCH ALL QUIZZES ON LOAD
+  useEffect(() => {
+    const fetchAllQuizzes = async () => {
+      try {
+        const response = await fetch(`http://localhost:3030/api/quizzes/`);
+        const json = await response.json();
+        setQuizzes(json);
+      } catch (err) {
+        console.error('Error fetching quizzes:', err);
+      }
+    };
+
+    fetchAllQuizzes();
+  }, []);
+
+  // HANDLE SELECTING A QUIZ
+  const handleSelectQuiz = (quiz: Quiz) => {
+    setSelectedQuiz(quiz);
+  };
+
+  return (
+    <div className='flex flex-col items-start'>
+      {/* QUIZ LIST */}
+      <div className='flex flex-col items-start'>
+        {quizzes.map((quiz) => (
+          <MainQuizCard
+            key={quiz.id}
+            quiz={quiz}
+            selected={selectedQuiz?.id === quiz.id}
+            onSelect={handleSelectQuiz}
+            onDelete={() => {}}
+          />
+        ))}
+      </div>
+
+      {/* ACTION BUTTONS */}
+      <div className='mt-8 flex gap-4'>
+        <button
+          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white hover:bg-green-400'
+          onClick={() => {}}
+        >
+          START QUIZ
+        </button>
+      </div>
+    </div>
+  );
 }
