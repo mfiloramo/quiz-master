@@ -59,7 +59,9 @@ export default function EditModalQuestion({
 
   // RENDER MODAL
   return (
+    // MAIN CONTAINER
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+      {/* INNER CONTENT CONTAINER */}
       <div className='w-full max-w-lg rounded-lg bg-white p-6 shadow-lg'>
         {/* TITLE */}
         <h2 className='mb-4 text-2xl font-bold'>Edit Question</h2>
@@ -83,7 +85,6 @@ export default function EditModalQuestion({
               onChange={(e) => {
                 const updatedOptions = [...editedOptions];
                 updatedOptions[idx] = e.target.value;
-                console.log(updatedOptions[idx]);
                 setEditedOptions(updatedOptions);
               }}
               className={`rounded p-3 ${

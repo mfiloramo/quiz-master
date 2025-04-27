@@ -21,14 +21,14 @@ export default function EditQuiz(): ReactElement {
       const response = await fetch(`http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`);
       const data = await response.json();
 
-      // CLEAN EACH QUESTION'S OPTIONS
-      const cleanedData = data.map((question: any) => ({
+      // FORMAT EACH QUESTION'S OPTIONS
+      const formattedData = data.map((question: any) => ({
         ...question,
         options:
           typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
       }));
 
-      setQuestions(cleanedData);
+      setQuestions(formattedData);
     } catch (error) {
       console.error('Error fetching questions:', error);
     }
@@ -41,7 +41,7 @@ export default function EditQuiz(): ReactElement {
 
   return (
     <div className='flex flex-col'>
-      {/* MODAL */}
+      {/* MODAL: EDIT QUESTION */}
       {editingQuestion && (
         <EditModalQuestion
           question={editingQuestion}
