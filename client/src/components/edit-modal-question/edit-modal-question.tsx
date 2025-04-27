@@ -87,12 +87,12 @@ export default function EditModalQuestion({
               }}
               className={`rounded p-3 ${
                 idx === 0
-                  ? 'bg-red-300'
+                  ? 'bg-red-500'
                   : idx === 1
-                    ? 'bg-blue-300'
+                    ? 'bg-blue-500'
                     : idx === 2
-                      ? 'bg-yellow-300'
-                      : 'bg-green-300'
+                      ? 'bg-yellow-500'
+                      : 'bg-green-500'
               }`}
               placeholder={`Option ${idx + 1}`}
             />
