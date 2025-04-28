@@ -38,8 +38,16 @@ export default function CreateQuiz(): ReactElement {
         throw new Error('Failed to create quiz');
       }
 
-      // SET CREATED QUIZ IN CONTEXT
-      setSelectedQuiz({ ...data.newQuiz });
+      // IMMEDIATELY FETCH FULL QUIZ DATA
+      const quizResponse = await fetch(`http://localhost:3030/api/quizzes/${data.newQuizId}`);
+      const newQuiz = await quizResponse.json();
+
+      if (!quizResponse.ok) {
+        throw new Error('Failed to fetch new quiz');
+      }
+
+      // SAVE FULL QUIZ INTO CONTEXT
+      setSelectedQuiz(newQuiz);
 
       // REDIRECT TO EDIT PAGE
       router.push('/dashboard/edit');

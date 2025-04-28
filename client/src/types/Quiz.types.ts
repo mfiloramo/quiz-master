@@ -1,9 +1,10 @@
 // TYPES FOR A SINGLE QUIZ
 export type Quiz = {
+  id: number;
+  quizId: number;
   author: string;
   created_date: string;
   description: string;
-  id: number;
   questions: QuizQuestion[];
   title: string;
 };

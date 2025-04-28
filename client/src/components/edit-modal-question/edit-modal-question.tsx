@@ -1,18 +1,14 @@
 'use client';
 
 import React, { ReactElement, useState } from 'react';
-import { QuestionListingType } from '@/types/QuestionListing.type';
-
-type EditModalProps = {
-  question: QuestionListingType;
-  onClose: () => void;
-  onSave: (updatedQuestion: QuestionListingType) => void;
-};
+import { EditModalProps } from '@/types/QuestionListing.type';
 
 export default function EditModalQuestion({
+  quizId,
   question,
   onClose,
   onSave,
+  mode,
 }: EditModalProps): ReactElement {
   // LOCAL STATE FOR QUESTION EDITING
   const [editedQuestion, setEditedQuestion] = useState<string>(question.question);
@@ -57,10 +53,47 @@ export default function EditModalQuestion({
     }
   };
 
+  const handleAdd = async () => {
+    try {
+      const payload = {
+        quizId: quizId,
+        question: editedQuestion,
+        options: JSON.stringify(editedOptions),
+        correct: correctAnswer,
+      };
+
+      const response = await fetch(`http://localhost:3030/api/questions/${quizId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add question');
+      }
+
+      const newQuestion = await response.json();
+
+      // PASS UP TO PARENT
+      onSave({
+        id: newQuestion.id,
+        question: newQuestion.question,
+        options: JSON.parse(newQuestion.options),
+        correct: newQuestion.correct,
+      });
+
+      onClose();
+    } catch (error) {
+      console.error('Error adding question:', error);
+    }
+  };
+
   // RENDER MODAL
   return (
     // MAIN CONTAINER
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 text-black'>
       {/* INNER CONTENT CONTAINER */}
       <div className='w-full max-w-lg rounded-lg bg-white p-6 shadow-lg'>
         {/* TITLE */}
@@ -71,7 +104,7 @@ export default function EditModalQuestion({
           type='text'
           value={editedQuestion}
           onChange={(e) => setEditedQuestion(e.target.value)}
-          className='mb-6 w-full rounded border p-3 text-black'
+          className='mb-6 w-full rounded border p-3 text-black placeholder-zinc-700'
           placeholder='Enter your question'
         />
 
@@ -124,9 +157,16 @@ export default function EditModalQuestion({
           <button onClick={onClose} className='rounded bg-gray-500 px-4 py-2 text-white'>
             Cancel
           </button>
-          <button onClick={handleSave} className='rounded bg-blue-600 px-4 py-2 text-white'>
-            Save
-          </button>
+          {mode === 'edit' && (
+            <button onClick={handleSave} className='rounded bg-blue-600 px-4 py-2 text-white'>
+              Save
+            </button>
+          )}
+          {mode === 'add' && (
+            <button onClick={handleAdd} className='rounded bg-cyan-600 px-4 py-2 text-white'>
+              Add
+            </button>
+          )}
         </div>
       </div>
     </div>
