@@ -104,7 +104,7 @@ export default function EditModalQuestion({
           type='text'
           value={editedQuestion}
           onChange={(e) => setEditedQuestion(e.target.value)}
-          className='mb-6 w-full rounded border p-3 text-black'
+          className='mb-6 w-full rounded border p-3 text-black placeholder-zinc-700'
           placeholder='Enter your question'
         />
 
