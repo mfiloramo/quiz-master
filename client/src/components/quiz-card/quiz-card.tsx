@@ -36,7 +36,7 @@ export default function MainQuizCard({
     <div
       onClick={() => onSelect(quiz)}
       className={`mb-4 cursor-pointer rounded-lg p-4 shadow-md transition ${
-        selected ? 'bg-blue-500 text-white' : 'bg-white hover:bg-cyan-100'
+        selected ? 'bg-sky-300' : 'bg-white hover:bg-cyan-100'
       }`}
     >
       {/* HEADER (TITLE + ICONS) */}

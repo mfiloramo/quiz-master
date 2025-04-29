@@ -6,6 +6,7 @@ import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Quiz } from '@/types/Quiz.types';
 import MainQuizCard from '@/components/quiz-card/quiz-card';
+import { motion } from 'framer-motion';
 
 export default function LibraryPage(): ReactElement {
   // STATE FOR ALL QUIZZES
@@ -79,18 +80,28 @@ export default function LibraryPage(): ReactElement {
 
       {/* ACTION BUTTONS */}
       <div className='mt-8 flex gap-4'>
-        <button
-          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white hover:bg-green-400'
+        <motion.button
+          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400 active:bg-green-300'
           onClick={navToQuiz}
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.005 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           START QUIZ
-        </button>
-        <button
-          className='h-16 w-40 rounded-lg bg-amber-500 font-bold text-white hover:bg-amber-400'
+        </motion.button>
+        <motion.button
+          className='h-16 w-40 rounded-lg bg-amber-500 font-bold text-white transition hover:bg-amber-400 active:bg-amber-300'
           onClick={navToEdit}
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.005 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           EDIT QUIZ
-        </button>
+        </motion.button>
       </div>
     </div>
   );
