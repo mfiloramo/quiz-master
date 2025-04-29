@@ -37,7 +37,7 @@ export default function EditQuiz(): ReactElement {
   };
 
   // UPDATE QUESTIONS LISTING & OPEN MODAL
-  const updateQuestionsModal = (updatedQuestion: string): void => {
+  const updateQuestionsModal = (updatedQuestion: QuestionListingType): void => {
     if (modalMode === 'edit') {
       setQuestions((prev) => prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)));
     } else if (modalMode === 'add') {

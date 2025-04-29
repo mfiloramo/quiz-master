@@ -63,9 +63,11 @@ export default function CreateQuiz(): ReactElement {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleCheckboxChange = (): void => {
-    setChecked(!checked);
-    setForm({ ...form, visibility: checked ? 'private' : 'public' });
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const isChecked = e.target.checked;
+    setChecked(isChecked);
+    setForm({ ...form, visibility: isChecked ? 'public' : 'private' });
+    console.log(form);
   };
 
   // RENDER PAGE

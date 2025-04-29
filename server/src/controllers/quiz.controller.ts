@@ -5,11 +5,11 @@ export class QuizController {
   // CREATE NEW QUIZ
   static async createQuiz(req: Request, res: Response): Promise<void> {
     try {
-      const { userId, username, title, description } = req.body;
+      const { userId, username, title, description, visibility } = req.body;
       const newQuizId: any = await sequelize.query(
-        "EXECUTE CreateQuiz :userId, :username, :title, :description",
+        "EXECUTE CreateQuiz :userId, :username, :title, :description, :visibility",
         {
-          replacements: { userId, username, title, description },
+          replacements: { userId, username, title, description, visibility },
         },
       );
       // SEND NEW QUIZ ID
