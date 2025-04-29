@@ -36,17 +36,18 @@ export default function DiscoverPage(): ReactElement {
     <div className='flex flex-col items-start'>
       {/* QUIZ LIST */}
       <div className='flex flex-col items-start'>
-        {quizzes.map((quiz) => (
-          <MainQuizCard
-            key={quiz.id}
-            quiz={quiz}
-            selected={selectedQuiz?.id === quiz.id}
-            onSelect={handleSelectQuiz}
-            onDelete={() => {}}
-          />
-        ))}
+        {quizzes.map((quiz) =>
+          quiz.visibility === 'public' ? (
+            <MainQuizCard
+              key={quiz.id}
+              quiz={quiz}
+              selected={selectedQuiz?.id === quiz.id}
+              onSelect={handleSelectQuiz}
+              onDelete={() => {}}
+            />
+          ) : null
+        )}
       </div>
-
       {/* ACTION BUTTONS */}
       <div className='mt-8 flex gap-4'>
         <button
