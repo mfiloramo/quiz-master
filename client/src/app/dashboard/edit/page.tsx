@@ -36,6 +36,16 @@ export default function EditQuiz(): ReactElement {
     }
   };
 
+  // UPDATE QUESTIONS LISTING & OPEN MODAL
+  const updateQuestionsModal = (updatedQuestion: string): void => {
+    if (modalMode === 'edit') {
+      setQuestions((prev) => prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)));
+    } else if (modalMode === 'add') {
+      setQuestions((prev) => [...prev, updatedQuestion]);
+    }
+    setEditingQuestion(null);
+  };
+
   // LOAD ONCE QUIZ SELECTED
   useEffect(() => {
     fetchQuestions();
@@ -69,16 +79,7 @@ export default function EditQuiz(): ReactElement {
         <EditModalQuestion
           question={editingQuestion}
           onClose={() => setEditingQuestion(null)}
-          onSave={(updatedQuestion) => {
-            if (modalMode === 'edit') {
-              setQuestions((prev) =>
-                prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
-              );
-            } else if (modalMode === 'add') {
-              setQuestions((prev) => [...prev, updatedQuestion]);
-            }
-            setEditingQuestion(null);
-          }}
+          onSave={updateQuestionsModal}
           mode={modalMode}
           quizId={selectedQuiz!.id}
         />
