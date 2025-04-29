@@ -4,6 +4,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import { Quiz } from '@/types/Quiz.types';
 import { useQuiz } from '@/contexts/QuizContext';
 import MainQuizCard from '@/components/quiz-card/quiz-card';
+import { useRouter } from 'next/navigation';
 
 export default function DiscoverPage(): ReactElement {
   // STATE FOR ALL QUIZZES
@@ -11,6 +12,7 @@ export default function DiscoverPage(): ReactElement {
 
   // CONTEXT HOOKS
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
+  const router: any = useRouter();
 
   // FETCH ALL QUIZZES ON LOAD
   useEffect(() => {
@@ -30,6 +32,15 @@ export default function DiscoverPage(): ReactElement {
   // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz) => {
     setSelectedQuiz(quiz);
+  };
+
+  // NAVIGATE TO PLAY PAGE
+  const navToQuiz = () => {
+    if (!selectedQuiz) {
+      alert('Please select a quiz to start!');
+      return;
+    }
+    router.push('/dashboard/library/quiz');
   };
 
   return (
@@ -52,7 +63,7 @@ export default function DiscoverPage(): ReactElement {
       <div className='mt-8 flex gap-4'>
         <button
           className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white hover:bg-green-400'
-          onClick={() => {}}
+          onClick={navToQuiz}
         >
           START QUIZ
         </button>

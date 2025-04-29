@@ -4,6 +4,7 @@ import React, { ReactElement } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { QuizCardProps } from '@/types/Quiz.types';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function MainQuizCard({
   quiz,
@@ -43,17 +44,9 @@ export default function MainQuizCard({
       <div className='min-w-lg mb-2 flex w-[40vw] max-w-xl items-center justify-between'>
         <span className='font-semibold'>{quiz.title}</span>
         <div className='flex gap-2'>
-          {pathname.includes('edit') ?? (
-            <Pencil
-              className='cursor-pointer text-blue-500'
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log('Edit modal coming soon!');
-              }}
-            />
-          )}
-
-          <Trash2 className='cursor-pointer text-red-500' onClick={handleDelete} />
+          {!pathname.includes('discover') ? (
+            <Trash2 className='cursor-pointer text-red-500' onClick={handleDelete} />
+          ) : null}
         </div>
       </div>
 

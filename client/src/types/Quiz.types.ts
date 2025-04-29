@@ -6,6 +6,7 @@ export type Quiz = {
   created_date: string;
   description: string;
   questions: QuizQuestion[];
+  visibility: string;
   title: string;
 };
 
