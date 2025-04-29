@@ -19,9 +19,10 @@ export type QuizQuestion = {
 
 // TYPES FOR DISPLAYING A QUIZ CARD IN LIBRARY
 export type QuizCardProps = {
-  onSelect: (quiz: Quiz) => void;
   quiz: Quiz;
   selected: boolean;
+  onSelect: (quiz: Quiz) => void;
+  onDelete: (quizId: number) => void;
 };
 
 // TYPES FOR THE QUIZ MODULE (DURING GAMEPLAY)

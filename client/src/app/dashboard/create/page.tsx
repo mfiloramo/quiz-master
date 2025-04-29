@@ -7,7 +7,8 @@ import { useQuiz } from '@/contexts/QuizContext';
 
 export default function CreateQuiz(): ReactElement {
   // FORM STATE
-  const [form, setForm] = useState({ title: '', description: '' });
+  const [form, setForm] = useState({ title: '', description: '', visibility: 'public' });
+  const [checked, setChecked] = useState<boolean>(false);
 
   // ROUTER INSTANCE
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function CreateQuiz(): ReactElement {
           username: user!.username,
           title: form.title,
           description: form.description,
+          visibility: checked ? 'private' : 'public',
         }),
       });
 
@@ -59,6 +61,11 @@ export default function CreateQuiz(): ReactElement {
   // HANDLE INPUT CHANGES
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleCheckboxChange = (): void => {
+    setChecked(!checked);
+    setForm({ ...form, visibility: checked ? 'private' : 'public' });
   };
 
   // RENDER PAGE
@@ -103,6 +110,19 @@ export default function CreateQuiz(): ReactElement {
                 onChange={handleChange}
                 className='h-[8vh] w-full rounded p-3'
               />
+            </div>
+
+            {/* QUIZ VISIBILITY TOGGLE */}
+            <div className={'mt-5 text-lg font-bold'}>
+              <input
+                name={'visibility'}
+                type={'checkbox'}
+                value={form.visibility}
+                checked={checked}
+                onChange={handleCheckboxChange}
+                className={'mr-1.5'}
+              />
+              <label>Private Visibility</label>
             </div>
 
             {/* SUBMIT BUTTON */}
