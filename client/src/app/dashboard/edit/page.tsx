@@ -5,6 +5,7 @@ import { QuestionListingType } from '@/types/QuestionListing.type';
 import QuestionListing from '@/components/question-listing/question-listing';
 import { useQuiz } from '@/contexts/QuizContext';
 import EditModalQuestion from '@/components/edit-modal-question/edit-modal-question';
+import { motion } from 'framer-motion';
 
 export default function EditQuiz(): ReactElement {
   // STATE HOOKS
@@ -43,8 +44,13 @@ export default function EditQuiz(): ReactElement {
   return (
     <div className='flex flex-col'>
       {/* ADD QUESTION BUTTON */}
-      <button
-        className='m-4 h-24 w-32 rounded bg-blue-700 text-white'
+      <motion.button
+        className='m-4 h-12 w-fit rounded bg-cyan-700 px-4 py-2 text-white shadow-lg transition hover:bg-cyan-600 active:bg-cyan-500'
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+        transition={{ duration: 0.005 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => {
           setModalMode('add');
           setEditingQuestion({
@@ -56,7 +62,7 @@ export default function EditQuiz(): ReactElement {
         }}
       >
         Add Question
-      </button>
+      </motion.button>
 
       {/* MODAL: EDIT OR ADD */}
       {editingQuestion && (

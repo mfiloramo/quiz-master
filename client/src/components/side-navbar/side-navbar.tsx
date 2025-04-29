@@ -5,7 +5,7 @@ import { ReactElement } from 'react';
 export default function SideNavbar({ dashboardLinks }: any): ReactElement {
   return (
     // MAIN CONTAINER
-    <div className={'h-[calc(100vh-4rem)] w-56 overflow-y-auto bg-slate-700'}>
+    <div className={'h-auto w-56 overflow-y-auto bg-slate-700'}>
       {/* SIDENAV BUTTONS */}
       <ul className='space-y-1 pt-1'>
         {dashboardLinks.map((item: DashboardItem, index: number) => (
