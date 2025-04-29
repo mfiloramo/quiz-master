@@ -48,7 +48,7 @@ export default function EditQuiz(): ReactElement {
 
   // LOAD ONCE QUIZ SELECTED
   useEffect(() => {
-    fetchQuestions();
+    fetchQuestions().then((r) => r);
   }, [selectedQuiz]);
 
   return (

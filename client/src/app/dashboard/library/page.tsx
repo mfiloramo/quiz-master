@@ -32,7 +32,7 @@ export default function LibraryPage(): ReactElement {
       }
     };
 
-    fetchQuizzes();
+    fetchQuizzes().then((r) => r);
   }, [user]);
 
   // HANDLE SELECTING A QUIZ

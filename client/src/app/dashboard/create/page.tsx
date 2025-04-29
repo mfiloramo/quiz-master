@@ -67,25 +67,25 @@ export default function CreateQuiz(): ReactElement {
     const isChecked = e.target.checked;
     setChecked(isChecked);
     setForm({ ...form, visibility: isChecked ? 'public' : 'private' });
-    console.log(form);
   };
 
   // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div className='m-3 flex flex-col'>
+    <div className='m-3 flex flex-col items-start'>
       {/* PAGE TITLE */}
       <div className='flex flex-row text-5xl font-bold'>Quiz Creator</div>
 
       {/* FORM AND IMAGE MODULE CONTAINER */}
-      <div className='my-3 flex flex-col rounded-xl md:flex-row'>
+      <div className='my-3 flex w-[70vw] max-w-6xl flex-col justify-items-start rounded-xl md:flex-row'>
         {/* IMAGE UPLOAD STUB */}
         <div className='mx-auto mb-3 h-[45vh] w-full content-center rounded-lg bg-white p-3 text-center text-4xl sm:max-w-sm md:mb-0'>
           Cover Image Module
         </div>
 
+        {/* TODO: EXTRACT FORM SECTION TO COMPONENT */}
         {/* FORM SECTION */}
-        <div className='flex w-full flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'>
+        <div className='min-w-5xl flex h-[45vh] w-full max-w-5xl flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'>
           <form className='my-2 w-full' onSubmit={handleSubmit}>
             {/* TITLE INPUT */}
             <div className='w-full text-2xl font-bold'>

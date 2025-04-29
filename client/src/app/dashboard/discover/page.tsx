@@ -26,7 +26,7 @@ export default function DiscoverPage(): ReactElement {
       }
     };
 
-    fetchAllQuizzes();
+    fetchAllQuizzes().then((r) => r);
   }, []);
 
   // HANDLE SELECTING A QUIZ
