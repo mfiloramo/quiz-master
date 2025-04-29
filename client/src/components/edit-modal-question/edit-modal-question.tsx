@@ -97,7 +97,9 @@ export default function EditModalQuestion({
       {/* INNER CONTENT CONTAINER */}
       <div className='w-full max-w-lg rounded-lg bg-white p-6 shadow-lg'>
         {/* TITLE */}
-        <h2 className='mb-4 text-2xl font-bold'>Edit Question</h2>
+        <h2 className='mb-4 text-2xl font-bold'>
+          {mode.charAt(0).toUpperCase() + mode.slice(1)} Question
+        </h2>
 
         {/* QUESTION INPUT */}
         <input
