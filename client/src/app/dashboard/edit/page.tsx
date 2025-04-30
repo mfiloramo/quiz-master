@@ -86,23 +86,29 @@ export default function EditQuiz(): ReactElement {
       )}
 
       {/* LIST QUESTIONS */}
-      {questions.map((question, index) => (
-        <QuestionListing
-          key={question.id}
-          id={question.id}
-          question={question.question}
-          options={question.options}
-          correct={question.correct}
-          index={index}
-          onEdit={() => {
-            setModalMode('edit');
-            setEditingQuestion(question);
-          }}
-          onDelete={() => {
-            setQuestions((prev) => prev.filter((q) => q.id !== question.id));
-          }}
-        />
-      ))}
+      {questions.length ? (
+        questions.map((question, index) => (
+          <QuestionListing
+            key={question.id}
+            id={question.id}
+            question={question.question}
+            options={question.options}
+            correct={question.correct}
+            index={index}
+            onEdit={() => {
+              setModalMode('edit');
+              setEditingQuestion(question);
+            }}
+            onDelete={() => {
+              setQuestions((prev) => prev.filter((q) => q.id !== question.id));
+            }}
+          />
+        ))
+      ) : (
+        <div className={'text-xl font-bold text-black'}>
+          No questions in this quiz yet. Add some!
+        </div>
+      )}
     </div>
   );
 }

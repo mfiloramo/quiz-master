@@ -9,7 +9,7 @@ const QuizContext = createContext<QuizContextType | undefined>(undefined);
 // QUIZ CONTEXT PROVIDER
 export function QuizProvider({ children }: { children: ReactNode }) {
   // SELECTED QUIZ OBJECT
-  const [selectedQuiz, setSelectedQuizState] = useState<Quiz | null>(null);
+  const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
 
   // CURRENT QUESTION INDEX
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -18,13 +18,13 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const savedQuiz = localStorage.getItem('selectedQuiz');
     if (savedQuiz) {
-      setSelectedQuizState(JSON.parse(savedQuiz));
+      setSelectedQuiz(JSON.parse(savedQuiz));
     }
   }, []);
 
   // SET QUIZ IN BOTH STATE AND LOCAL STORAGE
-  const setSelectedQuiz = (quiz: Quiz | null) => {
-    setSelectedQuizState(quiz);
+  const setQuiz = (quiz: Quiz | null) => {
+    setSelectedQuiz(quiz);
 
     if (quiz) {
       localStorage.setItem('selectedQuiz', JSON.stringify(quiz));
@@ -35,14 +35,14 @@ export function QuizProvider({ children }: { children: ReactNode }) {
 
   // RESET ALL QUIZ STATE
   const resetQuiz = () => {
-    setSelectedQuiz(null);
+    setQuiz(null);
     setCurrentIndex(0);
   };
 
   // RENDER PROVIDER
   return (
     <QuizContext.Provider
-      value={{ selectedQuiz, setSelectedQuiz, currentIndex, setCurrentIndex, resetQuiz }}
+      value={{ selectedQuiz, setSelectedQuiz: setQuiz, currentIndex, setCurrentIndex, resetQuiz }}
     >
       {children}
     </QuizContext.Provider>
