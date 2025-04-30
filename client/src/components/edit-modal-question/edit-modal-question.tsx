@@ -13,16 +13,20 @@ export default function EditModalQuestion({
   // LOCAL STATE FOR QUESTION EDITING
   const [editedQuestion, setEditedQuestion] = useState<string>(question.question);
   const [editedOptions, setEditedOptions] = useState<string[]>([...question.options]);
-  const [correctAnswer, setCorrectAnswer] = useState<any>(question.correct);
 
-  // HANDLE SAVE
+  const initialIndex = question.options.findIndex((opt) => opt === question.correct);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number>(
+    initialIndex !== -1 ? initialIndex : 0
+  );
+
+  // HANDLE SAVE (EDIT)
   const handleSave = async () => {
     try {
       const payload = {
         questionId: question.id,
         question: editedQuestion,
         options: JSON.stringify(editedOptions),
-        correct: correctAnswer,
+        correct: editedOptions[correctAnswerIndex],
       };
 
       const response = await fetch(`http://localhost:3030/api/questions/${question.id}`, {
@@ -44,7 +48,7 @@ export default function EditModalQuestion({
         ...question,
         question: editedQuestion,
         options: editedOptions,
-        correct: correctAnswer,
+        correct: editedOptions[correctAnswerIndex],
       });
 
       onClose();
@@ -53,13 +57,14 @@ export default function EditModalQuestion({
     }
   };
 
+  // HANDLE ADD (NEW)
   const handleAdd = async () => {
     try {
       const payload = {
         quizId: quizId,
         question: editedQuestion,
         options: JSON.stringify(editedOptions),
-        correct: correctAnswer,
+        correct: editedOptions[correctAnswerIndex],
       };
 
       const response = await fetch(`http://localhost:3030/api/questions/${quizId}`, {
@@ -92,9 +97,7 @@ export default function EditModalQuestion({
 
   // RENDER MODAL
   return (
-    // MAIN CONTAINER
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 text-black'>
-      {/* INNER CONTENT CONTAINER */}
       <div className='w-full max-w-lg rounded-lg bg-white p-6 shadow-lg'>
         {/* TITLE */}
         <h2 className='mb-4 text-2xl font-bold'>
@@ -140,15 +143,13 @@ export default function EditModalQuestion({
         <div className='mb-6'>
           <label className='mb-2 block font-bold'>Correct Answer</label>
           <select
-            value={correctAnswer}
-            onChange={(e) => {
-              setCorrectAnswer(e.target.value);
-            }}
+            value={correctAnswerIndex}
+            onChange={(e) => setCorrectAnswerIndex(parseInt(e.target.value))}
             className='w-full rounded border p-2'
           >
             {editedOptions.map((option, idx) => (
-              <option key={idx} value={option}>
-                {option ? option : `Option ${idx + 1}`}
+              <option key={idx} value={idx}>
+                {option || `Option ${idx + 1}`}
               </option>
             ))}
           </select>
