@@ -46,7 +46,7 @@ export default function LibraryPage(): ReactElement {
   };
 
   // NAVIGATE TO PLAY PAGE
-  const navToQuiz = () => {
+  const navToPlayQuiz = () => {
     if (!selectedQuiz) {
       alert('Please select a quiz to start!');
       return;
@@ -56,8 +56,6 @@ export default function LibraryPage(): ReactElement {
 
   // NAVIGATE TO EDIT PAGE
   const navToEdit = () => {
-    console.log(user!.id);
-    console.log(selectedQuiz);
     if (!selectedQuiz || selectedQuiz.user_id !== user!.id) {
       alert('Please select a quiz to start!');
       return;
@@ -84,7 +82,7 @@ export default function LibraryPage(): ReactElement {
       <div className='mt-8 flex gap-4'>
         <motion.button
           className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400 active:bg-green-300'
-          onClick={navToQuiz}
+          onClick={navToPlayQuiz}
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
           transition={{ duration: 0.005 }}
