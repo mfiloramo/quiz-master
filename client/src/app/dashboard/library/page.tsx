@@ -56,8 +56,10 @@ export default function LibraryPage(): ReactElement {
 
   // NAVIGATE TO EDIT PAGE
   const navToEdit = () => {
-    if (!selectedQuiz) {
-      alert('Please select a quiz to edit!');
+    console.log(user!.id);
+    console.log(selectedQuiz);
+    if (!selectedQuiz || selectedQuiz.user_id !== user!.id) {
+      alert('Please select a quiz to start!');
       return;
     }
     router.push('/dashboard/edit');
