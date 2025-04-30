@@ -4,7 +4,6 @@ import React, { ReactElement } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { QuizCardProps } from '@/types/Quiz.types';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function MainQuizCard({
   quiz,
@@ -41,7 +40,7 @@ export default function MainQuizCard({
       }`}
     >
       {/* HEADER (TITLE + ICONS) */}
-      <div className='min-w-lg mb-2 flex w-[40vw] max-w-xl items-center justify-between'>
+      <div className='mb-2 flex w-[70vw] max-w-2xl items-center justify-between'>
         <span className='font-semibold'>{quiz.title}</span>
         <div className='flex gap-2'>
           {!pathname.includes('discover') ? (
