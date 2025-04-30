@@ -12,7 +12,7 @@ export default function Navbar(): JSX.Element {
 
   const navLinksLeft: NavLinkType[] = [
     { path: '/', label: 'Home' },
-    { path: '/dashboard', label: 'Dashboard' },
+    { path: `${isLoggedIn ? '/dashboard' : '/auth/login'}`, label: 'Dashboard' },
     { path: '/students', label: 'Students' },
     { path: '/teachers', label: 'Teachers' },
   ];
