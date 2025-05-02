@@ -73,7 +73,7 @@ export default function Navbar(): JSX.Element {
               href={'/auth/login'}
               key={'login'}
             >
-              {'Log In'}
+              Log In
             </Link>
           )}
         </div>

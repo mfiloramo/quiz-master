@@ -20,7 +20,7 @@ export default function QuizPage(): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   // REDIRECT IF QUIZ NOT SELECTED
-  useEffect(() => {
+  useEffect((): void => {
     if (!selectedQuiz) {
       router.push('/dashboard/library');
     }

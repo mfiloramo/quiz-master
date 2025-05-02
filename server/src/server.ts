@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import cors, { CorsOptions } from 'cors';
 import * as http from "node:http";
-import { Server } from "socket.io";
+import { Server, Socket } from 'socket.io';
 import { sequelize } from "./config/sequelize";
 
 // ROUTE IMPORTS
@@ -13,10 +13,12 @@ import { sessionRouter } from "./routers/session.router";
 import { playerRouter } from "./routers/player.router";
 import { webSocketRouter } from "./routers/websocket.router";
 
+
 // GLOBAL VARIABLES
 const app: Express = express();
 const PORT: number = parseInt(process.env.PORT as string, 10) || 3030;
 const server: any = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',
@@ -61,6 +63,14 @@ const startServer = async (): Promise<void> => {
     // TEST DATABASE CONNECTION
     await sequelize.authenticate();
     console.log('Connection to the database has been established successfully.');
+
+    // START WEBSOCKET SERVER
+    io.on('connection', (socket: Socket) => {
+      console.log('User connected...');
+      socket.on('disconnect', () => {
+        console.log('user disconnected');
+      });
+    })
 
     // OPTIONAL: SYNC MODELS
     // Use sequelize.sync() to create tables based on models (development only)

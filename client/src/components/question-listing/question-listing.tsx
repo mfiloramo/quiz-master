@@ -12,7 +12,7 @@ export default function QuestionListing({
   index,
   onDelete,
   onEdit,
-}: QuestionListingType & { index: number; onDelete: () => void; onEdit: () => void }) {
+}: QuestionListingType) {
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:3030/api/questions/${id}`, {

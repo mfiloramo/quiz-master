@@ -64,6 +64,9 @@ export default function EditQuiz(): ReactElement {
         onClick={() => {
           setModalMode('add');
           setEditingQuestion({
+            index: 0,
+            onDelete(): void {},
+            onEdit(): void {},
             id: 0,
             question: '',
             options: ['', '', '', ''],
@@ -105,9 +108,7 @@ export default function EditQuiz(): ReactElement {
           />
         ))
       ) : (
-        <div className={'text-xl font-bold text-black'}>
-          No questions in this quiz yet. Add some!
-        </div>
+        <div className={'text-xl text-black'}>No questions in this quiz yet. Add some!</div>
       )}
     </div>
   );
