@@ -1,8 +1,9 @@
 import { Socket } from "socket.io";
+import { GameSessionAttributes } from '../interfaces/WebSocketAttributes.interface';
 
 export class WebSocketController {
   // PLAYER JOINS SESSION
-  joinSession(socket: Socket, data: { sessionId: string; playerId: string }): void {
+  joinSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId, playerId } = data;
     console.log(`Player ${ playerId } is joining session ${ sessionId }`);
     socket.join(sessionId);
@@ -10,14 +11,14 @@ export class WebSocketController {
   }
 
   // START WEBSOCKET SESSION
-  startSession(socket: Socket, data: { sessionId: string }): void {
+  startSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId } = data;
     console.log(`Session ${ sessionId } is starting`);
     socket.to(sessionId).emit("session-started");
   }
 
   // HANDLE PLAYER ANSWER SUBMISSION
-  submitAnswer(socket: Socket, data: { sessionId: string; playerId: string; answer: number }): void {
+  submitAnswer(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId, playerId, answer } = data;
     console.log(`Player ${ playerId } submitted answer ${ answer } for session ${ sessionId }`);
     // Simulate answer validation (replace with actual logic)
@@ -26,7 +27,7 @@ export class WebSocketController {
   }
 
   // END WEBSOCKET SESSION
-  endSession(socket: Socket, data: { sessionId: string }): void {
+  endSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId } = data;
     console.log(`Session ${ sessionId } is ending`);
     socket.to(sessionId).emit("session-ended");
