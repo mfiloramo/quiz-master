@@ -35,12 +35,12 @@ export default function MainQuizCard({
     // QUIZ CARD CONTAINER
     <div
       onClick={() => onSelect(quiz)}
-      className={`mb-4 w-[30rem] cursor-pointer rounded-lg p-4 shadow-md transition ${
+      className={`mb-4 w-[40rem] cursor-pointer rounded-lg p-4 shadow-md transition ${
         selected ? 'bg-sky-300' : 'bg-white hover:bg-cyan-100'
       }`}
     >
       {/* HEADER (TITLE + ICONS) */}
-      <div className='mb-2 flex w-full items-center justify-between px-4'>
+      <div className='mb-2 flex w-full items-center justify-between'>
         <span className='font-semibold'>{quiz.title}</span>
         <div className='flex gap-2'>
           {!pathname.includes('discover') ? (

@@ -58,31 +58,18 @@ app.use('*', (req, res): void => {
 });
 
 // DATABASE CONNECTION AND SERVER STARTUP
+// START SERVER
 const startServer = async (): Promise<void> => {
   try {
-    // TEST DATABASE CONNECTION
     await sequelize.authenticate();
-    console.log('Connection to the database has been established successfully.');
+    console.log('Database connected...');
 
-    // START WEBSOCKET SERVER
-    io.on('connection', (socket: Socket) => {
-      console.log('User connected...');
-      socket.on('disconnect', () => {
-        console.log('user disconnected');
-      });
-    })
-
-    // OPTIONAL: SYNC MODELS
-    // Use sequelize.sync() to create tables based on models (development only)
-    // await sequelize.sync({ force: false }); // force: true drops existing tables
-
-    // START THE SERVER
-    server.listen(PORT, (): void => {
-      console.log(`Server listening on port: ${ PORT }...`);
+    server.listen(PORT, () => {
+      console.log(`Server running on port: ${PORT}...`);
     });
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
-    process.exit(1); // EXIT THE PROCESS WITHOUT AN ERROR
+    console.error('Database connection failed:', error);
+    process.exit(1);
   }
 };
 

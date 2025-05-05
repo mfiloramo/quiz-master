@@ -1,40 +1,77 @@
-import { Socket } from "socket.io";
-import { GameSessionAttributes } from '../interfaces/WebSocketAttributes.interface';
+import { Socket, Server } from "socket.io";
+import { GameSession, Player } from "../utils/GameSessionClasses";
+
+// IN-MEMORY STORE FOR ACTIVE SESSIONS
+const activeSessions = new Map<string, GameSession>();
 
 export class WebSocketController {
+  constructor(private io: Server) {}
+
   // PLAYER JOINS SESSION
-  joinSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId, playerId } = data;
-    console.log(`Player ${ playerId } is joining session ${ sessionId }`);
+  joinSession(socket: Socket, data: { sessionId: string; playerId: string; name: string }): void {
+    const { sessionId, playerId, name } = data;
+    const session = activeSessions.get(sessionId);
+
+    if (session) {
+      const player = new Player(playerId, name);
+      session.addPlayer(player);
+      socket.join(sessionId);
+      this.io.to(sessionId).emit("player-joined", session.players);
+    } else {
+      socket.emit("error", "Session not found.");
+    }
+  }
+
+  // HOST STARTS SESSION
+  startSession(socket: Socket, data: { sessionId: string }): void {
+    const { sessionId } = data;
+    const session = activeSessions.get(sessionId);
+
+    if (session) {
+      session.isStarted = true;
+      this.io.to(sessionId).emit("session-started");
+    } else {
+      socket.emit("error", "Session not found.");
+    }
+  }
+
+  // PLAYER SUBMITS AN ANSWER
+  submitAnswer(socket: Socket, data: { sessionId: string; playerId: string; isCorrect: boolean }): void {
+    const { sessionId, playerId, isCorrect } = data;
+    const session = activeSessions.get(sessionId);
+
+    if (session) {
+      if (isCorrect) session.incrementScore(playerId);
+      this.io.to(sessionId).emit("answer-received", {
+        playerId,
+        correct: isCorrect,
+        score: session.getPlayer(playerId)?.score,
+      });
+    }
+  }
+
+  // HOST CREATES SESSION
+  createSession(socket: Socket, sessionId: string): void {
+    if (activeSessions.has(sessionId)) {
+      socket.emit("error", "Session ID already exists.");
+      return;
+    }
+
+    const session = new GameSession(sessionId, socket.id);
+    activeSessions.set(sessionId, session);
     socket.join(sessionId);
-    socket.to(sessionId).emit("player-joined", { playerId });
+    socket.emit("session-created", { sessionId });
   }
 
-  // START WEBSOCKET SESSION
-  startSession(socket: Socket, data: GameSessionAttributes): void {
+  // END SESSION
+  endSession(socket: Socket, data: { sessionId: string }): void {
     const { sessionId } = data;
-    console.log(`Session ${ sessionId } is starting`);
-    socket.to(sessionId).emit("session-started");
+    this.io.to(sessionId).emit("session-ended");
+    activeSessions.delete(sessionId);
   }
 
-  // HANDLE PLAYER ANSWER SUBMISSION
-  submitAnswer(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId, playerId, answer } = data;
-    console.log(`Player ${ playerId } submitted answer ${ answer } for session ${ sessionId }`);
-    // Simulate answer validation (replace with actual logic)
-    const isCorrect = Math.random() < 0.5;
-    socket.to(sessionId).emit("answer-received", { playerId, answer, isCorrect });
-  }
-
-  // END WEBSOCKET SESSION
-  endSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId } = data;
-    console.log(`Session ${ sessionId } is ending`);
-    socket.to(sessionId).emit("session-ended");
-  }
-
-  // HANDLE CLIENT DISCONNECTION
+  // HANDLE DISCONNECT
   disconnect(socket: Socket): void {
-    console.log(`Socket disconnected: ${ socket.id }`);
+    console.log(`Socket disconnected: ${socket.id}`);
   }
 }
