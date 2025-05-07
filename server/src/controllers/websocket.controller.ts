@@ -1,5 +1,6 @@
 import { Socket, Server } from "socket.io";
 import { GameSession, Player } from "../utils/GameSessionClasses";
+import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 
 // IN-MEMORY STORE FOR ACTIVE SESSIONS
 const activeSessions = new Map<string, GameSession>();
@@ -8,7 +9,7 @@ export class WebSocketController {
   constructor(private io: Server) {}
 
   // PLAYER JOINS SESSION
-  joinSession(socket: Socket, data: { sessionId: string; playerId: string; name: string }): void {
+  joinSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId, playerId, name } = data;
     const session = activeSessions.get(sessionId);
 
@@ -23,7 +24,7 @@ export class WebSocketController {
   }
 
   // HOST STARTS SESSION
-  startSession(socket: Socket, data: { sessionId: string }): void {
+  startSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId } = data;
     const session = activeSessions.get(sessionId);
 
@@ -36,7 +37,7 @@ export class WebSocketController {
   }
 
   // PLAYER SUBMITS AN ANSWER
-  submitAnswer(socket: Socket, data: { sessionId: string; playerId: string; isCorrect: boolean }): void {
+  submitAnswer(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId, playerId, isCorrect } = data;
     const session = activeSessions.get(sessionId);
 
@@ -64,7 +65,7 @@ export class WebSocketController {
   }
 
   // END SESSION
-  endSession(socket: Socket, data: { sessionId: string }): void {
+  endSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId } = data;
     this.io.to(sessionId).emit("session-ended");
     activeSessions.delete(sessionId);
