@@ -51,7 +51,7 @@ export default function LibraryPage(): ReactElement {
       alert('Please select a quiz to start!');
       return;
     }
-    router.push('/dashboard/library/quiz');
+    router.push('/dashboard/quiz');
   };
 
   // NAVIGATE TO EDIT PAGE

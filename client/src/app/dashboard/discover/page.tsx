@@ -35,12 +35,12 @@ export default function DiscoverPage(): ReactElement {
   };
 
   // NAVIGATE TO PLAY PAGE
-  const navToQuiz = () => {
+  const navToPlayQuiz = () => {
     if (!selectedQuiz) {
       alert('Please select a quiz to start!');
       return;
     }
-    router.push('/dashboard/library/quiz');
+    router.push('/dashboard/quiz');
   };
 
   return (
@@ -63,7 +63,7 @@ export default function DiscoverPage(): ReactElement {
       <div className='mt-8 flex gap-4'>
         <button
           className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white hover:bg-green-400'
-          onClick={navToQuiz}
+          onClick={navToPlayQuiz}
         >
           START QUIZ
         </button>
