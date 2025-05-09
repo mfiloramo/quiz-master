@@ -15,7 +15,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   // ON LOAD, CHECK IF QUIZ IS SAVED IN LOCAL STORAGE
-  useEffect(() => {
+  useEffect((): void => {
     const savedQuiz = localStorage.getItem('selectedQuiz');
     if (savedQuiz) {
       setSelectedQuiz(JSON.parse(savedQuiz));
@@ -23,7 +23,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // SET QUIZ IN BOTH STATE AND LOCAL STORAGE
-  const setQuiz = (quiz: Quiz | null) => {
+  const setQuiz = (quiz: Quiz | null): void => {
     setSelectedQuiz(quiz);
 
     if (quiz) {
@@ -34,7 +34,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   };
 
   // RESET ALL QUIZ STATE
-  const resetQuiz = () => {
+  const resetQuiz = (): void => {
     setQuiz(null);
     setCurrentIndex(0);
   };
