@@ -3,14 +3,14 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
-import { QuizQuestion } from '@/types/Quiz.types';
+import { useWebSocket } from '@/contexts/WebSocketContext';
 import QuizModule from '@/components/quiz-module/quiz-module';
+import { QuizQuestion } from '@/types/Quiz.types';
 
 export default function QuizPage(): ReactElement {
-  // QUIZ CONTEXT
+  // COMPONENT UTILITIES
   const { selectedQuiz, currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
-
-  // ROUTER INSTANCE
+  const socket = useWebSocket();
   const router = useRouter();
 
   // COMPONENT STATE
@@ -19,14 +19,13 @@ export default function QuizPage(): ReactElement {
   const [quizStarted, setQuizStarted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // REDIRECT IF QUIZ NOT SELECTED
-  useEffect((): void => {
+  // EFFECT HOOKS
+  useEffect(() => {
     if (!selectedQuiz) {
       router.push('/dashboard/library');
     }
   }, [selectedQuiz, router]);
 
-  // FETCH QUESTIONS FOR SELECTED QUIZ
   useEffect(() => {
     const fetchQuestions = async () => {
       if (!selectedQuiz) return;
@@ -50,16 +49,42 @@ export default function QuizPage(): ReactElement {
       }
     };
 
-    fetchQuestions().then((r) => r);
+    fetchQuestions();
   }, [selectedQuiz]);
 
-  // HANDLE ANSWER SUBMISSION
+  useEffect(() => {
+    socket.on('answer-received', (data) => {
+      // Handle real-time answer updates here
+      console.log('Answer received:', data);
+    });
+
+    socket.on('session-ended', () => {
+      alert('Session has ended.');
+      resetQuiz();
+      router.push('/dashboard/library');
+    });
+
+    return () => {
+      socket.off('answer-received');
+      socket.off('session-ended');
+    };
+  }, [socket, resetQuiz, router]);
+
+  // HANDLER FUNCTIONS
   const submitAnswer = async (selectedOption: string) => {
     await simulateLoad(750);
     const current = questions[currentIndex];
     if (!current) return;
 
-    if (selectedOption === current.correct) {
+    const isCorrect = selectedOption === current.correct;
+
+    socket.emit('submit-answer', {
+      sessionId: 'your-session-id',
+      playerId: socket.id,
+      isCorrect,
+    });
+
+    if (isCorrect) {
       if (currentIndex < questions.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
@@ -73,22 +98,20 @@ export default function QuizPage(): ReactElement {
     }
   };
 
-  // SIMULATE LOAD / RATE LIMIT
   const simulateLoad = async (ms: number): Promise<void> => {
     setLoading(true);
     await new Promise((resolve: any) => setTimeout(resolve, ms));
-    return setLoading(false);
+    setLoading(false);
   };
 
   // RENDER PAGE
   return (
-    <div className={'flex flex-col items-center justify-center'}>
-      {/* DISPLAY QUIZ TITLE */}
+    <div className='flex flex-col items-center justify-center'>
       {selectedQuiz && (
         <div className='mb-4 text-2xl font-bold text-white'>{selectedQuiz.title}</div>
       )}
 
-      {/* DISPLAY QUESTION */}
+      {/* DISPLAY QUIZ MODULE */}
       {quizStarted && questions[currentIndex] && (
         <QuizModule
           question={questions[currentIndex]}

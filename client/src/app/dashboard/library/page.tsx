@@ -51,7 +51,7 @@ export default function LibraryPage(): ReactElement {
       alert('Please select a quiz to start!');
       return;
     }
-    router.push('/dashboard/quiz');
+    router.push('/dashboard/host');
   };
 
   // NAVIGATE TO EDIT PAGE
@@ -89,7 +89,7 @@ export default function LibraryPage(): ReactElement {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          START QUIZ
+          HOST QUIZ
         </motion.button>
         <motion.button
           className='h-16 w-40 rounded-lg bg-amber-500 font-bold text-white transition hover:bg-amber-400 active:bg-amber-300'

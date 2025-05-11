@@ -8,7 +8,21 @@ const activeSessions = new Map<string, GameSession>();
 export class WebSocketController {
   constructor(private io: Server) {}
 
-  // PLAYER JOINS SESSION
+  // HOST CREATES A NEW SESSION
+  createSession(socket: Socket, sessionId: string): void {
+    if (activeSessions.has(sessionId)) {
+      socket.emit("error", "Session ID already exists.");
+      return;
+    }
+
+    const session = new GameSession(sessionId, socket.id);
+    activeSessions.set(sessionId, session);
+    socket.join(sessionId);
+    socket.emit("session-created", { sessionId });
+    if (session) console.log(`Session created: ${JSON.stringify(session)}`)
+  }
+
+  // PLAYER JOINS AN EXISTING SESSION
   joinSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId, playerId, name } = data;
     const session = activeSessions.get(sessionId);
@@ -18,12 +32,13 @@ export class WebSocketController {
       session.addPlayer(player);
       socket.join(sessionId);
       this.io.to(sessionId).emit("player-joined", session.players);
+      console.log(session.players);
     } else {
       socket.emit("error", "Session not found.");
     }
   }
 
-  // HOST STARTS SESSION
+  // HOST STARTS THE SESSION
   startSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId } = data;
     const session = activeSessions.get(sessionId);
@@ -51,28 +66,16 @@ export class WebSocketController {
     }
   }
 
-  // HOST CREATES SESSION
-  createSession(socket: Socket, sessionId: string): void {
-    if (activeSessions.has(sessionId)) {
-      socket.emit("error", "Session ID already exists.");
-      return;
-    }
-
-    const session = new GameSession(sessionId, socket.id);
-    activeSessions.set(sessionId, session);
-    socket.join(sessionId);
-    socket.emit("session-created", { sessionId });
-  }
-
-  // END SESSION
+  // HOST ENDS THE SESSION
   endSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId } = data;
     this.io.to(sessionId).emit("session-ended");
     activeSessions.delete(sessionId);
   }
 
-  // HANDLE DISCONNECT
+  // HANDLE PLAYER DISCONNECTION
   disconnect(socket: Socket): void {
     console.log(`Socket disconnected: ${socket.id}`);
+    // ADDITIONAL LOGIC TO HANDLE PLAYER REMOVAL FROM SESSIONS CAN BE ADDED HERE
   }
 }

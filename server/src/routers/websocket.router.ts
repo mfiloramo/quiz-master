@@ -6,7 +6,7 @@ export const webSocketRouter = (io: Server): void => {
   const controller = new WebSocketController(io);
 
   io.on("connection", (socket: Socket) => {
-    console.log(`SOCKET CONNECTED: ${socket.id}`);
+    console.log(`Socket connected: ${socket.id}`);
 
     socket.on("create-session", (sessionId) => controller.createSession(socket, sessionId));
     socket.on("join-session", (data) => controller.joinSession(socket, data));
