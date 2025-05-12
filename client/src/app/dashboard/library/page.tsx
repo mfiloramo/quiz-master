@@ -46,12 +46,12 @@ export default function LibraryPage(): ReactElement {
   };
 
   // NAVIGATE TO PLAY PAGE
-  const navToPlayQuiz = () => {
+  const navToHostQuiz = () => {
     if (!selectedQuiz) {
       alert('Please select a quiz to start!');
       return;
     }
-    router.push('/dashboard/quiz');
+    router.push('/dashboard/host');
   };
 
   // NAVIGATE TO EDIT PAGE
@@ -82,14 +82,14 @@ export default function LibraryPage(): ReactElement {
       <div className='mt-8 flex gap-4'>
         <motion.button
           className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400 active:bg-green-300'
-          onClick={navToPlayQuiz}
+          onClick={navToHostQuiz}
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
           transition={{ duration: 0.005 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          START QUIZ
+          HOST QUIZ
         </motion.button>
         <motion.button
           className='h-16 w-40 rounded-lg bg-amber-500 font-bold text-white transition hover:bg-amber-400 active:bg-amber-300'

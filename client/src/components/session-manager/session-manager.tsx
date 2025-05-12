@@ -1,36 +1,44 @@
+'use client';
+
 import React, { ReactElement, useState } from 'react';
 import { useWebSocket } from '@/contexts/WebSocketContext';
+import { useRouter } from 'next/navigation';
+import { useSession } from '@/contexts/SessionContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function SessionManager(): ReactElement {
-  const socket = useWebSocket();
-  const [sessionId, setSessionId] = useState('');
   const [playerName, setPlayerName] = useState('');
 
+  const router = useRouter();
+  const { sessionId, setSessionId } = useSession();
+  const { setIsHost } = useAuth();
+  const { socket } = useWebSocket();
+
   // HANDLER FUNCTIONS
-  const createSession = () => {
+  const createSession = (): void => {
     const newSessionId = Math.random().toString(36).substr(2, 4).toUpperCase();
     socket?.emit('create-session', newSessionId);
     setSessionId(newSessionId);
-  };
-  const joinSession = () => {
-    socket?.emit('join-session', { sessionId, playerId: socket?.id, name: playerName });
+    setIsHost(true);
+
+    router.push('/dashboard/lobby');
   };
 
   // RENDER COMPONENT
   return (
-    <div>
-      <button onClick={createSession}>Create Session</button>
-      <input
-        value={sessionId}
-        onChange={(e) => setSessionId(e.target.value)}
-        placeholder='Session ID'
-      />
+    <div className={'flex max-w-lg flex-col'}>
       <input
         value={playerName}
         onChange={(e) => setPlayerName(e.target.value)}
         placeholder='Your Name'
+        className={'mb-3'}
       />
-      <button onClick={joinSession}>Join Session</button>
+      <button
+        className={'mb-3 rounded-lg bg-blue-600 transition hover:bg-blue-500 active:bg-blue-400'}
+        onClick={createSession}
+      >
+        Create Session
+      </button>
     </div>
   );
 }

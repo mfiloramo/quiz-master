@@ -15,7 +15,7 @@ export class SessionController {
         quizId,
         hostUserId,
         players: [],
-        status: "created", // Possible statuses: created, ongoing, ended
+        status: "created", // POSSIBLE STATUSES: CREATED, ONGOING, ENDED
         createdAt: new Date(),
       };
 
