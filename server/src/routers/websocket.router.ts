@@ -1,6 +1,5 @@
 import { Server, Socket } from 'socket.io';
 import { WebSocketController } from '../controllers/websocket.controller';
-import User from '../models/User';
 
 export const webSocketRouter = (io: Server): void => {
   const controller = new WebSocketController(io);
@@ -11,8 +10,7 @@ export const webSocketRouter = (io: Server): void => {
     socket.on('create-session', (sessionId) => controller.createSession(socket, sessionId));
     socket.on('join-session', (data) => controller.joinSession(socket, data));
     socket.on('start-session', (data) => controller.startSession(socket, data));
-    socket.on('submit-answer', (data) => controller.submitAnswer(socket, data));
-    socket.on('end-session', (data) => controller.endSession(socket, data));
-    socket.on('player-disconnected', (data: User) => controller.disconnect);
+    socket.on('leave-session', () => controller.leaveSession(socket));
+    socket.on('disconnect', () => controller.handleDisconnect(socket));
   });
 };

@@ -1,26 +1,43 @@
 'use client';
 
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 
-export default function JoinPage(): ReactElement {
-  const router = useRouter();
+export default function JoinPage() {
   const { socket } = useWebSocket();
+  const router = useRouter();
 
   const [sessionId, setSessionId] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [error, setError] = useState('');
 
-  // TODO: WHEN USER JOINS PAGE, A NEW SESSION ID IS CREATED AND ADDED TO LOBBY
-  const handleJoinSession = () => {
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleError = (err: string) => {
+      setError(err || 'Failed to join session.');
+    };
+
+    socket.on('error', handleError);
+
+    return () => {
+      socket.off('error', handleError);
+    };
+  }, [socket]);
+
+  const handleJoin = () => {
+    if (!socket || !sessionId || !playerName) {
+      setError('Please enter session ID and name.');
+      return;
+    }
+
     socket.emit('join-session', {
       sessionId,
       playerId: socket.id,
       name: playerName,
     });
 
-    // TODO: VALIDATE THAT SESSION EXISTS BEFORE ROUTING USER
     router.push('/dashboard/lobby');
   };
 
@@ -41,10 +58,10 @@ export default function JoinPage(): ReactElement {
         onChange={(e) => setPlayerName(e.target.value)}
         className='mb-2 rounded border p-2'
       />
-      <button onClick={handleJoinSession} className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'>
+      <button onClick={handleJoin} className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'>
         Join Session
       </button>
-      {error && <p className='mt-2 text-red-500'>{error}</p>}
+      {error && <p className='text-red-500'>{error}</p>}
     </div>
   );
 }

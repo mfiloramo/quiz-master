@@ -1,83 +1,64 @@
-import { Socket, Server } from "socket.io";
-import { GameSession, Player } from "../utils/GameSessionClasses";
-import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
-import User from '../models/User';
+import { Socket, Server } from 'socket.io';
+import { GameSession, Player } from '../utils/GameSessionClasses';
 
-// IN-MEMORY STORE FOR ACTIVE SESSIONS
 const activeSessions = new Map<string, GameSession>();
 
 export class WebSocketController {
   constructor(private io: Server) {}
 
-  // HOST CREATES A NEW SESSION
   createSession(socket: Socket, sessionId: string): void {
     if (activeSessions.has(sessionId)) {
-      socket.emit("error", "Session ID already exists.");
+      socket.emit('error', 'Session already exists.');
       return;
     }
 
     const session = new GameSession(sessionId, socket.id);
     activeSessions.set(sessionId, session);
     socket.join(sessionId);
-    socket.emit("session-created", { sessionId });
-    if (session) console.log(`Session created: ${JSON.stringify(session)}`)
+    socket.emit('session-created', { sessionId });
   }
 
-  // PLAYER JOINS AN EXISTING SESSION
-  joinSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId, playerId, name } = data;
+  joinSession(socket: Socket, { sessionId, playerId, name }): void {
     const session = activeSessions.get(sessionId);
+    if (!session) {
+      socket.emit('error', 'Session not found.');
+      return;
+    }
 
-    if (session) {
-      const player = new Player(playerId, name);
-      session.addPlayer(player);
-      socket.join(sessionId);
-      this.io.to(sessionId).emit("player-joined", session.players);
-      socket.broadcast.emit("player-joined", session.players);
-      console.log(session.players);
-    } else {
-      socket.emit("error", "Session not found.");
+    const player = new Player(playerId, name, socket.id);
+    session.addPlayer(player);
+    socket.join(sessionId);
+    this.io.to(sessionId).emit('player-joined', session.players);
+  }
+
+  startSession(socket: Socket, { sessionId }): void {
+    const session = activeSessions.get(sessionId);
+    if (!session) return;
+    this.io.to(sessionId).emit('session-started');
+  }
+
+  leaveSession(socket: Socket): void {
+    for (const [sessionId, session] of activeSessions.entries()) {
+      const removed = session.removePlayerBySocketId(socket.id);
+      if (removed) {
+        this.io.to(sessionId).emit('player-joined', session.players);
+        break;
+      }
     }
   }
 
-  // HOST STARTS THE SESSION
-  public startSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId } = data;
-    const session = activeSessions.get(sessionId);
+  handleDisconnect(socket: Socket): void {
+    for (const [sessionId, session] of activeSessions.entries()) {
+      if (session.hostSocketId === socket.id) {
+        this.io.to(sessionId).emit('session-ended');
+        activeSessions.delete(sessionId);
+        return;
+      }
 
-    if (session) {
-      session.isStarted = true;
-      this.io.to(sessionId).emit("session-started");
-    } else {
-      socket.emit("error", "Session not found.");
+      const removed = session.removePlayerBySocketId(socket.id);
+      if (removed) {
+        this.io.to(sessionId).emit('player-joined', session.players);
+      }
     }
-  }
-
-  // PLAYER SUBMITS AN ANSWER
-  public submitAnswer(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId, playerId, isCorrect } = data;
-    const session = activeSessions.get(sessionId);
-
-    if (session) {
-      if (isCorrect) session.incrementScore(playerId);
-      this.io.to(sessionId).emit("answer-received", {
-        playerId,
-        correct: isCorrect,
-        score: session.getPlayer(playerId)?.score,
-      });
-    }
-  }
-
-  // HOST ENDS THE SESSION
-  public endSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId } = data;
-    this.io.to(sessionId).emit("session-ended");
-    activeSessions.delete(sessionId);
-  }
-
-  // DISCONNECT FROM SESSION
-  public disconnect(socket: Socket, data: User) {
-    console.log('player-disconnected from', data);
-    socket.broadcast.emit('player-disconnected', data);
   }
 }
