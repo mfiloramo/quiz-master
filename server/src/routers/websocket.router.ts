@@ -1,18 +1,22 @@
-import { Server, Socket } from "socket.io";
-import { WebSocketController } from "../controllers/websocket.controller";
+import { Server, Socket } from 'socket.io';
+import { WebSocketController } from '../controllers/websocket.controller';
+import User from '../models/User';
 
-// REGISTER ALL SOCKET EVENTS ON CONNECTION
 export const webSocketRouter = (io: Server): void => {
   const controller = new WebSocketController(io);
 
   io.on("connection", (socket: Socket) => {
-    console.log(`SOCKET CONNECTED: ${socket.id}`);
+    console.log(`Socket connected: ${socket.id}`);
 
     socket.on("create-session", (sessionId) => controller.createSession(socket, sessionId));
     socket.on("join-session", (data) => controller.joinSession(socket, data));
     socket.on("start-session", (data) => controller.startSession(socket, data));
     socket.on("submit-answer", (data) => controller.submitAnswer(socket, data));
     socket.on("end-session", (data) => controller.endSession(socket, data));
-    socket.on("disconnect", () => controller.disconnect(socket));
+
+    socket.on('player-disconnected', (data: User) => {
+      console.log('player-disconnected from', data);
+      socket.broadcast.emit('player-disconnected', data);
+    });
   });
 };

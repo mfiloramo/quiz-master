@@ -3,14 +3,15 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
-import { QuizQuestion } from '@/types/Quiz.types';
+import { useWebSocket } from '@/contexts/WebSocketContext';
 import QuizModule from '@/components/quiz-module/quiz-module';
+import { QuizQuestion } from '@/types/Quiz.types';
+import { motion } from 'framer-motion';
 
 export default function QuizPage(): ReactElement {
-  // QUIZ CONTEXT
+  // COMPONENT UTILITIES
   const { selectedQuiz, currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
-
-  // ROUTER INSTANCE
+  const { socket, disconnect } = useWebSocket();
   const router = useRouter();
 
   // COMPONENT STATE
@@ -19,14 +20,14 @@ export default function QuizPage(): ReactElement {
   const [quizStarted, setQuizStarted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // REDIRECT IF QUIZ NOT SELECTED
-  useEffect((): void => {
+  // EFFECT HOOKS
+  useEffect(() => {
     if (!selectedQuiz) {
       router.push('/dashboard/library');
     }
   }, [selectedQuiz, router]);
 
-  // FETCH QUESTIONS FOR SELECTED QUIZ
+  // FETCH AND SET QUIZ QUESTIONS
   useEffect(() => {
     const fetchQuestions = async () => {
       if (!selectedQuiz) return;
@@ -50,16 +51,48 @@ export default function QuizPage(): ReactElement {
       }
     };
 
-    fetchQuestions().then((r) => r);
+    router.push('/dashboard');
+
+    fetchQuestions();
   }, [selectedQuiz]);
 
-  // HANDLE ANSWER SUBMISSION
+  // WEBSOCKET EVENT LISTENERS
+  useEffect(() => {
+    socket.on('answer-received', (data) => {
+      console.log('Answer received:', data);
+    });
+
+    socket.on('session-ended', () => {
+      alert('Session has ended.');
+      resetQuiz();
+      router.push('/dashboard/library');
+    });
+
+    socket.on('player-disconnected', () => {
+      console.log('Player has disconnected');
+    });
+
+    return () => {
+      socket.off('answer-received');
+      socket.off('session-ended');
+    };
+  }, [socket, resetQuiz, router]);
+
+  // HANDLER FUNCTIONS
   const submitAnswer = async (selectedOption: string) => {
     await simulateLoad(750);
     const current = questions[currentIndex];
     if (!current) return;
 
-    if (selectedOption === current.correct) {
+    const isCorrect = selectedOption === current.correct;
+
+    socket.emit('submit-answer', {
+      sessionId: 'your-session-id',
+      playerId: socket.id,
+      isCorrect,
+    });
+
+    if (isCorrect) {
       if (currentIndex < questions.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
@@ -73,22 +106,30 @@ export default function QuizPage(): ReactElement {
     }
   };
 
-  // SIMULATE LOAD / RATE LIMIT
+  // RATE LIMIT & SIMULATE LOAD TIME
   const simulateLoad = async (ms: number): Promise<void> => {
     setLoading(true);
     await new Promise((resolve: any) => setTimeout(resolve, ms));
-    return setLoading(false);
+    setLoading(false);
+  };
+
+  // HANDLE USER DISCONNECT
+  const handleDisconnect = () => {
+    socket.emit('player-disconnected', { user });
+    disconnect();
+    router.push('/dashboard');
+    console.log('handleDisconnect invoked...')
+    // TODO: ADD TOAST MESSAGE
   };
 
   // RENDER PAGE
   return (
-    <div className={'flex flex-col items-center justify-center'}>
-      {/* DISPLAY QUIZ TITLE */}
+    <div className='flex flex-col items-center justify-center'>
       {selectedQuiz && (
         <div className='mb-4 text-2xl font-bold text-white'>{selectedQuiz.title}</div>
       )}
 
-      {/* DISPLAY QUESTION */}
+      {/* DISPLAY QUIZ MODULE */}
       {quizStarted && questions[currentIndex] && (
         <QuizModule
           question={questions[currentIndex]}
@@ -100,6 +141,20 @@ export default function QuizPage(): ReactElement {
 
       {/* DISPLAY LOADING STATE */}
       {loading && <p className='mt-4 text-white'>Loading...</p>}
+
+      {quizStarted && (
+        <motion.button
+          className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
+          onClick={handleDisconnect}
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.005 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          LEAVE GAME
+        </motion.button>
+      )}
 
       {/* DISPLAY ERROR */}
       {error && <p className='mt-4 text-red-200'>{error}</p>}

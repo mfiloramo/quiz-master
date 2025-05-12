@@ -65,7 +65,7 @@ export default function DiscoverPage(): ReactElement {
           className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white hover:bg-green-400'
           onClick={navToPlayQuiz}
         >
-          START QUIZ
+          HOST QUIZ
         </button>
       </div>
     </div>
