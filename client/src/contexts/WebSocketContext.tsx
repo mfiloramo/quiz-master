@@ -3,7 +3,12 @@
 import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const WebSocketContext = createContext<Socket | null>(null);
+type WebSocketContextType = {
+  socket: Socket;
+  disconnect: () => void;
+};
+
+const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 export function WebSocketProvider({ children }: { children: ReactNode }) {
   const socketRef = useRef<Socket | null>(null);
@@ -18,12 +23,16 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  if (!isReady || !socketRef.current) {
-    return null;
-  }
+  if (!isReady || !socketRef.current) return null;
+
+  const disconnect = () => {
+    socketRef.current?.disconnect();
+  };
 
   return (
-    <WebSocketContext.Provider value={socketRef.current}>{children}</WebSocketContext.Provider>
+    <WebSocketContext.Provider value={{ socket: socketRef.current, disconnect }}>
+      {children}
+    </WebSocketContext.Provider>
   );
 }
 

@@ -9,7 +9,6 @@ type SessionContextType = {
 
 const SessionContext = createContext<SessionContextType | null>(null);
 
-// 3. Create the provider component
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionId] = useState<string | null>(null);
 

@@ -4,19 +4,23 @@ import React, { ReactElement, useState } from 'react';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/types/SessionContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function SessionManager(): ReactElement {
   const [playerName, setPlayerName] = useState('');
 
   const router = useRouter();
-  const socket = useWebSocket();
   const { sessionId, setSessionId } = useSession();
+  const { setIsHost } = useAuth();
+  const { socket } = useWebSocket();
 
   // HANDLER FUNCTIONS
   const createSession = (): void => {
     const newSessionId = Math.random().toString(36).substr(2, 4).toUpperCase();
     socket?.emit('create-session', newSessionId);
     setSessionId(newSessionId);
+    setIsHost(true);
+
     router.push('/dashboard/lobby');
   };
   const joinSession = (): void => {
@@ -26,12 +30,6 @@ export function SessionManager(): ReactElement {
   // RENDER COMPONENT
   return (
     <div className={'flex max-w-lg flex-col'}>
-      <button
-        className={'mb-3 rounded-lg bg-blue-600 transition hover:bg-blue-500 active:bg-blue-400'}
-        onClick={createSession}
-      >
-        Create Session
-      </button>
       <input
         value={playerName}
         onChange={(e) => setPlayerName(e.target.value)}
@@ -39,10 +37,10 @@ export function SessionManager(): ReactElement {
         className={'mb-3'}
       />
       <button
-        className={'rounded-lg bg-blue-600 transition hover:bg-blue-500 active:bg-blue-400'}
-        onClick={joinSession}
+        className={'mb-3 rounded-lg bg-blue-600 transition hover:bg-blue-500 active:bg-blue-400'}
+        onClick={createSession}
       >
-        Join Session
+        Create Session
       </button>
     </div>
   );

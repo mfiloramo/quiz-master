@@ -3,11 +3,10 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
-import { Player } from '@/interfaces/PlayerListProps.interface';
 
 export default function JoinPage(): ReactElement {
   const router = useRouter();
-  const socket = useWebSocket();
+  const { socket } = useWebSocket();
 
   const [sessionId, setSessionId] = useState('');
   const [playerName, setPlayerName] = useState('');
@@ -20,6 +19,8 @@ export default function JoinPage(): ReactElement {
         playerId: socket.id,
         name: playerName,
       });
+
+      // TODO: VALIDATE THAT SESSION EXISTS BEFORE ROUTING USER
       router.push('/dashboard/lobby');
     }
   };

@@ -10,7 +10,7 @@ import { QuizQuestion } from '@/types/Quiz.types';
 export default function QuizPage(): ReactElement {
   // COMPONENT UTILITIES
   const { selectedQuiz, currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
-  const socket = useWebSocket();
+  const { socket } = useWebSocket();
   const router = useRouter();
 
   // COMPONENT STATE

@@ -13,6 +13,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // PROVIDER STATE
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<DecodedUser | null>(null);
+  const [isHost, setIsHost] = useState<boolean>(false);
   const router = useRouter();
 
   // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
@@ -63,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // RENDER PROVIDER
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, setIsHost, isHost, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
