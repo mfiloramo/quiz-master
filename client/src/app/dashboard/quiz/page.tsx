@@ -7,6 +7,7 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import QuizModule from '@/components/quiz-module/quiz-module';
 import { QuizQuestion } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
+import { User } from 'lucide-react';
 
 export default function QuizPage(): ReactElement {
   // COMPONENT UTILITIES
@@ -115,7 +116,7 @@ export default function QuizPage(): ReactElement {
 
   // HANDLE USER DISCONNECT
   const handleDisconnect = () => {
-    socket.emit('player-disconnected', { user });
+    socket.emit('player-disconnected', { user: User });
     disconnect();
     router.push('/dashboard');
     console.log('handleDisconnect invoked...')

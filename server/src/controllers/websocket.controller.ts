@@ -1,6 +1,7 @@
 import { Socket, Server } from "socket.io";
 import { GameSession, Player } from "../utils/GameSessionClasses";
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
+import User from '../models/User';
 
 // IN-MEMORY STORE FOR ACTIVE SESSIONS
 const activeSessions = new Map<string, GameSession>();
@@ -43,7 +44,7 @@ export class WebSocketController {
   }
 
   // HOST STARTS THE SESSION
-  startSession(socket: Socket, data: GameSessionAttributes): void {
+  public startSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId } = data;
     const session = activeSessions.get(sessionId);
 
@@ -56,7 +57,7 @@ export class WebSocketController {
   }
 
   // PLAYER SUBMITS AN ANSWER
-  submitAnswer(socket: Socket, data: GameSessionAttributes): void {
+  public submitAnswer(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId, playerId, isCorrect } = data;
     const session = activeSessions.get(sessionId);
 
@@ -71,9 +72,15 @@ export class WebSocketController {
   }
 
   // HOST ENDS THE SESSION
-  endSession(socket: Socket, data: GameSessionAttributes): void {
+  public endSession(socket: Socket, data: GameSessionAttributes): void {
     const { sessionId } = data;
     this.io.to(sessionId).emit("session-ended");
     activeSessions.delete(sessionId);
+  }
+
+  // DISCONNECT FROM SESSION
+  public disconnect(socket: Socket, data: User) {
+    console.log('player-disconnected from', data);
+    socket.broadcast.emit('player-disconnected', data);
   }
 }
