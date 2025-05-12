@@ -7,13 +7,14 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
+import { User } from 'lucide-react';
 
 export default function LobbyPage(): ReactElement {
   const router = useRouter();
   const session = useSession();
   const { socket, disconnect } = useWebSocket();
 
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState<any[]>([]);
   const [error, setError] = useState('');
 
   const { user, isHost } = useAuth();
@@ -24,7 +25,6 @@ export default function LobbyPage(): ReactElement {
 
     socket.on('player-joined', (updatedPlayers) => {
       setPlayers(updatedPlayers);
-      console.log(players);
     });
 
     socket.on('players-list', (updatedPlayers) => {
@@ -61,10 +61,10 @@ export default function LobbyPage(): ReactElement {
   };
 
   const handleDisconnect = () => {
-    socket.emit('player-disconnected', { user });
+    console.log('handleDisconnect in LobbyPage invoked...');
+    socket.emit('player-disconnected', { user: User });
     disconnect();
     router.push('/dashboard');
-    console.log('handleDisconnect invoked...');
     // TODO: ADD TOAST MESSAGE
   };
 

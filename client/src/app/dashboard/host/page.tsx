@@ -16,8 +16,10 @@ export function HostPage(): ReactElement {
 
   // HANDLER FUNCTIONS
   const createSession = (): void => {
+    console.log(`createSession FRONTEND sessionId: ${sessionId}`);
+
     const newSessionId = Math.random().toString(36).substr(2, 4).toUpperCase();
-    socket?.emit('create-session', newSessionId);
+    socket.emit('create-session', newSessionId);
     setSessionId(newSessionId);
     setIsHost(true);
 

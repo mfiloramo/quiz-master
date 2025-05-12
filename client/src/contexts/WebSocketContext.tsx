@@ -7,27 +7,36 @@ import { WebSocketContextType } from '@/types/WebSocketContext.type';
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 export function WebSocketProvider({ children }: { children: ReactNode }) {
-  const socket = useRef<WebSocketContextType | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    socket.current = io('http://localhost:3030');
-    setIsReady(true);
+    const socket = io('http://localhost:3030');
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server:', socket.id);
+      setIsReady(true);
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('WebSocket connection error:', err);
+    });
 
     return () => {
-      socket.current?.disconnect();
+      socket.disconnect();
     };
   }, []);
 
-  if (!isReady || !socket.current) return null;
-
   const disconnect = () => {
-    socket.current.emit('player-disconnected');
-    socket.current?.disconnect();
+    socketRef.current?.emit('player-disconnected');
+    socketRef.current?.disconnect();
   };
 
+  if (!isReady || !socketRef.current) return null;
+
   return (
-    <WebSocketContext.Provider value={{ socket: socket.current, disconnect }}>
+    <WebSocketContext.Provider value={{ socket: socketRef.current, disconnect }}>
       {children}
     </WebSocketContext.Provider>
   );

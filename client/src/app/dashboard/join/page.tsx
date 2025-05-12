@@ -12,8 +12,8 @@ export default function JoinPage(): ReactElement {
   const [playerName, setPlayerName] = useState('');
   const [error, setError] = useState('');
 
+  // TODO: WHEN USER JOINS PAGE, A NEW SESSION ID IS CREATED AND ADDED TO LOBBY
   const handleJoinSession = () => {
-    console.log(`sessionId: ${sessionId}, playerName: ${playerName}`);
     socket.emit('join-session', {
       sessionId,
       playerId: socket.id,

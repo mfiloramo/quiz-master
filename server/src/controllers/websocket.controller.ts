@@ -25,11 +25,8 @@ export class WebSocketController {
 
   // PLAYER JOINS AN EXISTING SESSION
   joinSession(socket: Socket, data: GameSessionAttributes): void {
-    console.log('joinSession invoked...');
     const { sessionId, playerId, name } = data;
     const session = activeSessions.get(sessionId);
-
-    console.log(session);
 
     if (session) {
       const player = new Player(playerId, name);
