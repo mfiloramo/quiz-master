@@ -3,7 +3,7 @@
 import React, { ReactElement, useState } from 'react';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/types/SessionContext';
+import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function SessionManager(): ReactElement {
@@ -22,9 +22,6 @@ export function SessionManager(): ReactElement {
     setIsHost(true);
 
     router.push('/dashboard/lobby');
-  };
-  const joinSession = (): void => {
-    socket?.emit('join-session', { sessionId, playerId: socket?.id, name: playerName });
   };
 
   // RENDER COMPONENT

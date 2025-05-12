@@ -2,35 +2,32 @@
 
 import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-
-type WebSocketContextType = {
-  socket: Socket;
-  disconnect: () => void;
-};
+import { WebSocketContextType } from '@/types/WebSocketContext.type';
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 export function WebSocketProvider({ children }: { children: ReactNode }) {
-  const socketRef = useRef<Socket | null>(null);
+  const socket = useRef<WebSocketContextType | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:3030');
+    socket.current = io('http://localhost:3030');
     setIsReady(true);
 
     return () => {
-      socketRef.current?.disconnect();
+      socket.current?.disconnect();
     };
   }, []);
 
-  if (!isReady || !socketRef.current) return null;
+  if (!isReady || !socket.current) return null;
 
   const disconnect = () => {
-    socketRef.current?.disconnect();
+    socket.current.emit('player-disconnected');
+    socket.current?.disconnect();
   };
 
   return (
-    <WebSocketContext.Provider value={{ socket: socketRef.current, disconnect }}>
+    <WebSocketContext.Provider value={{ socket: socket.current, disconnect }}>
       {children}
     </WebSocketContext.Provider>
   );

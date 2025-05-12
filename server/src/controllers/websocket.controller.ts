@@ -24,14 +24,18 @@ export class WebSocketController {
 
   // PLAYER JOINS AN EXISTING SESSION
   joinSession(socket: Socket, data: GameSessionAttributes): void {
+    console.log('joinSession invoked...');
     const { sessionId, playerId, name } = data;
     const session = activeSessions.get(sessionId);
+
+    console.log(session);
 
     if (session) {
       const player = new Player(playerId, name);
       session.addPlayer(player);
       socket.join(sessionId);
       this.io.to(sessionId).emit("player-joined", session.players);
+      socket.broadcast.emit("player-joined", session.players);
       console.log(session.players);
     } else {
       socket.emit("error", "Session not found.");
@@ -71,11 +75,5 @@ export class WebSocketController {
     const { sessionId } = data;
     this.io.to(sessionId).emit("session-ended");
     activeSessions.delete(sessionId);
-  }
-
-  // HANDLE PLAYER DISCONNECTION
-  disconnect(socket: Socket): void {
-    console.log(`Socket disconnected: ${socket.id}`);
-    // ADDITIONAL LOGIC TO HANDLE PLAYER REMOVAL FROM SESSIONS CAN BE ADDED HERE
   }
 }

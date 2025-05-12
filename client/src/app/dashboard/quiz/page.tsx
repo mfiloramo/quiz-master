@@ -6,11 +6,12 @@ import { useQuiz } from '@/contexts/QuizContext';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import QuizModule from '@/components/quiz-module/quiz-module';
 import { QuizQuestion } from '@/types/Quiz.types';
+import { motion } from 'framer-motion';
 
 export default function QuizPage(): ReactElement {
   // COMPONENT UTILITIES
   const { selectedQuiz, currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
-  const { socket } = useWebSocket();
+  const { socket, disconnect } = useWebSocket();
   const router = useRouter();
 
   // COMPONENT STATE
@@ -26,6 +27,7 @@ export default function QuizPage(): ReactElement {
     }
   }, [selectedQuiz, router]);
 
+  // FETCH AND SET QUIZ QUESTIONS
   useEffect(() => {
     const fetchQuestions = async () => {
       if (!selectedQuiz) return;
@@ -49,12 +51,14 @@ export default function QuizPage(): ReactElement {
       }
     };
 
+    router.push('/dashboard');
+
     fetchQuestions();
   }, [selectedQuiz]);
 
+  // WEBSOCKET EVENT LISTENERS
   useEffect(() => {
     socket.on('answer-received', (data) => {
-      // Handle real-time answer updates here
       console.log('Answer received:', data);
     });
 
@@ -62,6 +66,10 @@ export default function QuizPage(): ReactElement {
       alert('Session has ended.');
       resetQuiz();
       router.push('/dashboard/library');
+    });
+
+    socket.on('player-disconnected', () => {
+      console.log('Player has disconnected');
     });
 
     return () => {
@@ -98,10 +106,20 @@ export default function QuizPage(): ReactElement {
     }
   };
 
+  // RATE LIMIT & SIMULATE LOAD TIME
   const simulateLoad = async (ms: number): Promise<void> => {
     setLoading(true);
     await new Promise((resolve: any) => setTimeout(resolve, ms));
     setLoading(false);
+  };
+
+  // HANDLE USER DISCONNECT
+  const handleDisconnect = () => {
+    socket.emit('player-disconnected', { user });
+    disconnect();
+    router.push('/dashboard');
+    console.log('handleDisconnect invoked...')
+    // TODO: ADD TOAST MESSAGE
   };
 
   // RENDER PAGE
@@ -123,6 +141,20 @@ export default function QuizPage(): ReactElement {
 
       {/* DISPLAY LOADING STATE */}
       {loading && <p className='mt-4 text-white'>Loading...</p>}
+
+      {quizStarted && (
+        <motion.button
+          className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
+          onClick={handleDisconnect}
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.005 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          LEAVE GAME
+        </motion.button>
+      )}
 
       {/* DISPLAY ERROR */}
       {error && <p className='mt-4 text-red-200'>{error}</p>}

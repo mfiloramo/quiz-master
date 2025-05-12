@@ -2,7 +2,7 @@ import SideNavbar from '@/components/side-navbar/side-navbar';
 import { DashboardItem } from '@/types/DashboardItem.type';
 import { QuizProvider } from '@/contexts/QuizContext';
 import { WebSocketProvider } from '@/contexts/WebSocketContext';
-import { SessionProvider } from '@/types/SessionContext';
+import { SessionProvider } from '@/contexts/SessionContext';
 
 const dashboardLinks: DashboardItem[] = [
   { path: '/', label: '🏠 Home' },

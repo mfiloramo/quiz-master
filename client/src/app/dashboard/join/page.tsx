@@ -13,16 +13,15 @@ export default function JoinPage(): ReactElement {
   const [error, setError] = useState('');
 
   const handleJoinSession = () => {
-    if (sessionId && playerName) {
-      socket.emit('join-session', {
-        sessionId,
-        playerId: socket.id,
-        name: playerName,
-      });
+    console.log(`sessionId: ${sessionId}, playerName: ${playerName}`);
+    socket.emit('join-session', {
+      sessionId,
+      playerId: socket.id,
+      name: playerName,
+    });
 
-      // TODO: VALIDATE THAT SESSION EXISTS BEFORE ROUTING USER
-      router.push('/dashboard/lobby');
-    }
+    // TODO: VALIDATE THAT SESSION EXISTS BEFORE ROUTING USER
+    router.push('/dashboard/lobby');
   };
 
   return (
