@@ -3,20 +3,20 @@
 import React, { ReactElement, useState } from 'react';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useRouter } from 'next/navigation';
+import { useSession } from '@/types/SessionContext';
 
 export function SessionManager(): ReactElement {
-  const [sessionId, setSessionId] = useState('');
   const [playerName, setPlayerName] = useState('');
 
-  const socket = useWebSocket();
   const router = useRouter();
+  const socket = useWebSocket();
+  const { sessionId, setSessionId } = useSession();
 
   // HANDLER FUNCTIONS
   const createSession = (): void => {
     const newSessionId = Math.random().toString(36).substr(2, 4).toUpperCase();
     socket?.emit('create-session', newSessionId);
     setSessionId(newSessionId);
-    console.log(newSessionId);
     router.push('/dashboard/lobby');
   };
   const joinSession = (): void => {

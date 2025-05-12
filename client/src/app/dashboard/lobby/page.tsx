@@ -4,13 +4,13 @@ import { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { Player } from '@/interfaces/PlayerListProps.interface';
+import { useSession } from '@/types/SessionContext';
 
 export default function LobbyPage(): ReactElement {
   const router = useRouter();
   const socket = useWebSocket();
+  const session = useSession();
 
-  const [sessionId, setSessionId] = useState('');
-  const [playerName, setPlayerName] = useState('');
   const [players, setPlayers] = useState([]);
   const [error, setError] = useState('');
 
@@ -20,7 +20,7 @@ export default function LobbyPage(): ReactElement {
     });
 
     socket.on('session-started', () => {
-      router.push('dashboard/quiz');
+      router.push('/dashboard/quiz');
     });
 
     socket.on('error', (errMsg) => {
@@ -35,11 +35,12 @@ export default function LobbyPage(): ReactElement {
   }, [socket, router]);
 
   const handleStartSession = () => {
-    socket.emit('start-session', { sessionId });
+    socket.emit('start-session', { sessionId: session.sessionId });
   };
 
   return (
     <div className='flex flex-col items-center justify-center'>
+      <h1 className={'text-xl font-bold'}>{session.sessionId}</h1>
       <h2 className='mb-2 text-xl font-semibold'>Players:</h2>
       <ul>
         {players.map((player: Player, index: number) => (
