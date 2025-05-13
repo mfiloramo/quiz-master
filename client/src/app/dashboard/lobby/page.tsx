@@ -6,6 +6,7 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Player } from '@/interfaces/PlayerListProps.interface';
+import { motion } from 'framer-motion';
 
 export default function LobbyPage() {
   // STATE HOOKS
@@ -57,11 +58,39 @@ export default function LobbyPage() {
   // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
-      <div className='mb-6 text-5xl font-bold'>Game Lobby</div>
-      {isHost && <h1 className='mb-4 text-3xl font-bold'>Join with code: {sessionId}</h1>}
+      <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
+      {isHost && (
+        <motion.h1
+          className='mb-6 animate-bounce rounded-xl border-2 border-black bg-slate-50 px-4 py-2 text-3xl font-bold shadow'
+          animate={{
+            color: [
+              '#ff0000', // RED
+              '#ff9900', // ORANGE
+              '#009800', // GREEN
+              '#0000ff', // BLUE
+              '#4b0082', // INDIGO
+              '#b600b6', // VIOLET
+              '#ff0000', // RED (LOOP)
+            ],
+            opacity: [1, 0.8, 1],
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        >
+          Join with code: {sessionId}
+        </motion.h1>
+      )}
       <ul>
         {players.map((player: Player, index: number) => (
-          <li key={index} className={'cursor-pointer'}>
+          <li
+            key={index}
+            className={
+              'cursor-pointer rounded-xl border-2 border-black bg-slate-200 p-2 font-bold shadow'
+            }
+          >
             {player.username}
           </li>
         ))}

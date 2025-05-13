@@ -29,6 +29,7 @@ export class WebSocketController {
     const session = activeSessions.get(sessionId);
 
     if (!session) {
+      // TODO: ADD DURATION/TOAST TO THIS MESSAGE
       socket.emit('error', 'Session not found.');
       return;
     }
@@ -36,6 +37,7 @@ export class WebSocketController {
     // CHECK IF A PLAYER WITH THE SAME USERNAME ALREADY EXISTS
     const nameExists = session.players.some((player: Player) => player.username === username);
     if (nameExists) {
+      // TODO: ADD DURATION/TOAST TO THIS MESSAGE
       socket.emit('error', 'Player with this username already joined the game.');
       return;
     }
