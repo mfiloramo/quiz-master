@@ -32,13 +32,21 @@ export default function JoinPage() {
       return;
     }
 
+    // LISTEN FOR PLAYER LIST ON SUCCESSFUL JOIN
+    socket.once('player-joined', () => {
+      router.push('/dashboard/lobby');
+    });
+
+    // LISTEN FOR ERROR IF SESSION IS INVALID
+    socket.once('error', (err: string) => {
+      setError(err || 'Failed to join session.');
+    });
+
     socket.emit('join-session', {
       sessionId,
       playerId: socket.id,
       name: playerName,
     });
-
-    router.push('/dashboard/lobby');
   };
 
   return (

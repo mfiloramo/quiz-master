@@ -18,7 +18,7 @@ export class WebSocketController {
     socket.emit('session-created', { sessionId });
   }
 
-  joinSession(socket: Socket, { sessionId, playerId, name }): void {
+  joinSession(socket: Socket, { sessionId, playerId, name }: any): void {
     const session = activeSessions.get(sessionId);
     if (!session) {
       socket.emit('error', 'Session not found.');
@@ -31,7 +31,7 @@ export class WebSocketController {
     this.io.to(sessionId).emit('player-joined', session.players);
   }
 
-  startSession(socket: Socket, { sessionId }): void {
+  startSession(socket: Socket, { sessionId }: any): void {
     const session = activeSessions.get(sessionId);
     if (!session) return;
     this.io.to(sessionId).emit('session-started');
