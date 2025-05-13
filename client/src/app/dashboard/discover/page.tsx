@@ -16,6 +16,8 @@ export default function DiscoverPage(): ReactElement {
 
   // FETCH ALL QUIZZES ON LOAD
   useEffect(() => {
+    setSelectedQuiz(null);
+
     const fetchAllQuizzes = async () => {
       try {
         const response = await fetch(`http://localhost:3030/api/quizzes/`);

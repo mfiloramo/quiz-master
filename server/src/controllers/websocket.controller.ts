@@ -48,7 +48,6 @@ export class WebSocketController {
     this.io.to(sessionId).emit('player-joined', session.players);
   }
 
-
   // START A NEW GAME SESSION
   startSession(socket: Socket, { sessionId }: any): void {
     const session = activeSessions.get(sessionId);

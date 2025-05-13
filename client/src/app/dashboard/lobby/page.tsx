@@ -83,18 +83,39 @@ export default function LobbyPage() {
           Join with code: {sessionId}
         </motion.h1>
       )}
+
+      {/* PLAYERS LIST*/}
       <ul>
-        {players.map((player: Player, index: number) => (
-          <li
-            key={index}
-            className={
-              'cursor-pointer rounded-xl border-2 border-black bg-slate-200 p-2 font-bold shadow'
-            }
-          >
-            {player.username}
-          </li>
-        ))}
+        {players.map((player: Player, index: number) => {
+          // Pick a random ROYGBIV color
+          const colors = [
+            { bg: '#FF0000', text: 'white' }, // RED
+            { bg: '#FF7F00', text: 'black' }, // ORANGE
+            { bg: '#FFFF00', text: 'black' }, // YELLOW
+            { bg: '#00FF00', text: 'black' }, // GREEN
+            { bg: '#0000FF', text: 'white' }, // BLUE
+            { bg: '#4B0082', text: 'white' }, // INDIGO
+            { bg: '#8F00FF', text: 'white' }, // VIOLET
+          ];
+          const color = colors[Math.floor(Math.random() * colors.length)];
+
+          return (
+            <motion.li
+              key={index}
+              className='mb-2 cursor-pointer rounded-xl border-2 border-black p-2 font-bold shadow'
+              style={{
+                backgroundColor: color.bg,
+                color: color.text,
+              }}
+              animate={{ rotate: [-5, 5, -5] }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              {player.username}
+            </motion.li>
+          );
+        })}
       </ul>
+
       {isHost && (
         <button onClick={handleStart} className='mt-4 rounded bg-green-500 px-4 py-2 text-white'>
           Start Quiz
