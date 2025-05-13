@@ -8,10 +8,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
 export default function LobbyPage() {
-  // STATE
+  // STATE HOOKS
   const [players, setPlayers] = useState([]);
 
-  // UTILITIES
+  // CUSTOM HOOKS
   const { socket, disconnect } = useWebSocket();
   const { sessionId } = useSession();
   const { isHost } = useAuth();
@@ -57,10 +57,13 @@ export default function LobbyPage() {
   // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
-      <h1 className='mb-4 text-3xl font-bold'>Join with code: {sessionId}</h1>
+      <div className='mb-6 text-5xl font-bold'>Game Lobby</div>
+      {isHost && <h1 className='mb-4 text-3xl font-bold'>Join with code: {sessionId}</h1>}
       <ul>
         {players.map((player: Player, index: number) => (
-          <li key={index}>{player.name}</li>
+          <li key={index} className={'cursor-pointer'}>
+            {player.name}
+          </li>
         ))}
       </ul>
       {isHost && (

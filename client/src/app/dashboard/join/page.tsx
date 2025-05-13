@@ -43,7 +43,6 @@ export default function JoinPage() {
       setError(err || 'Failed to join session.');
     });
 
-    console.log(sessionId);
     socket.emit('join-session', {
       sessionId,
       username: user?.username,
@@ -62,7 +61,6 @@ export default function JoinPage() {
         className='mb-2 rounded border p-2'
       />
 
-      {/* TODO: DEPRECATE NAME INPUT AND AUTOMATICALLY PIPE VALUE FROM STATE */}
       <button onClick={handleJoin} className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'>
         Join Session
       </button>
