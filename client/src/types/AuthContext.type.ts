@@ -14,4 +14,6 @@ export type AuthContextType = {
   user: DecodedUser | null;
   login: (token: string) => boolean;
   logout: () => void;
+  isHost: boolean;
+  setIsHost: (hostStatus: boolean) => void;
 };

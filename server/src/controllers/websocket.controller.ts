@@ -1,79 +1,69 @@
-import { Socket, Server } from "socket.io";
-import { GameSession, Player } from "../utils/GameSessionClasses";
-import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
+import { Socket, Server } from 'socket.io';
+import { GameSession, Player } from '../utils/GameSessionClasses';
 
-// IN-MEMORY STORE FOR ACTIVE SESSIONS
 const activeSessions = new Map<string, GameSession>();
 
 export class WebSocketController {
   constructor(private io: Server) {}
 
-  // HOST CREATES A NEW SESSION
+  // CREATE NEW GAME SESSION
   createSession(socket: Socket, sessionId: string): void {
     if (activeSessions.has(sessionId)) {
-      socket.emit("error", "Session ID already exists.");
+      socket.emit('error', 'Session already exists.');
       return;
     }
 
     const session = new GameSession(sessionId, socket.id);
     activeSessions.set(sessionId, session);
     socket.join(sessionId);
-    socket.emit("session-created", { sessionId });
-    if (session) console.log(`Session created: ${JSON.stringify(session)}`)
+    socket.emit('session-created', { sessionId });
   }
 
-  // PLAYER JOINS AN EXISTING SESSION
-  joinSession(socket: Socket, data: GameSessionAttributes): void {
-    console.log('joinSession invoked...');
-    const { sessionId, playerId, name } = data;
+  // JOIN EXISTING GAME SESSION
+  joinSession(socket: Socket, { sessionId, playerId, name }: any): void {
     const session = activeSessions.get(sessionId);
+    if (!session) {
+      socket.emit('error', 'Session not found.');
+      return;
+    }
 
-    console.log(session);
+    const player = new Player(playerId, name, socket.id);
+    session.addPlayer(player);
+    socket.join(sessionId);
+    this.io.to(sessionId).emit('player-joined', session.players);
+  }
 
-    if (session) {
-      const player = new Player(playerId, name);
-      session.addPlayer(player);
-      socket.join(sessionId);
-      this.io.to(sessionId).emit("player-joined", session.players);
-      socket.broadcast.emit("player-joined", session.players);
-      console.log(session.players);
-    } else {
-      socket.emit("error", "Session not found.");
+  // START A NEW GAME SESSION
+  startSession(socket: Socket, { sessionId }: any): void {
+    const session = activeSessions.get(sessionId);
+    if (!session) return;
+    this.io.to(sessionId).emit('session-started');
+  }
+
+  // LEAVE AN EXISTING GAME SESSION
+  leaveSession(socket: Socket): void {
+    for (const [sessionId, session] of activeSessions.entries()) {
+      const removed = session.removePlayerBySocketId(socket.id);
+      if (removed) {
+        this.io.to(sessionId).emit('player-joined', session.players);
+        break;
+      }
     }
   }
 
-  // HOST STARTS THE SESSION
-  startSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId } = data;
-    const session = activeSessions.get(sessionId);
+  // HANDLE PLAYER DISCONNECT FROM SESSION
+  handleDisconnect(socket: Socket): void {
+    for (const [sessionId, session] of activeSessions.entries()) {
+      if (session.hostSocketId === socket.id) {
+        this.io.to(sessionId).emit('session-ended');
+        activeSessions.delete(sessionId);
+        return;
+      }
 
-    if (session) {
-      session.isStarted = true;
-      this.io.to(sessionId).emit("session-started");
-    } else {
-      socket.emit("error", "Session not found.");
+      const removed = session.removePlayerBySocketId(socket.id);
+      if (removed) {
+        this.io.to(sessionId).emit('player-joined', session.players);
+      }
     }
-  }
-
-  // PLAYER SUBMITS AN ANSWER
-  submitAnswer(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId, playerId, isCorrect } = data;
-    const session = activeSessions.get(sessionId);
-
-    if (session) {
-      if (isCorrect) session.incrementScore(playerId);
-      this.io.to(sessionId).emit("answer-received", {
-        playerId,
-        correct: isCorrect,
-        score: session.getPlayer(playerId)?.score,
-      });
-    }
-  }
-
-  // HOST ENDS THE SESSION
-  endSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId } = data;
-    this.io.to(sessionId).emit("session-ended");
-    activeSessions.delete(sessionId);
   }
 }
