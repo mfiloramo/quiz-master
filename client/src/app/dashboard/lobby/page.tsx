@@ -8,29 +8,34 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
 export default function LobbyPage() {
+  // STATE
+  const [players, setPlayers] = useState([]);
+
+  // UTILITIES
   const { socket, disconnect } = useWebSocket();
   const { sessionId } = useSession();
   const { isHost } = useAuth();
-  const [players, setPlayers] = useState([]);
   const router = useRouter();
 
+  // EFFECT HOOKS
   useEffect(() => {
     if (!socket) return;
 
+    // EMIT PLAYER FETCH
     socket.emit('get-players', { sessionId });
 
+    // EVENT LISTENERS
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
-
     socket.on('session-started', () => {
       router.push('/dashboard/quiz');
     });
-
     socket.on('session-ended', () => {
       alert('Host disconnected. Session ended.');
       router.push('/dashboard');
     });
 
+    // PAGE CLEANUP ON UNMOUNT
     return () => {
       socket.off('player-joined');
       socket.off('players-list');
@@ -39,6 +44,7 @@ export default function LobbyPage() {
     };
   }, [socket, sessionId, router]);
 
+  // HANDLER FUNCTIONS
   const handleStart = () => {
     socket?.emit('start-session', { sessionId });
   };
@@ -48,6 +54,7 @@ export default function LobbyPage() {
     router.push('/dashboard');
   };
 
+  // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='mb-4 text-3xl font-bold'>Join with code: {sessionId}</h1>
