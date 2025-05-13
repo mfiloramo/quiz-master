@@ -21,7 +21,7 @@ export default function HostPage() {
       return;
     }
 
-    socket.emit('create-session', { sessionId, username: user!.username });
+    socket.emit('create-session', { sessionId, host: user!.username });
     setSessionId(sessionId);
     setIsHost(true);
     router.push('/dashboard/lobby');

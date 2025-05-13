@@ -10,7 +10,7 @@ export class WebSocketController {
   // TODO: HANDLE NAME VALIDATION ON DATABASE SIDE
   // CREATE NEW GAME SESSION
   createSession(socket: Socket, sessionData: GameSessionAttributes): void {
-    const { sessionId, username } = sessionData;
+    const { sessionId, host } = sessionData;
     if (activeSessions.has(sessionId)) {
       socket.emit('error', 'Session already exists.');
       return;
