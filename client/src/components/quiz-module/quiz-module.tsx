@@ -57,7 +57,7 @@ export default function QuizModule({
               key={index}
               whileHover={{ scale: lockedIn ? 1 : 1.03 }}
               whileTap={{ scale: lockedIn ? 1 : 0.97 }}
-              transition={{ duration: 0.001 }}
+              transition={{ duration: 0.002 }}
               onClick={() => handleClick(option)}
               disabled={lockedIn}
               className={`cursor-pointer rounded-lg py-6 text-lg font-bold text-white shadow-md transition-all duration-200 ${colorMap[index % colorMap.length]} ${hoverMap[index % hoverMap.length]} ${activeMap[index % activeMap.length]} ${isSelected ? 'ring-4 ring-black' : ''}`}

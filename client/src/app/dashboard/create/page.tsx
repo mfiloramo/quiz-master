@@ -4,6 +4,7 @@ import React, { ReactElement, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
+import { motion } from 'framer-motion';
 
 export default function CreateQuiz(): ReactElement {
   // FORM STATE
@@ -128,12 +129,15 @@ export default function CreateQuiz(): ReactElement {
             </div>
 
             {/* SUBMIT BUTTON */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.001 }}
               type='submit'
               className='mt-3 h-12 w-24 cursor-pointer rounded-lg bg-cyan-600 text-xl font-medium text-cyan-200 shadow transition hover:bg-cyan-500 active:bg-cyan-400'
             >
               Submit
-            </button>
+            </motion.button>
           </form>
         </div>
       </div>
