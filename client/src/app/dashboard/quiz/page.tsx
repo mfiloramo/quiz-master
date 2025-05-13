@@ -52,9 +52,7 @@ export default function QuizPage(): ReactElement {
       }
     };
 
-    router.push('/dashboard');
-
-    fetchQuestions();
+    fetchQuestions().then((response: any): void => response);
   }, [selectedQuiz]);
 
   // WEBSOCKET EVENT LISTENERS

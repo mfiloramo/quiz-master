@@ -6,7 +6,7 @@ export default function PlayerList({ players }: PlayerListProps): ReactElement {
     <ul>
       {players.map((player) => (
         <li key={player.id}>
-          {player.name}: {player.score}
+          {player.username}: {player.score}
         </li>
       ))}
     </ul>

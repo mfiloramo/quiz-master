@@ -3,7 +3,7 @@ import User from '../models/User';
 export class Player {
   constructor(
     public id: string,
-    public name: string,
+    public username: string,
     public socketId: string, // ADDED SOCKET ID FOR DISCONNECT TRACKING
     public score: number = 0
   ) {}

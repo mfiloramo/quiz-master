@@ -62,7 +62,7 @@ export default function LobbyPage() {
       <ul>
         {players.map((player: Player, index: number) => (
           <li key={index} className={'cursor-pointer'}>
-            {player.name}
+            {player.username}
           </li>
         ))}
       </ul>

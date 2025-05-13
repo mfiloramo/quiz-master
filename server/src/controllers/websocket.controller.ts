@@ -27,8 +27,16 @@ export class WebSocketController {
   joinSession(socket: Socket, sessionData: GameSessionAttributes): void {
     const { sessionId, playerId, username } = sessionData;
     const session = activeSessions.get(sessionId);
+
     if (!session) {
       socket.emit('error', 'Session not found.');
+      return;
+    }
+
+    // CHECK IF A PLAYER WITH THE SAME USERNAME ALREADY EXISTS
+    const nameExists = session.players.some((player: Player) => player.username === username);
+    if (nameExists) {
+      socket.emit('error', 'Player with this username already joined the game.');
       return;
     }
 
@@ -37,6 +45,7 @@ export class WebSocketController {
     socket.join(sessionId);
     this.io.to(sessionId).emit('player-joined', session.players);
   }
+
 
   // START A NEW GAME SESSION
   startSession(socket: Socket, { sessionId }: any): void {
