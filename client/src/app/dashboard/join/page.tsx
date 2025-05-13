@@ -26,7 +26,7 @@ export default function JoinPage() {
     };
   }, [socket]);
 
-  const handleJoin = () => {
+  const handleJoin = (): void => {
     if (!socket || !sessionId || !playerName) {
       setError('Please enter session ID and name.');
       return;
@@ -42,6 +42,7 @@ export default function JoinPage() {
       setError(err || 'Failed to join session.');
     });
 
+    console.log(sessionId);
     socket.emit('join-session', {
       sessionId,
       playerId: socket.id,

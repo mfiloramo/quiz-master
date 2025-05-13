@@ -10,19 +10,19 @@ export default function HostPage() {
   const [playerName, setPlayerName] = useState('');
   const router = useRouter();
   const { setSessionId } = useSession();
-  const { setIsHost } = useAuth();
+  const { setIsHost, user } = useAuth();
   const { socket } = useWebSocket();
 
-  const createSession = () => {
-    const newSessionId = Math.random().toString(36).substr(2, 4).toUpperCase();
+  const createSession = (): void => {
+    const sessionId = Math.random().toString(36).substr(2, 4).toUpperCase();
 
     if (!socket?.connected) {
       console.warn('Socket not ready');
       return;
     }
 
-    socket.emit('create-session', newSessionId);
-    setSessionId(newSessionId);
+    socket.emit('create-session', { sessionId, username: user!.username });
+    setSessionId(sessionId);
     setIsHost(true);
     router.push('/dashboard/lobby');
   };
@@ -30,12 +30,7 @@ export default function HostPage() {
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='mb-4 text-2xl font-bold'>Host Quiz</h1>
-      <input
-        value={playerName}
-        onChange={(e) => setPlayerName(e.target.value)}
-        placeholder='Your Name'
-        className='mb-2 rounded border p-2'
-      />
+      <h2 className={'mb-6 text-xl'}>Game Session Configuration Options</h2>
       <button onClick={createSession} className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'>
         Create Session
       </button>

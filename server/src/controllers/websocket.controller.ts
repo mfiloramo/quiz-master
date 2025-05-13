@@ -1,13 +1,16 @@
 import { Socket, Server } from 'socket.io';
 import { GameSession, Player } from '../utils/GameSessionClasses';
+import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 
 const activeSessions = new Map<string, GameSession>();
 
 export class WebSocketController {
   constructor(private io: Server) {}
 
+  // TODO: HANDLE NAME VALIDATION ON DATABASE SIDE
   // CREATE NEW GAME SESSION
-  createSession(socket: Socket, sessionId: string): void {
+  createSession(socket: Socket, sessionData: GameSessionAttributes): void {
+    const { sessionId, username } = sessionData;
     if (activeSessions.has(sessionId)) {
       socket.emit('error', 'Session already exists.');
       return;
@@ -20,7 +23,9 @@ export class WebSocketController {
   }
 
   // JOIN EXISTING GAME SESSION
-  joinSession(socket: Socket, { sessionId, playerId, name }: any): void {
+  joinSession(socket: Socket, sessionData: GameSessionAttributes): void {
+    const { sessionId, playerId, name } = sessionData;
+    // console.log(sessionId, playerId, name)
     const session = activeSessions.get(sessionId);
     if (!session) {
       socket.emit('error', 'Session not found.');
