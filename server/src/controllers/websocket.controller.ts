@@ -22,17 +22,17 @@ export class WebSocketController {
     socket.emit('session-created', { sessionId });
   }
 
+  // TODO: HANDLE NAME VALIDATION ON DATABASE SIDE
   // JOIN EXISTING GAME SESSION
   joinSession(socket: Socket, sessionData: GameSessionAttributes): void {
-    const { sessionId, playerId, name } = sessionData;
-    // console.log(sessionId, playerId, name)
+    const { sessionId, playerId, username } = sessionData;
     const session = activeSessions.get(sessionId);
     if (!session) {
       socket.emit('error', 'Session not found.');
       return;
     }
 
-    const player = new Player(playerId, name, socket.id);
+    const player = new Player(playerId, username, socket.id);
     session.addPlayer(player);
     socket.join(sessionId);
     this.io.to(sessionId).emit('player-joined', session.players);

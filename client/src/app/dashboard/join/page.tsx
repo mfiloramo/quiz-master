@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function JoinPage() {
   const { socket } = useWebSocket();
+  const { user } = useAuth();
   const router = useRouter();
 
   const [sessionId, setSessionId] = useState('');
-  const [playerName, setPlayerName] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function JoinPage() {
   }, [socket]);
 
   const handleJoin = (): void => {
-    if (!socket || !sessionId || !playerName) {
+    if (!socket || !sessionId) {
       setError('Please enter session ID and name.');
       return;
     }
@@ -45,8 +46,8 @@ export default function JoinPage() {
     console.log(sessionId);
     socket.emit('join-session', {
       sessionId,
+      username: user?.username,
       playerId: socket.id,
-      name: playerName,
     });
   };
 
@@ -60,13 +61,8 @@ export default function JoinPage() {
         onChange={(e) => setSessionId(e.target.value)}
         className='mb-2 rounded border p-2'
       />
-      <input
-        type='text'
-        placeholder='Your Name'
-        value={playerName}
-        onChange={(e) => setPlayerName(e.target.value)}
-        className='mb-2 rounded border p-2'
-      />
+
+      {/* TODO: DEPRECATE NAME INPUT AND AUTOMATICALLY PIPE VALUE FROM STATE */}
       <button onClick={handleJoin} className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'>
         Join Session
       </button>
