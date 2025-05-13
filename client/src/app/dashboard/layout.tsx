@@ -7,6 +7,7 @@ import { SessionProvider } from '@/contexts/SessionContext';
 const dashboardLinks: DashboardItem[] = [
   { path: '/', label: '🏠 Home' },
   { path: '/dashboard/create', label: '✨ Create' },
+  { path: '/dashboard/join', label: '🎮 Join Game' },
   { path: '/dashboard/discover', label: '🧭 Discover' },
   { path: '/dashboard/library', label: '📚 My Quizzes' },
   { path: '/dashboard/settings', label: '⚙️ Settings' },

@@ -4,7 +4,6 @@ import { JSX, useEffect } from 'react';
 import DashboardCard from '@/components/dashboard-card/dashboard-card';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
-import SessionManager from '@/components/session-manager/session-manager';
 
 export default function DashboardHome(): JSX.Element {
   const router = useRouter();
