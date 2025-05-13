@@ -8,7 +8,7 @@ type SessionCreationAttributes = Optional<SessionAttributes, 'id' | 'created_at'
 
 
 class Session extends Model<SessionAttributes, SessionCreationAttributes> implements SessionAttributes {
-  public id!: number;
+  public id!: any;
   public quiz_id!: number;
   public host_user_id!: number;
   public status!: string;

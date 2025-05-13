@@ -29,7 +29,7 @@ export class AuthController {
 
       const newUserId = result[0]?.id;
 
-      // Send confirmation email
+      // SEND CONFIRMATION EMAIL
       await EmailService.sendConfirmationEmail({
         userId: newUserId,
         userName: username,

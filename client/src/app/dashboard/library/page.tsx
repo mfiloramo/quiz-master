@@ -22,6 +22,8 @@ export default function LibraryPage(): ReactElement {
   useEffect(() => {
     if (!user?.id) return;
 
+    setSelectedQuiz(null);
+
     const fetchQuizzes = async () => {
       try {
         const response = await fetch(`http://localhost:3030/api/quizzes/user/${user.id}`);
