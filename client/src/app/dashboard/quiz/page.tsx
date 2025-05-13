@@ -17,8 +17,8 @@ export default function QuizPage(): ReactElement {
 
   // COMPONENT STATE
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [quizStarted, setQuizStarted] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [quizStarted, setQuizStarted] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   // EFFECT HOOKS
@@ -52,30 +52,28 @@ export default function QuizPage(): ReactElement {
       }
     };
 
-    router.push('/dashboard');
-
-    fetchQuestions();
+    fetchQuestions().then((response: any): void => response);
   }, [selectedQuiz]);
 
   // WEBSOCKET EVENT LISTENERS
   useEffect(() => {
-    socket.on('answer-received', (data) => {
+    socket!.on('answer-received', (data) => {
       console.log('Answer received:', data);
     });
 
-    socket.on('session-ended', () => {
+    socket!.on('session-ended', () => {
       alert('Session has ended.');
       resetQuiz();
       router.push('/dashboard/library');
     });
 
-    socket.on('player-disconnected', () => {
+    socket!.on('player-disconnected', () => {
       console.log('Player has disconnected');
     });
 
     return () => {
-      socket.off('answer-received');
-      socket.off('session-ended');
+      socket!.off('answer-received');
+      socket!.off('session-ended');
     };
   }, [socket, resetQuiz, router]);
 
@@ -87,9 +85,9 @@ export default function QuizPage(): ReactElement {
 
     const isCorrect = selectedOption === current.correct;
 
-    socket.emit('submit-answer', {
+    socket!.emit('submit-answer', {
       sessionId: 'your-session-id',
-      playerId: socket.id,
+      playerId: socket!.id,
       isCorrect,
     });
 
@@ -116,10 +114,10 @@ export default function QuizPage(): ReactElement {
 
   // HANDLE USER DISCONNECT
   const handleDisconnect = () => {
-    socket.emit('player-disconnected', { user: User });
+    socket!.emit('player-disconnected', { user: User });
     disconnect();
     router.push('/dashboard');
-    console.log('handleDisconnect invoked...')
+    console.log('handleDisconnect invoked...');
     // TODO: ADD TOAST MESSAGE
   };
 
