@@ -39,19 +39,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // LOGIN HANDLER
   const login = (token: string): boolean => {
-    localStorage.setItem('token', token);
-    const decoded = jwtDecode<DecodedUser>(token);
+    try {
+      localStorage.setItem('token', token);
+      const decoded = jwtDecode<DecodedUser>(token);
 
-    // CHECK IF ACCOUNT IS ACTIVE
-    if (!decoded.isActive) {
-      alert('Account is inactive');
-      localStorage.removeItem('token');
+      if (!decoded.isActive) {
+        alert('Account is inactive');
+        localStorage.removeItem('token');
+        return false;
+      }
+
+      setUser(decoded);
+      setIsLoggedIn(true);
+
+      return true;
+    } catch (err) {
+      console.error('Failed to decode token:', err);
       return false;
     }
-
-    setUser(decoded);
-    setIsLoggedIn(true);
-    return true;
   };
 
   // LOGOUT HANDLER
@@ -59,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('token');
     setUser(null);
     setIsLoggedIn(false);
+    console.log(user);
     router.push('/');
   };
 

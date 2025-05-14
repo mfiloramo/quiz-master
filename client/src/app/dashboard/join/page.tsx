@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { motion } from 'framer-motion';
 
 export default function JoinPage() {
   const { socket } = useWebSocket();
@@ -52,18 +53,24 @@ export default function JoinPage() {
 
   return (
     <div className='flex flex-col items-center justify-center'>
-      <h1 className='mb-4 text-2xl font-bold'>Lobby</h1>
+      <h1 className='mb-4 text-2xl font-bold'>Join Game</h1>
       <input
         type='text'
         placeholder='Session ID'
         value={sessionId}
         onChange={(e) => setSessionId(e.target.value)}
-        className='mb-2 rounded border p-2'
+        className='mb-4 rounded border p-2'
       />
 
-      <button onClick={handleJoin} className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'>
+      <motion.button
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ duration: 0.01 }}
+        onClick={handleJoin}
+        className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'
+      >
         Join Session
-      </button>
+      </motion.button>
       {error && <p className='text-red-500'>{error}</p>}
     </div>
   );

@@ -13,7 +13,7 @@ export default function HostPage() {
   // CUSTOM HOOKS
   const router = useRouter();
   const { setSessionId } = useSession();
-  const { setIsHost, isHost, user } = useAuth();
+  const { setIsHost, user } = useAuth();
   const { socket } = useWebSocket();
 
   // HANDLER FUNCTIONS
