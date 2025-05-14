@@ -75,6 +75,7 @@ export class AuthController {
         return res.status(401).send("Account is not active");
       }
 
+      // SIGN JWT
       const token: string = jwt.sign(
         {
           id: user.id,
@@ -86,6 +87,8 @@ export class AuthController {
         process.env.JWT_SECRET!,
         { expiresIn: "1h" },
       );
+
+      console.log(user);
 
       return res.status(200).json({ token });
     } catch (error: any) {

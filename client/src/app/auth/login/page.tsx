@@ -14,37 +14,44 @@ export default function LoginPage(): ReactElement {
   const router = useRouter();
 
   // AUTH CONTEXT HOOK
-  const { login } = useAuth();
+  const { login, user } = useAuth();
+
+  // EFFECT HOOKS
+  useEffect(() => {
+    return () => {
+      setEmail('');
+      setPassword('');
+    };
+  }, []);
 
   // HANDLE LOGIN
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
+    console.log(user);
+
+    if (!email.trim() || !password.trim()) {
+      setError('Email and password are required');
+      return;
+    }
+
     try {
-      // SEND LOGIN REQUEST TO SERVER
       const response = await fetch('http://localhost:3030/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      // HANDLE INVALID RESPONSE
       if (!response.ok) throw new Error('Invalid email or password');
 
-      // PARSE TOKEN RESPONSE FROM SERVER
       const data = await response.json();
+      const success = login(data.token);
 
-      // SET TOKEN USING AUTH CONTEXT (UPDATES STATE & LOCAL STORAGE)
-      const success: boolean = login(data.token);
-      // REDIRECT TO DASHBOARD UPON SUCCESSFUL LOGIN
       if (success) {
         router.push('/dashboard');
       }
     } catch (error: any) {
-      // HANDLE ERROR STATE
       setError(error.message || 'Login failed');
     }
   };
