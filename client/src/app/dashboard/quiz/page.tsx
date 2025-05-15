@@ -1,161 +1,103 @@
 'use client';
 
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuiz } from '@/contexts/QuizContext';
 import { useWebSocket } from '@/contexts/WebSocketContext';
-import QuizModule from '@/components/quiz-module/quiz-module';
+import { useQuiz } from '@/contexts/QuizContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { QuizQuestion } from '@/types/Quiz.types';
+import QuizModule from '@/components/quiz-module/quiz-module';
 import { motion } from 'framer-motion';
-import { User } from 'lucide-react';
+import { useSession } from '@/contexts/SessionContext';
 
-export default function QuizPage(): ReactElement {
-  // COMPONENT UTILITIES
-  const { selectedQuiz, currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
+export default function QuizPage() {
+  const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
   const { socket, disconnect } = useWebSocket();
+  const { isHost } = useAuth();
   const router = useRouter();
+  const { sessionId } = useSession();
 
-  // COMPONENT STATE
-  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [quizStarted, setQuizStarted] = useState<boolean>(false);
+  const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
+  const [totalQuestions, setTotalQuestions] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // EFFECT HOOKS
-  useEffect(() => {
-    if (!selectedQuiz) {
-      router.push('/dashboard/library');
-    }
-  }, [selectedQuiz, router]);
+  // LISTEN FOR HOST-EMITTED QUESTIONS
+  useEffect((): any => {
+    if (!socket) return;
+    if (!sessionId) return <p>Loading session...</p>;
 
-  // FETCH AND SET QUIZ QUESTIONS
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      if (!selectedQuiz) return;
-
-      try {
-        setLoading(true);
-        const response = await fetch(`http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`);
-        const data = await response.json();
-
-        const formatted = data.map((q: any) => ({
-          ...q,
-          options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options,
-        }));
-
-        setQuestions(formatted);
-        setQuizStarted(true);
-      } catch (err) {
-        setError('Failed to load quiz questions.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchQuestions().then((response: any): void => response);
-  }, [selectedQuiz]);
-
-  // WEBSOCKET EVENT LISTENERS
-  useEffect(() => {
-    socket!.on('answer-received', (data) => {
-      console.log('Answer received:', data);
+    socket.on('new-question', (data) => {
+      console.log('new-question!');
+      setCurrentQuestion(data.question);
+      // setTotalQuestions(data.total);
     });
 
-    socket!.on('session-ended', () => {
+    socket.on('session-ended', () => {
       alert('Session has ended.');
       resetQuiz();
       router.push('/dashboard/library');
     });
 
-    socket!.on('player-disconnected', () => {
-      console.log('Player has disconnected');
-    });
-
     return () => {
-      socket!.off('answer-received');
-      socket!.off('session-ended');
+      socket.off('new-question');
+      socket.off('session-ended');
     };
   }, [socket, resetQuiz, router]);
 
-  // HANDLER FUNCTIONS
-  const submitAnswer = async (selectedOption: string) => {
-    await simulateLoad(750);
-    const current = questions[currentIndex];
-    if (!current) return;
+  useEffect(() => {
+    if (!socket) return;
 
-    const isCorrect = selectedOption === current.correct;
+    const timeout = setTimeout(() => {
+      // Emit fallback in case new-question never arrived
+      console.log('Fallback: requesting current question from server...');
+      socket.emit('get-current-question', { sessionId });
+    }, 500); // Wait a bit to allow any server-side emits first
 
-    socket!.emit('submit-answer', {
-      sessionId: 'your-session-id',
-      playerId: socket!.id,
-      isCorrect,
+    return () => clearTimeout(timeout);
+  }, [socket, sessionId]);
+
+  const handleAnswer = (answer: string) => {
+    socket?.emit('submit-answer', {
+      answer,
     });
 
-    if (isCorrect) {
-      if (currentIndex < questions.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      } else {
-        alert('Quiz completed!');
-        resetQuiz();
-        router.push('/dashboard/library');
-      }
-    } else {
-      setError('Incorrect answer, try again.');
-      setTimeout(() => setError(null), 2000);
-    }
-  };
-
-  // RATE LIMIT & SIMULATE LOAD TIME
-  const simulateLoad = async (ms: number): Promise<void> => {
+    // TEMPORARY FEEDBACK: host should control next question
     setLoading(true);
-    await new Promise((resolve: any) => setTimeout(resolve, ms));
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
   };
 
-  // HANDLE USER DISCONNECT
-  const handleDisconnect = () => {
-    socket!.emit('player-disconnected', { user: User });
+  const handleLeave = () => {
     disconnect();
     router.push('/dashboard');
-    console.log('handleDisconnect invoked...');
-    // TODO: ADD TOAST MESSAGE
   };
 
-  // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
-      {selectedQuiz && (
-        <div className='mb-4 text-2xl font-bold text-white'>{selectedQuiz.title}</div>
-      )}
-
-      {/* DISPLAY QUIZ MODULE */}
-      {quizStarted && questions[currentIndex] && (
+      {currentQuestion ? (
         <QuizModule
-          question={questions[currentIndex]}
+          question={currentQuestion}
           questionNumber={currentIndex + 1}
-          totalQuestions={questions.length}
-          onSubmit={submitAnswer}
+          totalQuestions={totalQuestions}
+          onSubmit={handleAnswer}
         />
+      ) : (
+        <div className='text-white'>Waiting for host to start the quiz...</div>
       )}
-
-      {/* DISPLAY LOADING STATE */}
-      {loading && <p className='mt-4 text-white'>Loading...</p>}
-
-      {quizStarted && (
-        <motion.button
-          className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
-          onClick={handleDisconnect}
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 0.005 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          LEAVE GAME
-        </motion.button>
-      )}
-
-      {/* DISPLAY ERROR */}
+      {loading && <p className='mt-4 text-black'>Waiting for next question...</p>}
+      <motion.button
+        className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
+        onClick={handleLeave}
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.005 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Leave Game
+      </motion.button>
       {error && <p className='mt-4 text-red-200'>{error}</p>}
     </div>
   );
