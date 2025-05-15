@@ -30,7 +30,7 @@ export default function JoinPage() {
 
   const handleJoin = (): void => {
     if (!socket || !sessionId) {
-      setError('Please enter session ID and name.');
+      setError('Please enter session ID.');
       return;
     }
 
