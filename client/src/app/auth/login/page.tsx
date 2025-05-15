@@ -29,8 +29,6 @@ export default function LoginPage(): ReactElement {
     e.preventDefault();
     setError(null);
 
-    console.log(user);
-
     if (!email.trim() || !password.trim()) {
       setError('Email and password are required');
       return;

@@ -1,5 +1,5 @@
 export interface GameSessionAttributes {
-  host: string;
+  hostUserName: string;
   name: string;
   username: string;
   sessionId: string;

@@ -1,43 +1,42 @@
 import { Socket, Server } from 'socket.io';
-import { GameSession, Player } from '../utils/GameSessionClasses';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
-
-const activeSessions = new Map<string, GameSession>();
+import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
+import { SessionManager } from '../utils/SessionManager';
+import { Player } from '../utils/Player';
+import { sequelize } from '../config/sequelize';;
 
 export class WebSocketController {
   constructor(private io: Server) {}
 
-  // TODO: HANDLE NAME VALIDATION ON DATABASE SIDE
   // CREATE NEW GAME SESSION
-  createSession(socket: Socket, sessionData: GameSessionAttributes): void {
-    const { sessionId, host } = sessionData;
-    if (activeSessions.has(sessionId)) {
+  public createSession(socket: Socket, sessionData: GameSessionAttributes): void {
+    const { sessionId, hostUserName } = sessionData;
+
+    if (SessionManager.getSession(sessionId)) {
       socket.emit('error', 'Session already exists.');
       return;
     }
 
-    const session = new GameSession(sessionId, socket.id);
-    activeSessions.set(sessionId, session);
+    const session = SessionManager.createSession(sessionId, socket.id, hostUserName);
     socket.join(sessionId);
-    socket.emit('session-created', { sessionId });
+    socket.emit('session-created', {
+      sessionId,
+      hostUsername: session.hostUsername,
+    });
   }
 
-  // TODO: HANDLE NAME VALIDATION ON DATABASE SIDE
   // JOIN EXISTING GAME SESSION
-  joinSession(socket: Socket, sessionData: GameSessionAttributes): void {
+  public joinSession(socket: Socket, sessionData: GameSessionAttributes): void {
     const { sessionId, playerId, username } = sessionData;
-    const session = activeSessions.get(sessionId);
+    const session = SessionManager.getSession(sessionId);
 
     if (!session) {
-      // TODO: ADD DURATION/TOAST TO THIS MESSAGE
       socket.emit('error', 'Session not found.');
       return;
     }
 
-    // CHECK IF A PLAYER WITH THE SAME USERNAME ALREADY EXISTS
     const nameExists = session.players.some((player: Player) => player.username === username);
     if (nameExists) {
-      // TODO: ADD DURATION/TOAST TO THIS MESSAGE
       socket.emit('error', 'Player with this username already joined the game.');
       return;
     }
@@ -48,33 +47,92 @@ export class WebSocketController {
     this.io.to(sessionId).emit('player-joined', session.players);
   }
 
-  // START A NEW GAME SESSION
-  startSession(socket: Socket, { sessionId }: any): void {
-    const session = activeSessions.get(sessionId);
-    if (!session) return;
-    this.io.to(sessionId).emit('session-started');
-  }
+  // START GAME SESSION
+  public async startSession(socket: Socket, { sessionId, quizId }: { sessionId: string, quizId: number }): Promise<void> {
 
-  // LEAVE AN EXISTING GAME SESSION
-  leaveSession(socket: Socket): void {
-    for (const [sessionId, session] of activeSessions.entries()) {
-      const removed = session.removePlayerBySocketId(socket.id);
-      if (removed) {
-        this.io.to(sessionId).emit('player-joined', session.players);
-        break;
+    const session = SessionManager.getSession(sessionId);
+    if (!session) {
+      socket.emit('error', 'Session not found.');
+      return;
+    }
+
+    try {
+      // FETCH QUESTIONS FOR GIVEN QUIZ ID
+      const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
+        replacements: { quizId },
+      });
+
+      // FORMAT QUESTIONS
+      const formattedQuestions: QuestionAttributes[] = result[0].map((question: any) => ({
+        ...question,
+        options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
+      }));
+
+      // STORE QUESTIONS IN MEMORY
+      session.questions = formattedQuestions;
+      session.isStarted = true;
+
+      // EMIT SESSION STARTED
+      this.io.to(sessionId).emit('session-started');
+
+      // EMIT FIRST QUESTION TO ALL PLAYERS
+      const firstQuestion = formattedQuestions[0];
+
+      if (firstQuestion) {
+        console.log('emitting!');
+        this.io.to(sessionId).emit('new-question', {
+          question: firstQuestion,
+          index: 0,
+          total: formattedQuestions.length,
+        });
       }
+    } catch (error: any) {
+      console.error('Error starting session:', error);
+      socket.emit('error', 'Failed to start quiz.');
     }
   }
 
-  // HANDLE PLAYER DISCONNECT FROM SESSION
-  handleDisconnect(socket: Socket): void {
-    for (const [sessionId, session] of activeSessions.entries()) {
-      if (session.hostSocketId === socket.id) {
-        this.io.to(sessionId).emit('session-ended');
-        activeSessions.delete(sessionId);
-        return;
-      }
+  // PLAYER LEAVES SESSION
+  public leaveSession(socket: Socket): void {
+    const result = SessionManager.getSessionBySocketId(socket.id);
+    if (!result) return;
 
+    const [sessionId, session] = result;
+    const removed = session.removePlayerBySocketId(socket.id);
+    if (removed) {
+      this.io.to(sessionId).emit('player-joined', session.players);
+    }
+  }
+
+  // GET CURRENT QUESTION FOR A SESSION
+  getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
+    const session = SessionManager.getSession(sessionId);
+    if (!session || !session.questions.length) {
+      socket.emit('error', 'No current question found.');
+      return;
+    }
+
+    const currentQuestion = session.questions[session.currentQuestionIndex];
+
+    socket.emit('new-question', {
+      question: currentQuestion,
+      index: session.currentQuestionIndex,
+      total: session.questions.length,
+    });
+  }
+
+
+  // HANDLE SOCKET DISCONNECT
+  public handleDisconnect(socket: Socket): void {
+    const result = SessionManager.getSessionBySocketId(socket.id);
+    if (!result) return;
+
+    const [sessionId, session] = result;
+
+    if (session.hostSocketId === socket.id) {
+      this.io.to(sessionId).emit('session-ended');
+      SessionManager.deleteSession(sessionId);
+    } else {
       const removed = session.removePlayerBySocketId(socket.id);
       if (removed) {
         this.io.to(sessionId).emit('player-joined', session.players);

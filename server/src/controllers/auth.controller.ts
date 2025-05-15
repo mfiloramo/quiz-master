@@ -88,8 +88,6 @@ export class AuthController {
         { expiresIn: "1h" },
       );
 
-      console.log(user);
-
       return res.status(200).json({ token });
     } catch (error: any) {
       console.error("Error logging in user:", error.message);
