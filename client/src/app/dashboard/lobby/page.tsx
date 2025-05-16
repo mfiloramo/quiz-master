@@ -14,14 +14,13 @@ export default function LobbyPage() {
   const { socket, disconnect } = useWebSocket();
   const { sessionId } = useSession();
   const { isHost } = useAuth();
-  const { selectedQuiz } = useQuiz();
+  const { selectedQuiz, resetQuiz } = useQuiz();
   const router = useRouter();
 
   useEffect(() => {
     if (!socket) return;
 
     socket.once('session-started', () => {
-      console.log('Session started, navigating to quiz...');
       router.push('/dashboard/quiz');
     });
 
@@ -30,15 +29,16 @@ export default function LobbyPage() {
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
 
-    // LISTEN FOR EJECTION NOTICE
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
+      resetQuiz(); // RESET QUIZ STATE ON EJECTION
       disconnect();
       router.push('/dashboard');
     });
 
     socket.on('session-ended', () => {
       alert('Host disconnected. Session ended.');
+      resetQuiz(); // RESET QUIZ STATE ON SESSION END
       router.push('/dashboard');
     });
 
@@ -49,7 +49,7 @@ export default function LobbyPage() {
       socket.off('ejected-by-host');
       socket.off('session-ended');
     };
-  }, [socket, sessionId, router, disconnect]);
+  }, [socket, sessionId, router, disconnect, resetQuiz]);
 
   const handleStart = () => {
     socket?.emit('start-session', {
@@ -97,7 +97,7 @@ export default function LobbyPage() {
             { bg: '#4B0082', text: 'white' },
             { bg: '#8F00FF', text: 'white' },
           ];
-          const color = colors[index % colors.length];
+          const color = colors[Math.floor(Math.random() * colors.length)];
 
           return (
             <motion.li

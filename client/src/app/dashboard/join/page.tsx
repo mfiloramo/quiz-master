@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
+import { useQuiz } from '@/contexts/QuizContext';
 
 export default function JoinPage() {
+  const router = useRouter();
   const { socket } = useWebSocket();
   const { user } = useAuth();
-  const router = useRouter();
+  const { resetQuiz } = useQuiz();
 
   const [sessionId, setSessionId] = useState('');
   const [error, setError] = useState('');
@@ -33,6 +35,9 @@ export default function JoinPage() {
       setError('Please enter session ID.');
       return;
     }
+
+    // RESET OLD QUIZ DATA ON JOIN ATTEMPT
+    resetQuiz();
 
     // LISTEN FOR PLAYER LIST ON SUCCESSFUL JOIN
     socket.once('player-joined', () => {

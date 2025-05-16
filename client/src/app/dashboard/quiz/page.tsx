@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
-import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from '@/contexts/SessionContext';
 import { QuizQuestion } from '@/types/Quiz.types';
 import QuizModule from '@/components/quiz-module/quiz-module';
@@ -13,7 +12,6 @@ import { motion } from 'framer-motion';
 export default function QuizPage() {
   const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
   const { socket, disconnect } = useWebSocket();
-  const { isHost } = useAuth();
   const { sessionId } = useSession();
   const router = useRouter();
 
@@ -29,12 +27,11 @@ export default function QuizPage() {
     socket.emit('get-current-question', { sessionId });
   }, [socket, sessionId]);
 
-  // SETUP SOCKET EVENT LISTENERS
+  // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket) return;
 
     socket.on('new-question', (data) => {
-      console.log('new-question!');
       setCurrentQuestion(data.question);
       setTotalQuestions(data.total);
       setLoading(false);

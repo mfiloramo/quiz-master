@@ -4,13 +4,14 @@ import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 import { SessionManager } from '../utils/SessionManager';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
+import { GameSession } from '../utils/GameSession';
 
 export class WebSocketController {
   constructor(private io: Server) {}
 
   // CREATE NEW GAME SESSION
   public createSession(socket: Socket, sessionData: GameSessionAttributes): void {
-    const { sessionId, hostUserName } = sessionData;
+    const { sessionId, hostUserName, quizId } = sessionData;
 
     if (SessionManager.getSession(sessionId)) {
       socket.emit('error', 'Session already exists.');
@@ -18,12 +19,20 @@ export class WebSocketController {
     }
 
     const session = SessionManager.createSession(sessionId, socket.id, hostUserName);
+
+    // CLEANUP: RESET QUESTIONS ARRAY IN CASE OF ANY STALE STATE
+    session.questions = [];
+
+    // SET QUIZ ID SO IT CAN BE USED IN startSession()
+    session.quizId = quizId;
+
     socket.join(sessionId);
     socket.emit('session-created', {
       sessionId,
       hostUsername: session.hostUsername,
     });
   }
+
 
   // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, sessionData: GameSessionAttributes): void {
@@ -35,13 +44,13 @@ export class WebSocketController {
       return;
     }
 
-    const nameExists = session.players.some((player: Player) => player.username === username);
-    if (nameExists) {
-      socket.emit('error', 'Player with this username already joined the game.');
-      return;
-    }
+    // const nameExists = session.players.some((player: Player) => player.username === username);
+    // if (nameExists) {
+    //   socket.emit('error', 'Player with this username already joined the game.');
+    //   return;
+    // }
 
-    const player = new Player(playerId, username, socket.id);
+    const player = new Player(playerId!, username!, socket.id);
     session.addPlayer(player);
     socket.join(sessionId);
 
@@ -60,16 +69,21 @@ export class WebSocketController {
   }
 
   // START GAME SESSION
-  public async startSession(socket: Socket, { sessionId, quizId }: { sessionId: string; quizId: number }): Promise<void> {
+  public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void> {
     const session = SessionManager.getSession(sessionId);
     if (!session) {
       socket.emit('error', 'Session not found.');
       return;
     }
 
+    if (!session.quizId) {
+      socket.emit('error', 'Quiz not set for this session.');
+      return;
+    }
+
     try {
       const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
-        replacements: { quizId },
+        replacements: { quizId: session.quizId },
       });
 
       const formattedQuestions: QuestionAttributes[] = result[0].map((question: any) => ({

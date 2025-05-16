@@ -5,6 +5,7 @@ import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 export class GameSession {
   public players: Player[] = [];
   public questions: QuestionAttributes[] = [];
+  public quizId?: number;
   public hostUsername: string;
   public isStarted: boolean = false;
   public currentQuestionIndex: number = 0;
