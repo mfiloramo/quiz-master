@@ -13,7 +13,7 @@ export default function LobbyPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession } = useSession();
-  const { isHost } = useAuth();
+  const { isHost, user } = useAuth();
   const { selectedQuiz, resetQuiz } = useQuiz();
   const router = useRouter();
 
@@ -116,7 +116,7 @@ export default function LobbyPage() {
         })}
       </ul>
 
-      {isHost && (
+      {user && (
         <button onClick={handleStart} className='mt-4 rounded bg-green-500 px-4 py-2 text-white'>
           Start Quiz
         </button>
