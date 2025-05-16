@@ -63,7 +63,7 @@ export default function LobbyPage() {
     router.push('/dashboard');
   };
 
-  // ✂️ EJECT SPECIFIC PLAYER
+  // EJECT SPECIFIC PLAYER
   const ejectPlayer = (playerId: string): void => {
     if (!isHost) return;
     socket?.emit('eject-player', { sessionId, playerId });
@@ -102,7 +102,7 @@ export default function LobbyPage() {
           return (
             <motion.li
               key={index}
-              onClick={() => isHost && ejectPlayer(player.id)} // 🧠 ONLY HOST CAN KICK
+              onClick={() => isHost && ejectPlayer(player.id)} // ONLY HOST CAN KICK
               className='mb-2 cursor-pointer rounded-xl border-2 border-black p-2 font-bold shadow'
               style={{ backgroundColor: color.bg, color: color.text }}
               animate={{ rotate: [-5, 5, -5] }}
