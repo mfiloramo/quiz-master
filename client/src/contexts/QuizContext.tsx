@@ -1,45 +1,23 @@
 'use client';
 
-import React, { ReactNode, createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 import { Quiz, QuizContextType } from '@/types/Quiz.types';
 
-// CREATE QUIZ CONTEXT
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
-// QUIZ CONTEXT PROVIDER
 export function QuizProvider({ children }: { children: ReactNode }) {
-  // SELECTED QUIZ OBJECT
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
-
-  // CURRENT QUESTION INDEX
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  // ON LOAD, CHECK IF QUIZ IS SAVED IN LOCAL STORAGE
-  useEffect((): void => {
-    const savedQuiz = localStorage.getItem('selectedQuiz');
-    if (savedQuiz) {
-      setSelectedQuiz(JSON.parse(savedQuiz));
-    }
-  }, []);
-
-  // SET QUIZ IN BOTH STATE AND LOCAL STORAGE
   const setQuiz = (quiz: Quiz | null): void => {
     setSelectedQuiz(quiz);
-
-    if (quiz) {
-      localStorage.setItem('selectedQuiz', JSON.stringify(quiz));
-    } else {
-      localStorage.removeItem('selectedQuiz');
-    }
   };
 
-  // RESET ALL QUIZ STATE
   const resetQuiz = (): void => {
-    setQuiz(null);
-    setCurrentIndex(0);
+    setSelectedQuiz(null); // RESET SELECTED QUIZ
+    setCurrentIndex(0); // RESET QUESTION INDEX
   };
 
-  // RENDER PROVIDER
   return (
     <QuizContext.Provider
       value={{ selectedQuiz, setSelectedQuiz: setQuiz, currentIndex, setCurrentIndex, resetQuiz }}
@@ -49,11 +27,8 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// CUSTOM HOOK TO ACCESS QUIZ CONTEXT
 export function useQuiz(): QuizContextType {
   const context = useContext(QuizContext);
-  if (!context) {
-    throw new Error('useQuiz must be used within a QuizProvider');
-  }
+  if (!context) throw new Error('useQuiz must be used within a QuizProvider');
   return context;
 }

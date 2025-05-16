@@ -4,14 +4,16 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSession } from '@/contexts/SessionContext';
 import { motion } from 'framer-motion';
 
 export default function JoinPage() {
   const { socket } = useWebSocket();
   const { user } = useAuth();
+  const { setSessionId } = useSession();
   const router = useRouter();
 
-  const [sessionId, setSessionId] = useState('');
+  const [sessionIdInput, setSessionIdInput] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -29,25 +31,27 @@ export default function JoinPage() {
   }, [socket]);
 
   const handleJoin = (): void => {
-    if (!socket || !sessionId) {
+    if (!socket || !sessionIdInput.trim()) {
       setError('Please enter session ID.');
       return;
     }
 
-    // LISTEN FOR PLAYER LIST ON SUCCESSFUL JOIN
+    // EMIT JOIN REQUEST
+    socket.emit('join-session', {
+      sessionId: sessionIdInput.trim().toUpperCase(),
+      username: user?.username,
+      playerId: socket.id,
+    });
+
+    // ON SUCCESSFUL JOIN, SAVE SESSION ID AND REDIRECT
     socket.once('player-joined', () => {
+      setSessionId(sessionIdInput.trim().toUpperCase());
       router.push('/dashboard/lobby');
     });
 
-    // LISTEN FOR ERROR IF SESSION IS INVALID
+    // ON FAILURE, DISPLAY ERROR
     socket.once('error', (err: string) => {
-      setError(err || 'Failed to join session.');
-    });
-
-    socket.emit('join-session', {
-      sessionId,
-      username: user?.username,
-      playerId: socket.id,
+      setError(err || 'Unable to join the session.');
     });
   };
 
@@ -57,11 +61,10 @@ export default function JoinPage() {
       <input
         type='text'
         placeholder='Session ID'
-        value={sessionId}
-        onChange={(e) => setSessionId(e.target.value)}
+        value={sessionIdInput}
+        onChange={(e) => setSessionIdInput(e.target.value)}
         className='mb-4 rounded border p-2'
       />
-
       <motion.button
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}

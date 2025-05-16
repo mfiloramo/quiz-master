@@ -10,7 +10,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AUTH PROVIDER COMPONENT
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // PROVIDER STATE
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<DecodedUser | null>(null);
   const [isHost, setIsHost] = useState<boolean>(false);
@@ -51,7 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(decoded);
       setIsLoggedIn(true);
-
       return true;
     } catch (err) {
       console.error('Failed to decode token:', err);
@@ -64,13 +62,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('token');
     setUser(null);
     setIsLoggedIn(false);
-    console.log(user);
     router.push('/');
   };
 
   // RENDER PROVIDER
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, setIsHost, isHost, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, isHost, setIsHost, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

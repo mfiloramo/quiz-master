@@ -12,17 +12,15 @@ import { motion } from 'framer-motion';
 export default function LobbyPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const { socket, disconnect } = useWebSocket();
-  const { sessionId } = useSession();
-  const { isHost } = useAuth();
-  const { selectedQuiz } = useQuiz();
+  const { sessionId, clearSession } = useSession();
+  const { isHost, user } = useAuth();
+  const { selectedQuiz, resetQuiz } = useQuiz();
   const router = useRouter();
 
-  // SETUP SOCKET EVENTS FOR LOBBY STATE
   useEffect(() => {
     if (!socket) return;
 
     socket.once('session-started', () => {
-      console.log('Session started, navigating to quiz...');
       router.push('/dashboard/quiz');
     });
 
@@ -31,8 +29,16 @@ export default function LobbyPage() {
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
 
+    socket.on('ejected-by-host', () => {
+      alert('You were removed from the session by the host.');
+      resetQuiz(); // RESET QUIZ STATE ON EJECTION
+      disconnect();
+      router.push('/dashboard');
+    });
+
     socket.on('session-ended', () => {
       alert('Host disconnected. Session ended.');
+      resetQuiz(); // RESET QUIZ STATE ON SESSION END
       router.push('/dashboard');
     });
 
@@ -40,11 +46,11 @@ export default function LobbyPage() {
       socket.off('player-joined');
       socket.off('players-list');
       socket.off('session-started');
+      socket.off('ejected-by-host');
       socket.off('session-ended');
     };
-  }, [socket, sessionId, router]);
+  }, [socket, sessionId, router, disconnect, resetQuiz]);
 
-  // START GAME SESSION
   const handleStart = () => {
     socket?.emit('start-session', {
       sessionId,
@@ -52,10 +58,17 @@ export default function LobbyPage() {
     });
   };
 
-  // LEAVE GAME SESSION
   const handleLeave = () => {
     disconnect();
+    resetQuiz();
+    clearSession();
     router.push('/dashboard');
+  };
+
+  // EJECT SPECIFIC PLAYER
+  const ejectPlayer = (playerId: string): void => {
+    if (!isHost) return;
+    socket?.emit('eject-player', { sessionId, playerId });
   };
 
   return (
@@ -86,11 +99,12 @@ export default function LobbyPage() {
             { bg: '#4B0082', text: 'white' },
             { bg: '#8F00FF', text: 'white' },
           ];
-          const color = colors[index % colors.length];
+          const color = colors[Math.floor(Math.random() * colors.length)];
 
           return (
             <motion.li
               key={index}
+              onClick={() => isHost && ejectPlayer(player.id)} // ONLY HOST CAN KICK
               className='mb-2 cursor-pointer rounded-xl border-2 border-black p-2 font-bold shadow'
               style={{ backgroundColor: color.bg, color: color.text }}
               animate={{ rotate: [-5, 5, -5] }}
@@ -102,7 +116,7 @@ export default function LobbyPage() {
         })}
       </ul>
 
-      {isHost && (
+      {user && (
         <button onClick={handleStart} className='mt-4 rounded bg-green-500 px-4 py-2 text-white'>
           Start Quiz
         </button>

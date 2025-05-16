@@ -3,10 +3,12 @@
 import { JSX, useEffect } from 'react';
 import DashboardCard from '@/components/dashboard-card/dashboard-card';
 import { useRouter } from 'next/navigation';
+import { useQuiz } from '@/contexts/QuizContext';
 import { jwtDecode } from 'jwt-decode';
 
 export default function DashboardHome(): JSX.Element {
   const router = useRouter();
+  const { resetQuiz } = useQuiz();
 
   const DashboardCards = [
     {
@@ -45,6 +47,8 @@ export default function DashboardHome(): JSX.Element {
         router.push('/auth/login');
       }
     }
+
+    resetQuiz(); // CLEAR STALE QUIZ WHEN RETURNING TO DASHBOARD
   }, [router]);
 
   // RENDER PAGE
