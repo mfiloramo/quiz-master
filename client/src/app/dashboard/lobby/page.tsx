@@ -17,7 +17,6 @@ export default function LobbyPage() {
   const { selectedQuiz } = useQuiz();
   const router = useRouter();
 
-  // SETUP SOCKET EVENTS FOR LOBBY STATE
   useEffect(() => {
     if (!socket) return;
 
@@ -31,6 +30,13 @@ export default function LobbyPage() {
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
 
+    // LISTEN FOR EJECTION NOTICE
+    socket.on('ejected-by-host', () => {
+      alert('You were removed from the session by the host.');
+      disconnect();
+      router.push('/dashboard');
+    });
+
     socket.on('session-ended', () => {
       alert('Host disconnected. Session ended.');
       router.push('/dashboard');
@@ -40,11 +46,11 @@ export default function LobbyPage() {
       socket.off('player-joined');
       socket.off('players-list');
       socket.off('session-started');
+      socket.off('ejected-by-host');
       socket.off('session-ended');
     };
-  }, [socket, sessionId, router]);
+  }, [socket, sessionId, router, disconnect]);
 
-  // START GAME SESSION
   const handleStart = () => {
     socket?.emit('start-session', {
       sessionId,
@@ -52,10 +58,15 @@ export default function LobbyPage() {
     });
   };
 
-  // LEAVE GAME SESSION
   const handleLeave = () => {
     disconnect();
     router.push('/dashboard');
+  };
+
+  // ✂️ EJECT SPECIFIC PLAYER
+  const ejectPlayer = (playerId: string): void => {
+    if (!isHost) return;
+    socket?.emit('eject-player', { sessionId, playerId });
   };
 
   return (
@@ -91,6 +102,7 @@ export default function LobbyPage() {
           return (
             <motion.li
               key={index}
+              onClick={() => isHost && ejectPlayer(player.id)} // 🧠 ONLY HOST CAN KICK
               className='mb-2 cursor-pointer rounded-xl border-2 border-black p-2 font-bold shadow'
               style={{ backgroundColor: color.bg, color: color.text }}
               animate={{ rotate: [-5, 5, -5] }}

@@ -79,7 +79,6 @@ export class WebSocketController {
       const firstQuestion = formattedQuestions[0];
 
       if (firstQuestion) {
-        console.log('emitting!');
         this.io.to(sessionId).emit('new-question', {
           question: firstQuestion,
           index: 0,
@@ -105,7 +104,7 @@ export class WebSocketController {
   }
 
   // GET CURRENT QUESTION FOR A SESSION
-  getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
+  public getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
     const session = SessionManager.getSession(sessionId);
     if (!session || !session.questions.length) {
       socket.emit('error', 'No current question found.');
@@ -121,6 +120,29 @@ export class WebSocketController {
     });
   }
 
+  // HANDLE PLAYER EJECTION
+  public handleEjectPlayer(socket: Socket, { sessionId, playerId }: { sessionId: string, playerId: string }): void {
+    const session = SessionManager.getSession(sessionId);
+    if (!session) return;
+
+    // ONLY ALLOW HOST TO EJECT
+    if (socket.id !== session.hostSocketId) {
+      socket.emit('error', 'Only the host can eject players.');
+      return;
+    }
+
+    const playerToKick = session.getPlayer(playerId);
+    if (!playerToKick) return;
+
+    // SEND TO SPECIFIC PLAYER
+    this.io.to(playerToKick.socketId).emit('ejected-by-host');
+
+    // REMOVE FROM SESSION
+    session.removePlayerByPlayerId(playerId);
+
+    // BROADCAST UPDATED LIST
+    this.io.to(sessionId).emit('player-joined', session.players);
+  }
 
   // HANDLE SOCKET DISCONNECT
   public handleDisconnect(socket: Socket): void {

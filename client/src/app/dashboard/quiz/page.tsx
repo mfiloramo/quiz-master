@@ -33,6 +33,13 @@ export default function QuizPage() {
       // setTotalQuestions(data.total);
     });
 
+    // LISTEN FOR EJECTION NOTICE
+    socket.on('ejected-by-host', () => {
+      alert('You were removed from the session by the host.');
+      disconnect();
+      router.push('/dashboard');
+    });
+
     socket.on('session-ended', () => {
       alert('Session has ended.');
       resetQuiz();
