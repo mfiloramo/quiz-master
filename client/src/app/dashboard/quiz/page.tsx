@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 export default function QuizPage() {
   const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId } = useSession();
+  const { sessionId, clearSession } = useSession();
   const router = useRouter();
 
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
@@ -20,14 +20,11 @@ export default function QuizPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // REQUEST CURRENT QUESTION ON MOUNT (FOR LATE JOINERS)
   useEffect(() => {
     if (!socket || !sessionId) return;
-    console.log('Requesting current question on mount...');
     socket.emit('get-current-question', { sessionId });
   }, [socket, sessionId]);
 
-  // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket) return;
 
@@ -40,12 +37,16 @@ export default function QuizPage() {
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
       disconnect();
+      resetQuiz();
+      clearSession();
       router.push('/dashboard');
     });
 
     socket.on('session-ended', () => {
       alert('Session has ended.');
+      disconnect();
       resetQuiz();
+      clearSession();
       router.push('/dashboard/library');
     });
 
@@ -54,30 +55,28 @@ export default function QuizPage() {
       socket.off('session-ended');
       socket.off('ejected-by-host');
     };
-  }, [socket, resetQuiz, router, disconnect]);
+  }, [socket, resetQuiz, router, disconnect, clearSession]);
 
-  // FALLBACK REQUEST IN CASE HOST'S FIRST EMIT MISSES
   useEffect(() => {
     if (!socket || !sessionId) return;
 
     const timeout = setTimeout(() => {
-      console.log('Fallback: requesting current question...');
       socket.emit('get-current-question', { sessionId });
-    }, 500); // ALLOW TIME FOR HOST TO EMIT FIRST
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, [socket, sessionId]);
 
-  // HANDLE ANSWER SELECTION
   const handleAnswer = (answer: string) => {
     socket?.emit('submit-answer', { answer });
     setLoading(true);
     setTimeout(() => setLoading(false), 1500);
   };
 
-  // HANDLE DISCONNECT
   const handleLeave = () => {
     disconnect();
+    resetQuiz();
+    clearSession();
     router.push('/dashboard');
   };
 

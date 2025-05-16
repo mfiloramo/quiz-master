@@ -1,3 +1,4 @@
+// app/dashboard/layout.tsx
 import SideNavbar from '@/components/side-navbar/side-navbar';
 import { DashboardItem } from '@/types/DashboardItem.type';
 import { QuizProvider } from '@/contexts/QuizContext';

@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 export default function LobbyPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const { socket, disconnect } = useWebSocket();
-  const { sessionId } = useSession();
+  const { sessionId, clearSession } = useSession();
   const { isHost } = useAuth();
   const { selectedQuiz, resetQuiz } = useQuiz();
   const router = useRouter();
@@ -60,6 +60,8 @@ export default function LobbyPage() {
 
   const handleLeave = () => {
     disconnect();
+    resetQuiz();
+    clearSession();
     router.push('/dashboard');
   };
 
