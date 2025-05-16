@@ -4,73 +4,79 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSession } from '@/contexts/SessionContext';
 import { QuizQuestion } from '@/types/Quiz.types';
 import QuizModule from '@/components/quiz-module/quiz-module';
 import { motion } from 'framer-motion';
-import { useSession } from '@/contexts/SessionContext';
 
 export default function QuizPage() {
   const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
   const { socket, disconnect } = useWebSocket();
-  const { isHost } = useAuth();
+  const { sessionId, clearSession } = useSession();
   const router = useRouter();
-  const { sessionId } = useSession();
 
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // LISTEN FOR HOST-EMITTED QUESTIONS
-  useEffect((): any => {
+  useEffect(() => {
+    if (!socket || !sessionId) return;
+    socket.emit('get-current-question', { sessionId });
+  }, [socket, sessionId]);
+
+  useEffect(() => {
     if (!socket) return;
-    if (!sessionId) return <p>Loading session...</p>;
 
     socket.on('new-question', (data) => {
-      console.log('new-question!');
       setCurrentQuestion(data.question);
-      // setTotalQuestions(data.total);
+      setTotalQuestions(data.total);
+      setLoading(false);
+    });
+
+    socket.on('ejected-by-host', () => {
+      alert('You were removed from the session by the host.');
+      disconnect();
+      resetQuiz();
+      clearSession();
+      router.push('/dashboard');
     });
 
     socket.on('session-ended', () => {
       alert('Session has ended.');
+      disconnect();
       resetQuiz();
+      clearSession();
       router.push('/dashboard/library');
     });
 
     return () => {
       socket.off('new-question');
       socket.off('session-ended');
+      socket.off('ejected-by-host');
     };
-  }, [socket, resetQuiz, router]);
+  }, [socket, resetQuiz, router, disconnect, clearSession]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !sessionId) return;
 
     const timeout = setTimeout(() => {
-      // Emit fallback in case new-question never arrived
-      console.log('Fallback: requesting current question from server...');
       socket.emit('get-current-question', { sessionId });
-    }, 500); // Wait a bit to allow any server-side emits first
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, [socket, sessionId]);
 
   const handleAnswer = (answer: string) => {
-    socket?.emit('submit-answer', {
-      answer,
-    });
-
-    // TEMPORARY FEEDBACK: host should control next question
+    socket?.emit('submit-answer', { answer });
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+    setTimeout(() => setLoading(false), 1500);
   };
 
   const handleLeave = () => {
     disconnect();
+    resetQuiz();
+    clearSession();
     router.push('/dashboard');
   };
 
@@ -86,7 +92,9 @@ export default function QuizPage() {
       ) : (
         <div className='text-white'>Waiting for host to start the quiz...</div>
       )}
+
       {loading && <p className='mt-4 text-black'>Waiting for next question...</p>}
+
       <motion.button
         className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
         onClick={handleLeave}
@@ -98,6 +106,7 @@ export default function QuizPage() {
       >
         Leave Game
       </motion.button>
+
       {error && <p className='mt-4 text-red-200'>{error}</p>}
     </div>
   );

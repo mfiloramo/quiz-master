@@ -1,44 +1,41 @@
 'use client';
 
-import React, { createContext, ReactNode, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+// CONTEXT TYPE
 type SessionContextType = {
   sessionId: string | null;
   setSessionId: (id: string | null) => void;
+  clearSession: () => void;
 };
 
+// CONTEXT INSTANCE
 const SessionContext = createContext<SessionContextType | null>(null);
 
+// PROVIDER COMPONENT
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionIdState] = useState<string | null>(null);
 
-  useEffect(() => {
-    const savedId = localStorage.getItem('sessionId');
-    if (savedId) setSessionIdState(savedId);
-  }, []);
-
   const setSessionId = (id: string | null) => {
     setSessionIdState(id);
-    if (id) {
-      localStorage.setItem('sessionId', id);
-    } else {
-      localStorage.removeItem('sessionId');
-    }
+  };
+
+  const clearSession = () => {
+    setSessionIdState(null);
   };
 
   return (
-    <SessionContext.Provider value={{ sessionId, setSessionId }}>
+    <SessionContext.Provider value={{ sessionId, setSessionId, clearSession }}>
       {children}
     </SessionContext.Provider>
   );
 }
 
-export function useSession() {
+// CUSTOM HOOK
+export function useSession(): SessionContextType {
   const context = useContext(SessionContext);
   if (!context) {
     throw new Error('useSession must be used within a SessionProvider');
   }
   return context;
 }
-
-// TODO: QUESTIONS ARE FROM DIFFERENT QUIZZES
