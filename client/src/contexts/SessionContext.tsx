@@ -1,13 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-// CONTEXT TYPE
-type SessionContextType = {
-  sessionId: string | null;
-  setSessionId: (id: string | null) => void;
-  clearSession: () => void;
-};
+import { SessionContextType } from '@/types/SessionContext.type';
 
 // CONTEXT INSTANCE
 const SessionContext = createContext<SessionContextType | null>(null);
