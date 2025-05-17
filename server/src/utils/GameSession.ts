@@ -1,7 +1,6 @@
 import { Player } from './Player';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
-
 // GAME SESSION MODEL FOR HOST + QUESTION MANAGEMENT
 export class GameSession {
   public players: Player[] = [];
@@ -45,8 +44,8 @@ export class GameSession {
   }
 
   // INCREMENT PLAYER SCORE
-  public incrementScore(player: Player) {
-    const player = this.getPlayer(player?.id);
+  public incrementScore(playerId: string) {
+    const player = this.getPlayer(playerId);
     if (player) {
       player.score += 1;
     }
