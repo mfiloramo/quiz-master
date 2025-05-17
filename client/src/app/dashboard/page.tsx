@@ -1,14 +1,16 @@
 'use client';
 
 import { JSX, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import DashboardCard from '@/components/dashboard-card/dashboard-card';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function DashboardHome(): JSX.Element {
   const router = useRouter();
   const { resetQuiz } = useQuiz();
+  const { setIsHost } = useAuth();
 
   const DashboardCards = [
     {
@@ -35,6 +37,8 @@ export default function DashboardHome(): JSX.Element {
 
   // CHECK IF USER IS LOGGED IN
   useEffect(() => {
+    // TODO: TEMPORARY -- IMPLEMENT ALTERNATIVE SETISHOST(FALSE) FALLBACK
+    setIsHost(false);
     const token = localStorage.getItem('token');
 
     if (!token) {

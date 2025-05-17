@@ -4,7 +4,6 @@ import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 import { SessionManager } from '../utils/SessionManager';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
-import { GameSession } from '../utils/GameSession';
 
 export class WebSocketController {
   constructor(private io: Server) {}
@@ -44,6 +43,7 @@ export class WebSocketController {
       return;
     }
 
+    // ENABLE IN PROD
     // const nameExists = session.players.some((player: Player) => player.username === username);
     // if (nameExists) {
     //   socket.emit('error', 'Player with this username already joined the game.');

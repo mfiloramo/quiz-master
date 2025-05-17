@@ -8,18 +8,23 @@ import { useSession } from '@/contexts/SessionContext';
 import { QuizQuestion } from '@/types/Quiz.types';
 import QuizModule from '@/components/quiz-module/quiz-module';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function QuizPage() {
-  const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
-  const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession } = useSession();
-  const router = useRouter();
-
+  // STATE
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // CONTEXT HOOKS
+  const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
+  const { socket, disconnect } = useWebSocket();
+  const { sessionId, clearSession } = useSession();
+  const { isHost, setIsHost } = useAuth();
+  const router = useRouter();
+
+  // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket || !sessionId) return;
     socket.emit('get-current-question', { sessionId });
@@ -77,6 +82,7 @@ export default function QuizPage() {
     disconnect();
     resetQuiz();
     clearSession();
+    if (isHost) setIsHost(false);
     router.push('/dashboard');
   };
 

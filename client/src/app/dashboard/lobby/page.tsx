@@ -17,6 +17,7 @@ export default function LobbyPage() {
   const { selectedQuiz, resetQuiz } = useQuiz();
   const router = useRouter();
 
+  // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket) return;
 
@@ -30,7 +31,7 @@ export default function LobbyPage() {
     socket.on('players-list', setPlayers);
 
     socket.on('ejected-by-host', () => {
-      alert('You were removed from the session by the host.');
+      alert('You were removed from the session by the host.'); // TODO: NOT POPPING UP ON EJECTION
       resetQuiz(); // RESET QUIZ STATE ON EJECTION
       disconnect();
       router.push('/dashboard');
@@ -51,6 +52,7 @@ export default function LobbyPage() {
     };
   }, [socket, sessionId, router, disconnect, resetQuiz]);
 
+  // HANDLE START SESSION
   const handleStart = () => {
     socket?.emit('start-session', {
       sessionId,
@@ -58,6 +60,7 @@ export default function LobbyPage() {
     });
   };
 
+  // HANDLE LEAVE SESSION
   const handleLeave = () => {
     disconnect();
     resetQuiz();
@@ -71,6 +74,7 @@ export default function LobbyPage() {
     socket?.emit('eject-player', { sessionId, playerId });
   };
 
+  // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>

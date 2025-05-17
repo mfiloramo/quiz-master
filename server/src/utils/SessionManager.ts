@@ -1,4 +1,6 @@
 import { GameSession } from './GameSession';
+import { Player } from './Player';
+
 
 // SESSION MANAGER HANDLING IN-MEMORY STORE
 export class SessionManager {
@@ -20,7 +22,7 @@ export class SessionManager {
 
   static getSessionBySocketId(socketId: string): [string, GameSession] | undefined {
     for (const [sessionId, session] of this.sessions.entries()) {
-      if (session.hostSocketId === socketId || session.players.some(p => p.socketId === socketId)) {
+      if (session.hostSocketId === socketId || session.players.some((player: Player) => player.socketId === socketId)) {
         return [sessionId, session];
       }
     }

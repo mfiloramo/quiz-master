@@ -42,7 +42,7 @@ export default function DiscoverPage(): ReactElement {
       alert('Please select a quiz to start!');
       return;
     }
-    router.push('/dashboard/quiz');
+    router.push('/dashboard/host');
   };
 
   return (

@@ -1,6 +1,7 @@
 import { Player } from './Player';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
+
 // GAME SESSION MODEL FOR HOST + QUESTION MANAGEMENT
 export class GameSession {
   public players: Player[] = [];
@@ -40,7 +41,15 @@ export class GameSession {
 
   // GET PLAYER BY ID
   public getPlayer(playerId: string): Player | undefined {
-    return this.players.find(p => p.id === playerId);
+    return this.players.find(player => player.id === playerId);
+  }
+
+  // INCREMENT PLAYER SCORE
+  public incrementScore(player: Player) {
+    const player = this.getPlayer(player?.id);
+    if (player) {
+      player.score += 1;
+    }
   }
 
   // RESET ANSWER FLAGS
@@ -56,6 +65,6 @@ export class GameSession {
 
   // CHECK IF ALL PLAYERS ANSWERED
   public allPlayersAnswered(): boolean {
-    return this.players.every(p => p.hasAnswered);
+    return this.players.every(player => player.hasAnswered);
   }
 }
