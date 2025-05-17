@@ -5,18 +5,22 @@ import { SessionManager } from '../utils/SessionManager';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
 
+
 export class WebSocketController {
   constructor(private io: Server) {}
 
   // CREATE NEW GAME SESSION
   public createSession(socket: Socket, sessionData: GameSessionAttributes): void {
+    // DESTRUCTURE SESSION DATA
     const { sessionId, hostUserName, quizId } = sessionData;
 
+    // CHECK FOR EXISTING SESSION
     if (SessionManager.getSession(sessionId)) {
       socket.emit('error', 'Session already exists.');
       return;
     }
 
+    // CREATE NEW SESSION
     const session = SessionManager.createSession(sessionId, socket.id, hostUserName);
 
     // CLEANUP: RESET QUESTIONS ARRAY IN CASE OF ANY STALE STATE
@@ -25,13 +29,13 @@ export class WebSocketController {
     // SET QUIZ ID SO IT CAN BE USED IN startSession()
     session.quizId = quizId;
 
+    // JOIN GAME SESSION
     socket.join(sessionId);
     socket.emit('session-created', {
       sessionId,
       hostUsername: session.hostUsername,
     });
   }
-
 
   // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, sessionData: GameSessionAttributes): void {

@@ -7,8 +7,10 @@ import { WebSocketContextType } from '@/types/WebSocketContext.type';
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 export function WebSocketProvider({ children }: { children: ReactNode }) {
+  // PROVIDER STATE
   const [socket, setSocket] = useState<Socket | null>(null);
 
+  // PROVIDER EFFECT HOOKS
   useEffect(() => {
     const newSocket = io('http://localhost:3030', {
       autoConnect: true,
@@ -34,6 +36,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // PROVIDER HANDLER FUNCTIONS
   const disconnect = () => {
     socket?.emit('leave-session');
   };

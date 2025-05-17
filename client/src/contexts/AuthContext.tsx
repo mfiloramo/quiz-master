@@ -10,9 +10,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AUTH PROVIDER COMPONENT
 export function AuthProvider({ children }: { children: ReactNode }) {
+  // PROVIDER STATE
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<DecodedUser | null>(null);
   const [isHost, setIsHost] = useState<boolean>(false);
+
+  // PROVIDER UTILITIES
   const router = useRouter();
 
   // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT

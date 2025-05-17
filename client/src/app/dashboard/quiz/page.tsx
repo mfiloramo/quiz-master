@@ -17,7 +17,7 @@ export default function QuizPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // CONTEXT HOOKS
+  // CUSTOM HOOKS
   const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession } = useSession();
@@ -33,9 +33,12 @@ export default function QuizPage() {
   useEffect(() => {
     if (!socket) return;
 
+    socket.once('new-question', (data) => {
+      setTotalQuestions(data.total);
+    });
+
     socket.on('new-question', (data) => {
       setCurrentQuestion(data.question);
-      setTotalQuestions(data.total);
       setLoading(false);
     });
 

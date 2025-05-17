@@ -8,8 +8,10 @@ const SessionContext = createContext<SessionContextType | null>(null);
 
 // PROVIDER COMPONENT
 export function SessionProvider({ children }: { children: ReactNode }) {
+  // PROVIDER STATE
   const [sessionId, setSessionIdState] = useState<string | null>(null);
 
+  // PROVIDER HANDLER FUNCTIONS
   const setSessionId = (id: string | null) => {
     setSessionIdState(id);
   };
