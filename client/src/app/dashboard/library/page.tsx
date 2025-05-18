@@ -47,7 +47,7 @@ export default function LibraryPage(): ReactElement {
     setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
   };
 
-  // NAVIGATE TO PLAY PAGE
+  // NAVIGATE TO HOST PAGE
   const navToHostQuiz = () => {
     if (!selectedQuiz) {
       alert('Please select a quiz to start!');

@@ -40,7 +40,16 @@ export class GameSession {
 
   // GET PLAYER BY ID
   public getPlayer(playerId: string): Player | undefined {
-    return this.players.find(p => p.id === playerId);
+    return this.players.find(player => player.id === playerId);
+  }
+
+  // INCREMENT PLAYER SCORE
+  public incrementScore(playerId: string) {
+    const player = this.getPlayer(playerId);
+    if (player) {
+      player.score += 1;
+    }
+    console.log(this.players);
   }
 
   // RESET ANSWER FLAGS
@@ -50,12 +59,14 @@ export class GameSession {
 
   // ADVANCE TO NEXT QUESTION
   public nextQuestion(): void {
-    this.currentQuestionIndex += 1;
-    this.resetAnswers();
+    if (this.players.every((player: Player) => (player.hasAnswered = true))) {
+      this.currentQuestionIndex += 1;
+      this.resetAnswers();
+    }
   }
 
   // CHECK IF ALL PLAYERS ANSWERED
   public allPlayersAnswered(): boolean {
-    return this.players.every(p => p.hasAnswered);
+    return this.players.every(player => player.hasAnswered);
   }
 }

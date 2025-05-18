@@ -1,4 +1,3 @@
-// PLAYER MODEL FOR GAME SESSION
 export class Player {
   constructor(
     public id: string,

@@ -19,6 +19,8 @@ const app: Express = express();
 const PORT: number = parseInt(process.env.PORT as string, 10) || 3030;
 const server: any = http.createServer(app);
 
+// TODO: IMPLEMENT MORE ROBUST CORS CONFIG
+// INITIALIZE SERVER
 const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',

@@ -13,6 +13,7 @@ export const webSocketRouter = (io: Server): void => {
     socket.on('start-session', async (data) => await controller.startSession(socket, data));
     socket.on('leave-session', () => controller.leaveSession(socket));
     socket.on('get-current-question', (data) => controller.getCurrentQuestion(socket, data));
+    socket.on('submit-answer', (data) => controller.submitAnswer(socket, data));
     socket.on('eject-player', (data) => controller.handleEjectPlayer(socket, data));
     socket.on('disconnect', () => controller.handleDisconnect(socket));
   });
