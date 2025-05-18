@@ -6,21 +6,25 @@ import { Player } from './Player';
 export class SessionManager {
   private static sessions = new Map<string, GameSession>();
 
-  static createSession(sessionId: string, hostSocketId: string, hostUsername: string): GameSession {
+  public static createSession(
+    sessionId: string,
+    hostSocketId: string,
+    hostUsername: string
+  ): GameSession {
     const session = new GameSession(sessionId, hostSocketId, hostUsername);
     this.sessions.set(sessionId, session);
     return session;
   }
 
-  static getSession(sessionId: string): GameSession | undefined {
+  public static getSession(sessionId: string): GameSession | undefined {
     return this.sessions.get(sessionId);
   }
 
-  static deleteSession(sessionId: string): void {
+  public static deleteSession(sessionId: string): void {
     this.sessions.delete(sessionId);
   }
 
-  static getSessionBySocketId(socketId: string): [string, GameSession] | undefined {
+  public static getSessionBySocketId(socketId: string): [string, GameSession] | undefined {
     for (const [sessionId, session] of this.sessions.entries()) {
       if (session.hostSocketId === socketId || session.players.some((player: Player) => player.socketId === socketId)) {
         return [sessionId, session];

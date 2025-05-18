@@ -12,9 +12,11 @@ export default function QuizModule({
   totalQuestions,
   onSubmit,
 }: QuizModuleProps) {
+  // STATE
   const [selected, setSelected] = useState<string | null>(null);
   const [lockedIn, setLockedIn] = useState(false);
 
+  // HANDLER FUNCTIONS
   const handleClick = (option: string) => {
     if (lockedIn) return;
     setSelected(option);
@@ -22,6 +24,7 @@ export default function QuizModule({
     onSubmit(option);
   };
 
+  // RENDER COMPONENTS
   return (
     <div className='flex w-full max-w-3xl flex-col items-center rounded-xl bg-white p-6 shadow-2xl'>
       <h2 className='mb-2 text-xl font-bold text-gray-700'>

@@ -49,6 +49,7 @@ export class GameSession {
     if (player) {
       player.score += 1;
     }
+    console.log(this.players);
   }
 
   // RESET ANSWER FLAGS
@@ -58,8 +59,10 @@ export class GameSession {
 
   // ADVANCE TO NEXT QUESTION
   public nextQuestion(): void {
-    this.currentQuestionIndex += 1;
-    this.resetAnswers();
+    if (this.players.every((player: Player) => (player.hasAnswered = true))) {
+      this.currentQuestionIndex += 1;
+      this.resetAnswers();
+    }
   }
 
   // CHECK IF ALL PLAYERS ANSWERED

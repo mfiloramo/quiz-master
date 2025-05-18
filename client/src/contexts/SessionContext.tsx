@@ -11,6 +11,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // PROVIDER STATE
   const [sessionId, setSessionIdState] = useState<string | null>(null);
 
+  // TODO: IS THIS EXTRA LAYER (METHOD) NEEDED HERE?
   // PROVIDER HANDLER FUNCTIONS
   const setSessionId = (id: string | null) => {
     setSessionIdState(id);

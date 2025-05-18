@@ -21,27 +21,28 @@ export default function QuizPage() {
   const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession } = useSession();
-  const { isHost, setIsHost } = useAuth();
+  const { user, isHost, setIsHost } = useAuth();
   const router = useRouter();
 
-  // INITIALIZE SOCKET EVENT LISTENERS
+  // EMIT NEW QUESTION REQUEST
   useEffect(() => {
     if (!socket || !sessionId) return;
     socket.emit('get-current-question', { sessionId });
   }, [socket, sessionId]);
 
+  // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket) return;
 
-    socket.once('new-question', (data) => {
-      setTotalQuestions(data.total);
-    });
-
+    // RECEIVE NEW QUESTION
     socket.on('new-question', (data) => {
+      setCurrentIndex(data.index);
       setCurrentQuestion(data.question);
+      setTotalQuestions(data.total);
       setLoading(false);
     });
 
+    // PLAYER IS EJECTED BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
       disconnect();
@@ -50,6 +51,7 @@ export default function QuizPage() {
       router.push('/dashboard');
     });
 
+    // GAME SESSION ENS
     socket.on('session-ended', () => {
       alert('Session has ended.');
       disconnect();
@@ -65,6 +67,7 @@ export default function QuizPage() {
     };
   }, [socket, resetQuiz, router, disconnect, clearSession]);
 
+  // GET CURRENT QUESTION
   useEffect(() => {
     if (!socket || !sessionId) return;
 
@@ -75,13 +78,17 @@ export default function QuizPage() {
     return () => clearTimeout(timeout);
   }, [socket, sessionId]);
 
-  const handleAnswer = (answer: string) => {
-    socket?.emit('submit-answer', { answer });
+  // HANDLER FUNCTIONS
+  const handleAnswer = (answer: string): void => {
+    socket?.emit('submit-answer', { socket, user, answer });
     setLoading(true);
     setTimeout(() => setLoading(false), 1500);
+    if (isHost) {
+      socket?.emit('get-current-question', { sessionId });
+    }
   };
 
-  const handleLeave = () => {
+  const handleLeave = (): void => {
     disconnect();
     resetQuiz();
     clearSession();
@@ -89,6 +96,7 @@ export default function QuizPage() {
     router.push('/dashboard');
   };
 
+  // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
       {currentQuestion ? (

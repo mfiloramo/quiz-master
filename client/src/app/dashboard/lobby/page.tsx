@@ -18,7 +18,7 @@ export default function LobbyPage() {
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession } = useSession();
   const { isHost, user } = useAuth();
-  const { selectedQuiz, resetQuiz } = useQuiz();
+  const { selectedQuiz, resetQuiz, currentIndex } = useQuiz();
 
   // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function LobbyPage() {
     socket.on('players-list', setPlayers);
 
     socket.on('ejected-by-host', () => {
-      alert('You were removed from the session by the host.'); // TODO: NOT POPPING UP ON EJECTION
+      alert('You were removed from the session by the host.'); // TODO: NOT POPPING UP ON PLAYER EJECTION
       resetQuiz(); // RESET QUIZ STATE ON EJECTION
       disconnect();
       router.push('/dashboard');
@@ -82,6 +82,7 @@ export default function LobbyPage() {
     <div className='flex flex-col items-center justify-center'>
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
 
+      {/* JOIN SESSION CODE */}
       {isHost && (
         <motion.h1
           className='mb-6 animate-bounce rounded-xl border-2 border-black bg-slate-50 px-4 py-2 text-3xl font-bold shadow'
@@ -95,8 +96,10 @@ export default function LobbyPage() {
         </motion.h1>
       )}
 
+      {/* PLAYERS LIST */}
       <ul>
         {players.map((player, index) => {
+          // ASSIGN PLAYERS WITH RANDOM COLORS
           const colors = [
             { bg: '#FF0000', text: 'white' },
             { bg: '#FF7F00', text: 'black' },
@@ -123,11 +126,14 @@ export default function LobbyPage() {
         })}
       </ul>
 
-      {user && (
+      {/* START QUIZ BUTTON (HOST ONLY) */}
+      {isHost && (
         <button onClick={handleStart} className='mt-4 rounded bg-green-500 px-4 py-2 text-white'>
           Start Quiz
         </button>
       )}
+
+      {/* LEAVE GAME BUTTON*/}
       <button onClick={handleLeave} className='mt-6 rounded bg-red-500 px-4 py-2 text-white'>
         Leave Game
       </button>
