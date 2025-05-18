@@ -8,14 +8,17 @@ import { useSession } from '@/contexts/SessionContext';
 import { motion } from 'framer-motion';
 
 export default function JoinPage() {
+  // STATE
+  const [sessionIdInput, setSessionIdInput] = useState('');
+  const [error, setError] = useState('');
+
+  // CUSTOM HOOKS
   const { socket } = useWebSocket();
   const { user } = useAuth();
   const { setSessionId } = useSession();
   const router = useRouter();
 
-  const [sessionIdInput, setSessionIdInput] = useState('');
-  const [error, setError] = useState('');
-
+  // EFFECT HOOKS
   useEffect(() => {
     if (!socket) return;
 
@@ -23,6 +26,7 @@ export default function JoinPage() {
       setError(err || 'Failed to join session.');
     };
 
+    // INITIALIZE SOCKET EVENT LISTENERS
     socket.on('error', handleError);
 
     return () => {
@@ -30,6 +34,7 @@ export default function JoinPage() {
     };
   }, [socket]);
 
+  // HANDLER FUNCTIONS
   const handleJoin = (): void => {
     if (!socket || !sessionIdInput.trim()) {
       setError('Please enter session ID.');
@@ -55,6 +60,7 @@ export default function JoinPage() {
     });
   };
 
+  // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='mb-4 text-2xl font-bold'>Join Game</h1>

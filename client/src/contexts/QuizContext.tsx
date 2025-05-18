@@ -6,9 +6,11 @@ import { Quiz, QuizContextType } from '@/types/Quiz.types';
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
 export function QuizProvider({ children }: { children: ReactNode }) {
+  // PROVIDER STATE
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
+  // PROVIDER HANDLER FUNCTIONS
   const setQuiz = (quiz: Quiz | null): void => {
     setSelectedQuiz(quiz);
   };

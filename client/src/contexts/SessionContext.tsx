@@ -1,21 +1,18 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-// CONTEXT TYPE
-type SessionContextType = {
-  sessionId: string | null;
-  setSessionId: (id: string | null) => void;
-  clearSession: () => void;
-};
+import { SessionContextType } from '@/types/SessionContext.type';
 
 // CONTEXT INSTANCE
 const SessionContext = createContext<SessionContextType | null>(null);
 
 // PROVIDER COMPONENT
 export function SessionProvider({ children }: { children: ReactNode }) {
+  // PROVIDER STATE
   const [sessionId, setSessionIdState] = useState<string | null>(null);
 
+  // TODO: IS THIS EXTRA LAYER (METHOD) NEEDED HERE?
+  // PROVIDER HANDLER FUNCTIONS
   const setSessionId = (id: string | null) => {
     setSessionIdState(id);
   };

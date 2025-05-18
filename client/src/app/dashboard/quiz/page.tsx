@@ -8,32 +8,41 @@ import { useSession } from '@/contexts/SessionContext';
 import { QuizQuestion } from '@/types/Quiz.types';
 import QuizModule from '@/components/quiz-module/quiz-module';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function QuizPage() {
-  const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
-  const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession } = useSession();
-  const router = useRouter();
-
+  // STATE
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // CUSTOM HOOKS
+  const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
+  const { socket, disconnect } = useWebSocket();
+  const { sessionId, clearSession } = useSession();
+  const { user, isHost, setIsHost } = useAuth();
+  const router = useRouter();
+
+  // EMIT NEW QUESTION REQUEST
   useEffect(() => {
     if (!socket || !sessionId) return;
     socket.emit('get-current-question', { sessionId });
   }, [socket, sessionId]);
 
+  // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket) return;
 
+    // RECEIVE NEW QUESTION
     socket.on('new-question', (data) => {
+      setCurrentIndex(data.index);
       setCurrentQuestion(data.question);
       setTotalQuestions(data.total);
       setLoading(false);
     });
 
+    // PLAYER IS EJECTED BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
       disconnect();
@@ -42,6 +51,7 @@ export default function QuizPage() {
       router.push('/dashboard');
     });
 
+    // GAME SESSION ENS
     socket.on('session-ended', () => {
       alert('Session has ended.');
       disconnect();
@@ -57,6 +67,7 @@ export default function QuizPage() {
     };
   }, [socket, resetQuiz, router, disconnect, clearSession]);
 
+  // GET CURRENT QUESTION
   useEffect(() => {
     if (!socket || !sessionId) return;
 
@@ -67,19 +78,25 @@ export default function QuizPage() {
     return () => clearTimeout(timeout);
   }, [socket, sessionId]);
 
-  const handleAnswer = (answer: string) => {
-    socket?.emit('submit-answer', { answer });
+  // HANDLER FUNCTIONS
+  const handleAnswer = (answer: string): void => {
+    socket?.emit('submit-answer', { socket, user, answer });
     setLoading(true);
     setTimeout(() => setLoading(false), 1500);
+    if (isHost) {
+      socket?.emit('get-current-question', { sessionId });
+    }
   };
 
-  const handleLeave = () => {
+  const handleLeave = (): void => {
     disconnect();
     resetQuiz();
     clearSession();
+    if (isHost) setIsHost(false);
     router.push('/dashboard');
   };
 
+  // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
       {currentQuestion ? (

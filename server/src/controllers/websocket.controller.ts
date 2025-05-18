@@ -4,20 +4,23 @@ import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 import { SessionManager } from '../utils/SessionManager';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
-import { GameSession } from '../utils/GameSession';
+
 
 export class WebSocketController {
   constructor(private io: Server) {}
 
   // CREATE NEW GAME SESSION
-  public createSession(socket: Socket, sessionData: GameSessionAttributes): void {
-    const { sessionId, hostUserName, quizId } = sessionData;
+  public createSession(socket: Socket, data: GameSessionAttributes): void {
+    // DESTRUCTURE SESSION DATA
+    const { sessionId, hostUserName, quizId } = data;
 
+    // CHECK FOR EXISTING SESSION
     if (SessionManager.getSession(sessionId)) {
       socket.emit('error', 'Session already exists.');
       return;
     }
 
+    // CREATE NEW SESSION
     const session = SessionManager.createSession(sessionId, socket.id, hostUserName);
 
     // CLEANUP: RESET QUESTIONS ARRAY IN CASE OF ANY STALE STATE
@@ -26,17 +29,19 @@ export class WebSocketController {
     // SET QUIZ ID SO IT CAN BE USED IN startSession()
     session.quizId = quizId;
 
+    // JOIN GAME SESSION
     socket.join(sessionId);
+
+    // EMIT SESSION DATA
     socket.emit('session-created', {
       sessionId,
       hostUsername: session.hostUsername,
     });
   }
 
-
   // JOIN EXISTING GAME SESSION
-  public joinSession(socket: Socket, sessionData: GameSessionAttributes): void {
-    const { sessionId, playerId, username } = sessionData;
+  public joinSession(socket: Socket, data: GameSessionAttributes): void {
+    const { sessionId, playerId, username } = data;
     const session = SessionManager.getSession(sessionId);
 
     if (!session) {
@@ -44,6 +49,7 @@ export class WebSocketController {
       return;
     }
 
+    // ENABLE IN PROD
     // const nameExists = session.players.some((player: Player) => player.username === username);
     // if (nameExists) {
     //   socket.emit('error', 'Player with this username already joined the game.');
@@ -69,34 +75,43 @@ export class WebSocketController {
   }
 
   // START GAME SESSION
-  public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void> {
+  public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void>
+  {
+    // GET REQUESTED SESSION
     const session = SessionManager.getSession(sessionId);
+
+    // CHECK FOR EXISTING SESSION
     if (!session) {
       socket.emit('error', 'Session not found.');
       return;
     }
 
+    // CHECK IF QUIZ ID IS PROVIDED
     if (!session.quizId) {
       socket.emit('error', 'Quiz not set for this session.');
       return;
     }
 
+    // QUERY DATABASE FOR ALL QUESTIONS IN SELECTED QUIZ
     try {
       const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
         replacements: { quizId: session.quizId },
       });
 
+      // FORMAT DATABASE OUTPUT
       const formattedQuestions: QuestionAttributes[] = result[0].map((question: any) => ({
         ...question,
         options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
       }));
 
+      // ADD QUESTIONS AND isStarted TO SESSION
       session.questions = formattedQuestions;
       session.isStarted = true;
 
       // BROADCAST SESSION STARTED TO ALL CLIENTS
       this.io.to(sessionId).emit('session-started');
 
+      // EMIT FIRST QUIZ QUESTION
       const firstQuestion = formattedQuestions[0];
       if (firstQuestion) {
         this.io.to(sessionId).emit('new-question', {
@@ -126,18 +141,43 @@ export class WebSocketController {
   // RETURN CURRENT QUESTION TO REQUESTING PLAYER
   public getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
     const session = SessionManager.getSession(sessionId);
-    if (!session || !session.questions.length) {
-      socket.emit('error', 'No current question found.');
-      return;
+
+    try {
+      if (!session || !session.questions.length) {
+        socket.emit('error', 'No current question found.');
+        return;
+      }
+
+      const currentQuestion = session.questions[session.currentQuestionIndex];
+
+      socket.emit('new-question', {
+        question: currentQuestion,
+        index: session.currentQuestionIndex,
+        total: session.questions.length,
+      });
+    } catch (error: any) {
+      console.error(`Server error in websocket.controller at getCurrentQuestion: ${error}`)
+    } finally {
+      session!.nextQuestion();
     }
+  }
 
-    const currentQuestion = session.questions[session.currentQuestionIndex];
+  // HANDLE PLAYER ANSWER SUBMISSION
+  public submitAnswer(socket: Socket, sessionData: any, answer: any): void {
 
-    socket.emit('new-question', {
-      question: currentQuestion,
-      index: session.currentQuestionIndex,
-      total: session.questions.length,
-    });
+    console.log(sessionData, answer);
+
+    // FETCH GAME SESSION
+    const session = SessionManager.getSession(sessionData.sessionId);
+    const { questions, currentQuestionIndex } = sessionData;
+
+    // MAKE SURE SESSION IS VALID
+    if (!session) return;
+
+    // CHECK IF ANSWER IS CORRECT
+    if (answer === session.questions[currentQuestionIndex].correct) {
+      session.incrementScore(sessionData.id)
+    }
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER

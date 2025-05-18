@@ -8,12 +8,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 
 export default function HostPage() {
+  // STATE
+  const [error, setError] = useState('');
+
+  // CUSTOM HOOKS
   const router = useRouter();
   const { socket } = useWebSocket();
   const { setSessionId } = useSession();
   const { setIsHost, user } = useAuth();
   const { selectedQuiz } = useQuiz();
-  const [error, setError] = useState('');
 
   // CREATE A NEW GAME SESSION
   const createSession = () => {
@@ -35,6 +38,7 @@ export default function HostPage() {
     router.push('/dashboard/lobby');
   };
 
+  // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='mb-6 text-5xl font-bold'>Host Quiz</h1>
