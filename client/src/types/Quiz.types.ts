@@ -1,4 +1,6 @@
 // TYPE FOR A SINGLE QUIZ
+import { Dispatch, SetStateAction } from 'react';
+
 export type Quiz = {
   id: number;
   user_id: number;
@@ -12,8 +14,8 @@ export type Quiz = {
 
 // TYPE FOR AN INDIVIDUAL QUIZ QUESTION
 export type QuizQuestion = {
+  id: number;
   question: string;
-  description: string;
   options: string[];
   correct: string;
 };
@@ -41,4 +43,6 @@ export type QuizContextType = {
   selectedQuiz: Quiz | null;
   setCurrentIndex: (index: number) => void;
   setSelectedQuiz: (quiz: Quiz | null) => void;
+  lockedIn: boolean;
+  setLockedIn: Dispatch<SetStateAction<boolean>>;
 };

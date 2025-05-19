@@ -22,6 +22,7 @@ export default function QuizPage() {
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession } = useSession();
   const { user, isHost, setIsHost } = useAuth();
+  const { lockedIn, setLockedIn } = useQuiz();
   const router = useRouter();
 
   // EMIT NEW QUESTION REQUEST
@@ -36,12 +37,15 @@ export default function QuizPage() {
 
     // RECEIVE NEW QUESTION
     socket.on('new-question', (data) => {
+      console.log('new-question', lockedIn);
+      setLockedIn(false);
       setCurrentIndex(data.index);
       setCurrentQuestion(data.question);
       setTotalQuestions(data.total);
       setLoading(false);
     });
 
+    // TODO: ALERT() SOMETIMES COMES UP AFTER PLAYER LEAVES GAME, COMES BACK AND IS EJECTED AGAIN
     // PLAYER IS EJECTED BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');

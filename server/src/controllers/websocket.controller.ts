@@ -177,7 +177,6 @@ export class WebSocketController {
     if (session!.allPlayersAnswered()) {
       session!.nextQuestion();
       const next = session!.questions[session!.currentQuestionIndex];
-      console.log(next);
 
       if (next) {
         this.io.to(session!.sessionId).emit('new-question', {
