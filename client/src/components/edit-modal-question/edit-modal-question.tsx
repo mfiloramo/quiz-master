@@ -125,7 +125,7 @@ export default function EditModalQuestion({
                 updatedOptions[idx] = e.target.value;
                 setEditedOptions(updatedOptions);
               }}
-              className={`rounded p-3 ${
+              className={`rounded p-3 placeholder-slate-200 ${
                 idx === 0
                   ? 'bg-red-500'
                   : idx === 1

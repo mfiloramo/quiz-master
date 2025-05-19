@@ -175,21 +175,22 @@ export class WebSocketController {
     }
 
     if (session!.allPlayersAnswered()) {
-      session!.nextQuestion();
-      const next = session!.questions[session!.currentQuestionIndex];
+      setTimeout(() => {
+        session!.nextQuestion();
+        const next = session!.questions[session!.currentQuestionIndex];
 
-      if (next) {
-        this.io.to(session!.sessionId).emit('new-question', {
-          question: next,
-          index: session!.currentQuestionIndex,
-          total: session!.questions.length,
-        });
-      } else {
-        this.io.to(session!.sessionId).emit('session-ended');
-        SessionManager.deleteSession(session!.sessionId);
-      }
+        if (next) {
+          this.io.to(session!.sessionId).emit('new-question', {
+            question: next,
+            index: session!.currentQuestionIndex,
+            total: session!.questions.length,
+          });
+        } else {
+          this.io.to(session!.sessionId).emit('session-ended');
+          SessionManager.deleteSession(session!.sessionId);
+        }
+      }, 1500);
     }
-
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER

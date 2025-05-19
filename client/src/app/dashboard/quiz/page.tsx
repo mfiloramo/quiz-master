@@ -37,7 +37,6 @@ export default function QuizPage() {
 
     // RECEIVE NEW QUESTION
     socket.on('new-question', (data) => {
-      console.log('new-question', lockedIn);
       setLockedIn(false);
       setCurrentIndex(data.index);
       setCurrentQuestion(data.question);
