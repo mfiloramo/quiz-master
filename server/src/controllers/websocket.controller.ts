@@ -41,7 +41,7 @@ export class WebSocketController {
 
   // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId, playerId, username } = data;
+    const { playerId, username, sessionId } = data;
     const session = SessionManager.getSession(sessionId);
 
     if (!session) {
@@ -49,7 +49,7 @@ export class WebSocketController {
       return;
     }
 
-    // CHECK IF PLAYER HAS JOINED ALREADY
+    // ENABLE IN PROD: CHECK IF PLAYER HAS JOINED ALREADY
     // const nameExists = session.players.some((player: Player) => player.username === username);
     // if (nameExists) {
     //   socket.emit('error', 'Player with this username already joined the game.');
@@ -168,11 +168,16 @@ export class WebSocketController {
     const player = session!.getPlayer(playerId);
 
     // PREVENT DUPLICATE ANSWERS
-    if (!player || player.hasAnswered) return;
+    if (!player || player.hasAnswered) {
+      return;
+    } else {
+      player.hasAnswered = true;
+    }
 
     if (session!.allPlayersAnswered()) {
       session!.nextQuestion();
       const next = session!.questions[session!.currentQuestionIndex];
+      console.log(next);
 
       if (next) {
         this.io.to(session!.sessionId).emit('new-question', {

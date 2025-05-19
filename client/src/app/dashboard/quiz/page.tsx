@@ -36,14 +36,12 @@ export default function QuizPage() {
 
     // RECEIVE NEW QUESTION
     socket.on('new-question', (data) => {
-      console.log('new-question event received');
       setCurrentIndex(data.index);
       setCurrentQuestion(data.question);
       setTotalQuestions(data.total);
       setLoading(false);
     });
 
-    // TODO: ALERT() ONLY COMES UP AFTER PLAYER LEAVES GAME, COMES BACK AND IS EJECTED AGAIN
     // PLAYER IS EJECTED BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');

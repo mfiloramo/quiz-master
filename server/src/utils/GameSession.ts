@@ -59,10 +59,8 @@ export class GameSession {
 
   // ADVANCE TO NEXT QUESTION
   public nextQuestion(): void {
-    if (this.allPlayersAnswered()) {
-      this.currentQuestionIndex += 1;
-      this.resetAnswers();
-    }
+    this.currentQuestionIndex += 1;
+    this.resetAnswers();
   }
 
 
