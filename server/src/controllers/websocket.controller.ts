@@ -49,13 +49,14 @@ export class WebSocketController {
       return;
     }
 
-    // ENABLE IN PROD
+    // CHECK IF PLAYER HAS JOINED ALREADY
     // const nameExists = session.players.some((player: Player) => player.username === username);
     // if (nameExists) {
     //   socket.emit('error', 'Player with this username already joined the game.');
     //   return;
     // }
 
+    // INSTANTIATE NEW PLAYER
     const player = new Player(playerId!, username!, socket.id);
     session.addPlayer(player);
     socket.join(sessionId);
@@ -142,42 +143,49 @@ export class WebSocketController {
   public getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
     const session = SessionManager.getSession(sessionId);
 
-    try {
-      if (!session || !session.questions.length) {
-        socket.emit('error', 'No current question found.');
-        return;
-      }
-
-      const currentQuestion = session.questions[session.currentQuestionIndex];
-
-      socket.emit('new-question', {
-        question: currentQuestion,
-        index: session.currentQuestionIndex,
-        total: session.questions.length,
-      });
-    } catch (error: any) {
-      console.error(`Server error in websocket.controller at getCurrentQuestion: ${error}`)
-    } finally {
-      session!.nextQuestion();
+    if (!session || !session.questions.length) {
+      socket.emit('error', 'No current question found.');
+      return;
     }
+
+    const currentQuestion = session.questions[session.currentQuestionIndex];
+
+    socket.emit('new-question', {
+      question: currentQuestion,
+      index: session.currentQuestionIndex,
+      total: session.questions.length,
+    });
   }
 
+
   // HANDLE PLAYER ANSWER SUBMISSION
-  public submitAnswer(socket: Socket, sessionData: any, answer: any): void {
-
-    console.log(sessionData, answer);
-
+  public submitAnswer(socket: Socket, sessionData: any): void {
+    const { sessionId, playerId, answer } = sessionData;
     // FETCH GAME SESSION
-    const session = SessionManager.getSession(sessionData.sessionId);
-    const { questions, currentQuestionIndex } = sessionData;
+    const session = SessionManager.getSession(sessionId);
 
-    // MAKE SURE SESSION IS VALID
-    if (!session) return;
+    // FETCH PLAYER
+    const player = session!.getPlayer(playerId);
 
-    // CHECK IF ANSWER IS CORRECT
-    if (answer === session.questions[currentQuestionIndex].correct) {
-      session.incrementScore(sessionData.id)
+    // PREVENT DUPLICATE ANSWERS
+    if (!player || player.hasAnswered) return;
+
+    if (session!.allPlayersAnswered()) {
+      session!.nextQuestion();
+      const next = session!.questions[session!.currentQuestionIndex];
+
+      if (next) {
+        this.io.to(session!.sessionId).emit('new-question', {
+          question: next,
+          index: session!.currentQuestionIndex,
+          total: session!.questions.length,
+        });
+      } else {
+        this.io.to(session!.sessionId).emit('session-ended');
+        SessionManager.deleteSession(session!.sessionId);
+      }
     }
+
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER

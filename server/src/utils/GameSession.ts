@@ -59,11 +59,12 @@ export class GameSession {
 
   // ADVANCE TO NEXT QUESTION
   public nextQuestion(): void {
-    if (this.players.every((player: Player) => (player.hasAnswered = true))) {
+    if (this.allPlayersAnswered()) {
       this.currentQuestionIndex += 1;
       this.resetAnswers();
     }
   }
+
 
   // CHECK IF ALL PLAYERS ANSWERED
   public allPlayersAnswered(): boolean {

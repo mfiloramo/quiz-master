@@ -36,12 +36,14 @@ export default function QuizPage() {
 
     // RECEIVE NEW QUESTION
     socket.on('new-question', (data) => {
+      console.log('new-question event received');
       setCurrentIndex(data.index);
       setCurrentQuestion(data.question);
       setTotalQuestions(data.total);
       setLoading(false);
     });
 
+    // TODO: ALERT() ONLY COMES UP AFTER PLAYER LEAVES GAME, COMES BACK AND IS EJECTED AGAIN
     // PLAYER IS EJECTED BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
@@ -80,7 +82,11 @@ export default function QuizPage() {
 
   // HANDLER FUNCTIONS
   const handleAnswer = (answer: string): void => {
-    socket?.emit('submit-answer', { socket, user, answer });
+    socket?.emit('submit-answer', {
+      sessionId,
+      playerId: user!.id,
+      answer,
+    });
     setLoading(true);
     setTimeout(() => setLoading(false), 1500);
     if (isHost) {

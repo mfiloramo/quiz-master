@@ -1,4 +1,4 @@
-// TYPES FOR A SINGLE QUIZ
+// TYPE FOR A SINGLE QUIZ
 export type Quiz = {
   id: number;
   user_id: number;
@@ -10,7 +10,7 @@ export type Quiz = {
   title: string;
 };
 
-// TYPES FOR AN INDIVIDUAL QUIZ QUESTION
+// TYPE FOR AN INDIVIDUAL QUIZ QUESTION
 export type QuizQuestion = {
   question: string;
   description: string;
@@ -18,7 +18,7 @@ export type QuizQuestion = {
   correct: string;
 };
 
-// TYPES FOR DISPLAYING A QUIZ CARD IN LIBRARY
+// TYPE FOR DISPLAYING A QUIZ CARD IN LIBRARY
 export type QuizCardProps = {
   quiz: Quiz;
   selected: boolean;
@@ -26,7 +26,7 @@ export type QuizCardProps = {
   onDelete: (quizId: number) => void;
 };
 
-// TYPES FOR THE QUIZ MODULE (DURING GAMEPLAY)
+// TYPE FOR THE QUIZ MODULE (DURING GAMEPLAY)
 export type QuizModuleProps = {
   onSubmit: (option: string) => void;
   question: QuizQuestion;
@@ -34,7 +34,7 @@ export type QuizModuleProps = {
   totalQuestions: number;
 };
 
-// TYPES FOR QUIZ CONTEXT STATE
+// TYPE FOR QUIZ CONTEXT STATE
 export type QuizContextType = {
   currentIndex: number;
   resetQuiz: () => void;

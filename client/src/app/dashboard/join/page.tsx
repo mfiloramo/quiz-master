@@ -55,7 +55,7 @@ export default function JoinPage() {
     });
 
     // ON FAILURE, DISPLAY ERROR
-    socket.once('error', (err: string) => {
+    socket.on('error', (err: string) => {
       setError(err || 'Unable to join the session.');
     });
   };
