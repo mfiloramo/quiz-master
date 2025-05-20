@@ -10,13 +10,10 @@ import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 
 export default function LobbyPage() {
-  // STATE
-  const [players, setPlayers] = useState<Player[]>([]);
-
   // CUSTOM HOOKS
   const router = useRouter();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession } = useSession();
+  const { players, setPlayers, clearSession, sessionId } = useSession();
   const { isHost } = useAuth();
   const { selectedQuiz, resetQuiz } = useQuiz();
 

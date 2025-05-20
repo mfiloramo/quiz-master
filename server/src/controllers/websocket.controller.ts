@@ -160,6 +160,13 @@ export class WebSocketController {
     });
   }
 
+  // GET PLAYER LIST FOR CLIENT THAT MISSED INITIAL BROADCAST
+  public getPlayers(socket: Socket, { sessionId }: { sessionId: string }): void {
+    const session = SessionManager.getSession(sessionId);
+    if (!session) return;
+    socket.emit('player-joined', session.players); // SEND LATEST PLAYER LIST
+  }
+
   // HANDLE PLAYER ANSWER SUBMISSION
   public submitAnswer(socket: Socket, sessionData: any): void {
     const { sessionId, answer } = sessionData;
@@ -176,6 +183,13 @@ export class WebSocketController {
       player.hasAnswered = true;
     }
 
+    // INCREMENT PLAYER SCORE IF CORRECT
+    if (answer === session?.questions[session?.currentQuestionIndex].correct) {
+      session?.incrementScore(player.id);
+      this.io.to(sessionId).emit('player-joined', session!.players);
+    }
+
+    // ADVANCE TO NEXT QUESTION ONCE ALL PLAYERS ANSWER
     if (session!.allPlayersAnswered()) {
       setTimeout(() => {
         session!.nextQuestion();
@@ -197,16 +211,17 @@ export class WebSocketController {
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER
   public handleEjectPlayer(socket: Socket, { sessionId, id }: { sessionId: string; id: string }): void {
-    console.log('handleEjectPlayer:', {sessionId, id})
-
+    // GET SESSION
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
+    // CHECK IF USER IS HOST
     if (socket.id !== session.hostSocketId) {
       socket.emit('error', 'Only the host can eject players.');
       return;
     }
 
+    // GET PLAYER
     const player = session.getPlayerById(id);
     if (!player) return;
 
