@@ -26,7 +26,7 @@ export default function JoinPage() {
       setError(err || 'Failed to join session.');
     };
 
-    // INITIALIZE SOCKET EVENT LISTENERS
+    // INITIALIZE SOCKET EVENT LISTENERS FOR ERROR HANDLING
     socket.on('error', handleError);
 
     return () => {
@@ -41,11 +41,13 @@ export default function JoinPage() {
       return;
     }
 
+    console.log(user);
+
     // EMIT JOIN REQUEST
     socket.emit('join-session', {
-      sessionId: sessionIdInput.trim().toUpperCase(),
-      username: user?.username,
-      playerId: socket.id,
+      id: user!.id,
+      username: user!.username,
+      sessionId: sessionIdInput,
     });
 
     // ON SUCCESSFUL JOIN, SAVE SESSION ID AND REDIRECT
@@ -55,7 +57,7 @@ export default function JoinPage() {
     });
 
     // ON FAILURE, DISPLAY ERROR
-    socket.once('error', (err: string) => {
+    socket.on('error', (err: string) => {
       setError(err || 'Unable to join the session.');
     });
   };

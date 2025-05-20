@@ -17,8 +17,8 @@ export default function LobbyPage() {
   const router = useRouter();
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession } = useSession();
-  const { isHost, user } = useAuth();
-  const { selectedQuiz, resetQuiz, currentIndex } = useQuiz();
+  const { isHost } = useAuth();
+  const { selectedQuiz, resetQuiz } = useQuiz();
 
   // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function LobbyPage() {
     socket.on('players-list', setPlayers);
 
     socket.on('ejected-by-host', () => {
-      alert('You were removed from the session by the host.'); // TODO: NOT POPPING UP ON PLAYER EJECTION
+      alert('You were removed from the session by the host.'); // TODO: ALERT() NOT POPPING UP ON PLAYER EJECTION
       resetQuiz(); // RESET QUIZ STATE ON EJECTION
       disconnect();
       router.push('/dashboard');
@@ -72,9 +72,9 @@ export default function LobbyPage() {
   };
 
   // EJECT SPECIFIC PLAYER
-  const ejectPlayer = (playerId: string): void => {
+  const ejectPlayer = (id: string): void => {
     if (!isHost) return;
-    socket?.emit('eject-player', { sessionId, playerId });
+    socket?.emit('eject-player', { sessionId, id });
   };
 
   // RENDER PAGE

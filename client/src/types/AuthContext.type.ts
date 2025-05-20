@@ -1,6 +1,6 @@
 // DECODED USER TYPE (MATCHES JWT PAYLOAD STRUCTURE)
 export type DecodedUser = {
-  id: number;
+  id: number | string;
   username: string;
   email: string;
   isActive: boolean;

@@ -9,6 +9,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   // PROVIDER STATE
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [lockedIn, setLockedIn] = useState<boolean>(false);
 
   // PROVIDER HANDLER FUNCTIONS
   const setQuiz = (quiz: Quiz | null): void => {
@@ -22,7 +23,15 @@ export function QuizProvider({ children }: { children: ReactNode }) {
 
   return (
     <QuizContext.Provider
-      value={{ selectedQuiz, setSelectedQuiz: setQuiz, currentIndex, setCurrentIndex, resetQuiz }}
+      value={{
+        selectedQuiz,
+        setSelectedQuiz: setQuiz,
+        currentIndex,
+        setCurrentIndex,
+        resetQuiz,
+        lockedIn,
+        setLockedIn,
+      }}
     >
       {children}
     </QuizContext.Provider>
