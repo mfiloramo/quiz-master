@@ -54,7 +54,6 @@ export class GameSession {
     if (player) {
       player.score += 1;
     }
-    console.log(this.players);
   }
 
   // RESET ANSWER FLAGS
