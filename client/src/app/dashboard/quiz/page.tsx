@@ -85,7 +85,7 @@ export default function QuizPage() {
   const handleAnswer = (answer: string): void => {
     socket?.emit('submit-answer', {
       sessionId,
-      playerId: user!.id,
+      id: user!.id,
       answer,
     });
     setLoading(true);

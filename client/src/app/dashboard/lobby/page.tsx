@@ -72,9 +72,9 @@ export default function LobbyPage() {
   };
 
   // EJECT SPECIFIC PLAYER
-  const ejectPlayer = (playerId: string): void => {
+  const ejectPlayer = (id: string): void => {
     if (!isHost) return;
-    socket?.emit('eject-player', { sessionId, playerId });
+    socket?.emit('eject-player', { sessionId, id });
   };
 
   // RENDER PAGE

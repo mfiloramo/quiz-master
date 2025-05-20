@@ -4,6 +4,7 @@ import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 import { SessionManager } from '../utils/SessionManager';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
+import user from '../models/User';
 
 
 export class WebSocketController {
@@ -40,8 +41,8 @@ export class WebSocketController {
   }
 
   // JOIN EXISTING GAME SESSION
-  public joinSession(socket: Socket, data: GameSessionAttributes): void {
-    const { playerId, username, sessionId } = data;
+  public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
+    const { id, sessionId, username } = data;
     const session = SessionManager.getSession(sessionId);
 
     if (!session) {
@@ -49,7 +50,7 @@ export class WebSocketController {
       return;
     }
 
-    // ENABLE IN PROD: CHECK IF PLAYER HAS JOINED ALREADY
+    // TODO: ENABLE IN PROD -- CHECK IF PLAYER HAS ALREADY JOINED
     // const nameExists = session.players.some((player: Player) => player.username === username);
     // if (nameExists) {
     //   socket.emit('error', 'Player with this username already joined the game.');
@@ -57,7 +58,9 @@ export class WebSocketController {
     // }
 
     // INSTANTIATE NEW PLAYER
-    const player = new Player(playerId!, username!, socket.id);
+    const player = new Player(id, socket.id, username);
+
+    // ADD PLAYER TO SESSION AND JOIN
     session.addPlayer(player);
     socket.join(sessionId);
 
@@ -157,15 +160,14 @@ export class WebSocketController {
     });
   }
 
-
   // HANDLE PLAYER ANSWER SUBMISSION
   public submitAnswer(socket: Socket, sessionData: any): void {
-    const { sessionId, playerId, answer } = sessionData;
+    const { sessionId, answer } = sessionData;
     // FETCH GAME SESSION
     const session = SessionManager.getSession(sessionId);
 
     // FETCH PLAYER
-    const player = session!.getPlayer(playerId);
+    const player = session!.getPlayerBySocketId(socket.id);
 
     // PREVENT DUPLICATE ANSWERS
     if (!player || player.hasAnswered) {
@@ -189,12 +191,12 @@ export class WebSocketController {
           this.io.to(session!.sessionId).emit('session-ended');
           SessionManager.deleteSession(session!.sessionId);
         }
-      }, 1500);
+      }, 1000);
     }
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER
-  public handleEjectPlayer(socket: Socket, { sessionId, playerId }: { sessionId: string; playerId: string }): void {
+  public handleEjectPlayer(socket: Socket, { sessionId }: { sessionId: string; id: string }): void {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
@@ -203,14 +205,14 @@ export class WebSocketController {
       return;
     }
 
-    const player = session.getPlayer(playerId);
+    const player = session.getPlayerBySocketId(socket.id);
     if (!player) return;
 
     // SEND EJECTION TO PLAYER
     this.io.to(player.socketId).emit('ejected-by-host');
 
     // REMOVE FROM SESSION
-    session.removePlayerByPlayerId(playerId);
+    session.removePlayerByPlayerId(id);
 
     // BROADCAST UPDATED PLAYER LIST
     this.io.to(sessionId).emit('player-joined', session.players);
