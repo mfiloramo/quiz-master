@@ -31,21 +31,26 @@ export class GameSession {
   }
 
   // REMOVE PLAYER BY PLAYER ID
-  public removePlayerByPlayerId(playerId: string): boolean {
+  public removePlayerByPlayerId(id: string): boolean {
     const initialLength: number = this.players.length;
     this.players = this.players.filter((player: Player): boolean =>
-      player.id !== playerId);
+      player.id !== id);
     return this.players.length < initialLength;
   }
 
   // GET PLAYER BY ID
-  public getPlayer(playerId: string): Player | undefined {
-    return this.players.find(player => player.id === playerId);
+  public getPlayerById(id: string): Player | undefined {
+    return this.players.find(player => player.id === id);
+  }
+
+  // GET PLAYER BY SOCKET ID
+  public getPlayerBySocketId(id: string): Player | undefined {
+    return this.players.find(player => player.socketId === id);
   }
 
   // INCREMENT PLAYER SCORE
-  public incrementScore(playerId: string) {
-    const player = this.getPlayer(playerId);
+  public incrementScore(id: string) {
+    const player = this.getPlayerById(id);
     if (player) {
       player.score += 1;
     }
@@ -59,11 +64,10 @@ export class GameSession {
 
   // ADVANCE TO NEXT QUESTION
   public nextQuestion(): void {
-    if (this.players.every((player: Player) => (player.hasAnswered = true))) {
-      this.currentQuestionIndex += 1;
-      this.resetAnswers();
-    }
+    this.currentQuestionIndex += 1;
+    this.resetAnswers();
   }
+
 
   // CHECK IF ALL PLAYERS ANSWERED
   public allPlayersAnswered(): boolean {

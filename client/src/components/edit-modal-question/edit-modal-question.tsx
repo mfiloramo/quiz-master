@@ -114,7 +114,7 @@ export default function EditModalQuestion({
         />
 
         {/* OPTIONS INPUTS */}
-        <div className='mb-6 grid grid-cols-2 gap-4'>
+        <div className='mb-6 grid grid-cols-2 gap-4 text-white'>
           {editedOptions.map((option, idx) => (
             <input
               key={idx}
@@ -125,7 +125,7 @@ export default function EditModalQuestion({
                 updatedOptions[idx] = e.target.value;
                 setEditedOptions(updatedOptions);
               }}
-              className={`rounded p-3 ${
+              className={`rounded p-3 placeholder-slate-200 ${
                 idx === 0
                   ? 'bg-red-500'
                   : idx === 1
