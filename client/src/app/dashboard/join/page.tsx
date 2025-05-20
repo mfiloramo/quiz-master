@@ -41,8 +41,6 @@ export default function JoinPage() {
       return;
     }
 
-    console.log(user);
-
     // EMIT JOIN REQUEST
     socket.emit('join-session', {
       id: user!.id,

@@ -196,7 +196,9 @@ export class WebSocketController {
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER
-  public handleEjectPlayer(socket: Socket, { sessionId }: { sessionId: string; id: string }): void {
+  public handleEjectPlayer(socket: Socket, { sessionId, id }: { sessionId: string; id: string }): void {
+    console.log('handleEjectPlayer:', {sessionId, id})
+
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
@@ -205,7 +207,7 @@ export class WebSocketController {
       return;
     }
 
-    const player = session.getPlayerBySocketId(socket.id);
+    const player = session.getPlayerById(id);
     if (!player) return;
 
     // SEND EJECTION TO PLAYER
