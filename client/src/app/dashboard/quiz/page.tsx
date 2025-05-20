@@ -9,33 +9,39 @@ import { QuizQuestion } from '@/types/Quiz.types';
 import QuizModule from '@/components/quiz-module/quiz-module';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { Player } from '@/interfaces/PlayerListProps.interface';
 
 export default function QuizPage() {
-  // STATE
+  // LOCAL STATE
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // CUSTOM HOOKS
-  const { currentIndex, setCurrentIndex, resetQuiz } = useQuiz();
+  const { currentIndex, setCurrentIndex, resetQuiz, lockedIn, setLockedIn } = useQuiz();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession } = useSession();
+  const { sessionId, clearSession, players, setPlayers } = useSession();
   const { user, isHost, setIsHost } = useAuth();
-  const { lockedIn, setLockedIn } = useQuiz();
   const router = useRouter();
 
-  // EMIT NEW QUESTION REQUEST
+  // REQUEST QUESTION ON INITIAL MOUNT
   useEffect(() => {
     if (!socket || !sessionId) return;
     socket.emit('get-current-question', { sessionId });
   }, [socket, sessionId]);
 
-  // INITIALIZE SOCKET EVENT LISTENERS
+  // REQUEST FULL PLAYER LIST ON INITIAL MOUNT (COVERS MISSED JOIN EMITS)
+  useEffect(() => {
+    if (!socket || !sessionId) return;
+    socket.emit('get-players', { sessionId });
+  }, [socket, sessionId]);
+
+  // SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket) return;
 
-    // RECEIVE NEW QUESTION
+    // RECEIVE QUESTION
     socket.on('new-question', (data) => {
       setLockedIn(false);
       setCurrentIndex(data.index);
@@ -44,8 +50,12 @@ export default function QuizPage() {
       setLoading(false);
     });
 
-    // TODO: ALERT() SOMETIMES COMES UP AFTER PLAYER LEAVES GAME, COMES BACK AND IS EJECTED AGAIN
-    // PLAYER IS EJECTED BY HOST
+    // RECEIVE UPDATED PLAYER LIST
+    socket.on('player-joined', (updatedPlayers: Player[]) => {
+      setPlayers(updatedPlayers);
+    });
+
+    // PLAYER EJECTED BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
       disconnect();
@@ -54,7 +64,7 @@ export default function QuizPage() {
       router.push('/dashboard');
     });
 
-    // GAME SESSION ENS
+    // SESSION ENDED BY HOST DISCONNECT
     socket.on('session-ended', () => {
       alert('Session has ended.');
       disconnect();
@@ -63,25 +73,16 @@ export default function QuizPage() {
       router.push('/dashboard/library');
     });
 
+    // CLEANUP SOCKET LISTENERS
     return () => {
       socket.off('new-question');
+      socket.off('player-joined');
       socket.off('session-ended');
       socket.off('ejected-by-host');
     };
-  }, [socket, resetQuiz, router, disconnect, clearSession]);
+  }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex]);
 
-  // GET CURRENT QUESTION
-  useEffect(() => {
-    if (!socket || !sessionId) return;
-
-    const timeout = setTimeout(() => {
-      socket.emit('get-current-question', { sessionId });
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [socket, sessionId]);
-
-  // HANDLER FUNCTIONS
+  // HANDLE ANSWER SUBMISSION
   const handleAnswer = (answer: string): void => {
     socket?.emit('submit-answer', {
       sessionId,
@@ -95,6 +96,7 @@ export default function QuizPage() {
     }
   };
 
+  // HANDLE USER LEAVING
   const handleLeave = (): void => {
     disconnect();
     resetQuiz();
@@ -103,7 +105,7 @@ export default function QuizPage() {
     router.push('/dashboard');
   };
 
-  // RENDER PAGE
+  // RENDER
   return (
     <div className='flex flex-col items-center justify-center'>
       {currentQuestion ? (
@@ -119,6 +121,20 @@ export default function QuizPage() {
 
       {loading && <p className='mt-4 text-black'>Waiting for next question...</p>}
 
+      {/* PLAYER SCOREBOARD */}
+      <div className='flex flex-wrap items-center justify-center gap-4 px-12'>
+        {players?.map((player: Player) => (
+          <div
+            key={player.id}
+            className='mt-4 flex flex-col items-center rounded-xl bg-sky-200 p-4 text-black shadow-xl'
+          >
+            <div className='text-2xl font-extrabold'>{player.username}</div>
+            <div className='text-lg'>Score: {player.score}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* LEAVE BUTTON */}
       <motion.button
         className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
         onClick={handleLeave}

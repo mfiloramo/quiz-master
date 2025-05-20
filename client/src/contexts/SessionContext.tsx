@@ -2,27 +2,33 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { SessionContextType } from '@/types/SessionContext.type';
+import { Player } from '@/interfaces/PlayerListProps.interface';
 
 // CONTEXT INSTANCE
 const SessionContext = createContext<SessionContextType | null>(null);
 
 // PROVIDER COMPONENT
 export function SessionProvider({ children }: { children: ReactNode }) {
-  // PROVIDER STATE
+  // LOCAL STATES
   const [sessionId, setSessionIdState] = useState<string | null>(null);
+  const [players, setPlayersState] = useState<Player[]>([]);
 
-  // TODO: IS THIS EXTRA LAYER (METHOD) NEEDED HERE?
-  // PROVIDER HANDLER FUNCTIONS
+  // HANDLER FUNCTIONS
   const setSessionId = (id: string | null) => {
     setSessionIdState(id);
   };
 
+  const setPlayers = (updatedPlayers: Player[]) => {
+    setPlayersState(updatedPlayers);
+  };
+
   const clearSession = () => {
     setSessionIdState(null);
+    setPlayersState([]);
   };
 
   return (
-    <SessionContext.Provider value={{ sessionId, setSessionId, clearSession }}>
+    <SessionContext.Provider value={{ sessionId, setSessionId, clearSession, players, setPlayers }}>
       {children}
     </SessionContext.Provider>
   );
