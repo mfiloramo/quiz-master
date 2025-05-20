@@ -4,6 +4,7 @@ import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 import { SessionManager } from '../utils/SessionManager';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
+import user from '../models/User';
 
 
 export class WebSocketController {
@@ -40,8 +41,8 @@ export class WebSocketController {
   }
 
   // JOIN EXISTING GAME SESSION
-  public joinSession(socket: Socket, data: GameSessionAttributes): void {
-    const { sessionId, playerId, username } = data;
+  public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
+    const { id, sessionId, username } = data;
     const session = SessionManager.getSession(sessionId);
 
     if (!session) {
@@ -49,14 +50,17 @@ export class WebSocketController {
       return;
     }
 
-    // ENABLE IN PROD
+    // TODO: ENABLE IN PROD -- CHECK IF PLAYER HAS ALREADY JOINED
     // const nameExists = session.players.some((player: Player) => player.username === username);
     // if (nameExists) {
     //   socket.emit('error', 'Player with this username already joined the game.');
     //   return;
     // }
 
-    const player = new Player(playerId!, username!, socket.id);
+    // INSTANTIATE NEW PLAYER
+    const player = new Player(id, socket.id, username);
+
+    // ADD PLAYER TO SESSION AND JOIN
     session.addPlayer(player);
     socket.join(sessionId);
 
@@ -142,46 +146,57 @@ export class WebSocketController {
   public getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
     const session = SessionManager.getSession(sessionId);
 
-    try {
-      if (!session || !session.questions.length) {
-        socket.emit('error', 'No current question found.');
-        return;
-      }
-
-      const currentQuestion = session.questions[session.currentQuestionIndex];
-
-      socket.emit('new-question', {
-        question: currentQuestion,
-        index: session.currentQuestionIndex,
-        total: session.questions.length,
-      });
-    } catch (error: any) {
-      console.error(`Server error in websocket.controller at getCurrentQuestion: ${error}`)
-    } finally {
-      session!.nextQuestion();
+    if (!session || !session.questions.length) {
+      socket.emit('error', 'No current question found.');
+      return;
     }
+
+    const currentQuestion = session.questions[session.currentQuestionIndex];
+
+    socket.emit('new-question', {
+      question: currentQuestion,
+      index: session.currentQuestionIndex,
+      total: session.questions.length,
+    });
   }
 
   // HANDLE PLAYER ANSWER SUBMISSION
-  public submitAnswer(socket: Socket, sessionData: any, answer: any): void {
-
-    console.log(sessionData, answer);
-
+  public submitAnswer(socket: Socket, sessionData: any): void {
+    const { sessionId, answer } = sessionData;
     // FETCH GAME SESSION
-    const session = SessionManager.getSession(sessionData.sessionId);
-    const { questions, currentQuestionIndex } = sessionData;
+    const session = SessionManager.getSession(sessionId);
 
-    // MAKE SURE SESSION IS VALID
-    if (!session) return;
+    // FETCH PLAYER
+    const player = session!.getPlayerBySocketId(socket.id);
 
-    // CHECK IF ANSWER IS CORRECT
-    if (answer === session.questions[currentQuestionIndex].correct) {
-      session.incrementScore(sessionData.id)
+    // PREVENT DUPLICATE ANSWERS
+    if (!player || player.hasAnswered) {
+      return;
+    } else {
+      player.hasAnswered = true;
+    }
+
+    if (session!.allPlayersAnswered()) {
+      setTimeout(() => {
+        session!.nextQuestion();
+        const next = session!.questions[session!.currentQuestionIndex];
+
+        if (next) {
+          this.io.to(session!.sessionId).emit('new-question', {
+            question: next,
+            index: session!.currentQuestionIndex,
+            total: session!.questions.length,
+          });
+        } else {
+          this.io.to(session!.sessionId).emit('session-ended');
+          SessionManager.deleteSession(session!.sessionId);
+        }
+      }, 1000);
     }
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER
-  public handleEjectPlayer(socket: Socket, { sessionId, playerId }: { sessionId: string; playerId: string }): void {
+  public handleEjectPlayer(socket: Socket, { sessionId }: { sessionId: string; id: string }): void {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
@@ -190,14 +205,14 @@ export class WebSocketController {
       return;
     }
 
-    const player = session.getPlayer(playerId);
+    const player = session.getPlayerBySocketId(socket.id);
     if (!player) return;
 
     // SEND EJECTION TO PLAYER
     this.io.to(player.socketId).emit('ejected-by-host');
 
     // REMOVE FROM SESSION
-    session.removePlayerByPlayerId(playerId);
+    session.removePlayerByPlayerId(id);
 
     // BROADCAST UPDATED PLAYER LIST
     this.io.to(sessionId).emit('player-joined', session.players);

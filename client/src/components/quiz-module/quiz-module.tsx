@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { QuizModuleProps } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
+import { useQuiz } from '@/contexts/QuizContext';
 
 const colorMap = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
@@ -14,7 +15,9 @@ export default function QuizModule({
 }: QuizModuleProps) {
   // STATE
   const [selected, setSelected] = useState<string | null>(null);
-  const [lockedIn, setLockedIn] = useState(false);
+
+  // CUSTOM HOOKS
+  const { lockedIn, setLockedIn } = useQuiz();
 
   // HANDLER FUNCTIONS
   const handleClick = (option: string) => {
