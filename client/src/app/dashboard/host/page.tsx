@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 
 export default function HostPage() {
-  // STATE
+  // LOCAL STATE
   const [error, setError] = useState('');
 
   // CUSTOM HOOKS

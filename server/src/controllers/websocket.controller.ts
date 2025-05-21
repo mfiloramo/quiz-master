@@ -169,11 +169,11 @@ export class WebSocketController {
 
   // HANDLE PLAYER ANSWER SUBMISSION
   public submitAnswer(socket: Socket, sessionData: any): void {
+    // DESTRUCTURE SESSION DATA
     const { sessionId, answer } = sessionData;
-    // FETCH GAME SESSION
-    const session = SessionManager.getSession(sessionId);
 
-    // FETCH PLAYER
+    // FETCH GAME SESSION & PLAYER
+    const session = SessionManager.getSession(sessionId);
     const player = session!.getPlayerBySocketId(socket.id);
 
     // PREVENT DUPLICATE ANSWERS
