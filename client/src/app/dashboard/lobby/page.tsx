@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
-import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 
 export default function LobbyPage() {
@@ -29,14 +28,12 @@ export default function LobbyPage() {
 
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
-
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.'); // TODO: ALERT() NOT POPPING UP ON PLAYER EJECTION
       resetQuiz(); // RESET QUIZ STATE ON EJECTION
       disconnect();
       router.push('/dashboard');
     });
-
     socket.on('session-ended', () => {
       alert('Host disconnected. Session ended.');
       resetQuiz(); // RESET QUIZ STATE ON SESSION END
