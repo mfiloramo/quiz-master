@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useSession } from '@/contexts/SessionContext';
-import { QuizQuestion } from '@/types/Quiz.types';
-import QuizModule from '@/components/quiz-module/quiz-module';
-import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import QuizModule from '@/components/quiz-module/quiz-module';
+import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
+import { motion } from 'framer-motion';
 
 export default function QuizPage() {
   // LOCAL STATE
@@ -19,10 +19,10 @@ export default function QuizPage() {
   const [error, setError] = useState<string | null>(null);
 
   // CUSTOM HOOKS
-  const { currentIndex, setCurrentIndex, resetQuiz, lockedIn, setLockedIn } = useQuiz();
+  const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession, players, setPlayers } = useSession();
-  const { user, isHost, setIsHost } = useAuth();
+  const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
   const router = useRouter();
 
   // REQUEST QUESTION ON INITIAL MOUNT
@@ -31,7 +31,7 @@ export default function QuizPage() {
     socket.emit('get-current-question', { sessionId });
   }, [socket, sessionId]);
 
-  // REQUEST FULL PLAYER LIST ON INITIAL MOUNT (COVERS MISSED JOIN EMITS)
+  // REQUEST FULL PLAYER LIST ON INITIAL MOUNT (FOR MISSED JOIN EMITS)
   useEffect(() => {
     if (!socket || !sessionId) return;
     socket.emit('get-players', { sessionId });

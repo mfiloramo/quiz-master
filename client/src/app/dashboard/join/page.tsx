@@ -6,9 +6,11 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from '@/contexts/SessionContext';
 import { motion } from 'framer-motion';
+import Leaderboard from '@/components/leaderboard/Leaderboard';
+import { Player } from '@/interfaces/PlayerListProps.interface';
 
 export default function JoinPage() {
-  // STATE
+  // LOCAL STATE
   const [sessionIdInput, setSessionIdInput] = useState('');
   const [error, setError] = useState('');
 
@@ -80,6 +82,10 @@ export default function JoinPage() {
       >
         Join Session
       </motion.button>
+
+      {/* LEADERBOARD (STUB) */}
+      <Leaderboard />
+
       {error && <p className='text-red-500'>{error}</p>}
     </div>
   );

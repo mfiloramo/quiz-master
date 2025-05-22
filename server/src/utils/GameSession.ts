@@ -67,7 +67,6 @@ export class GameSession {
     this.resetAnswers();
   }
 
-
   // CHECK IF ALL PLAYERS ANSWERED
   public allPlayersAnswered(): boolean {
     return this.players.every(player => player.hasAnswered);
