@@ -28,14 +28,12 @@ export default function LobbyPage() {
 
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
-
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.'); // TODO: ALERT() NOT POPPING UP ON PLAYER EJECTION
       resetQuiz(); // RESET QUIZ STATE ON EJECTION
       disconnect();
       router.push('/dashboard');
     });
-
     socket.on('session-ended', () => {
       alert('Host disconnected. Session ended.');
       resetQuiz(); // RESET QUIZ STATE ON SESSION END
