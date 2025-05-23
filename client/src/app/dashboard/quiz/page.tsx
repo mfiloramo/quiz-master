@@ -10,6 +10,7 @@ import QuizModule from '@/components/quiz-module/quiz-module';
 import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
+import Leaderboard from '@/components/leaderboard/Leaderboard';
 
 export default function QuizPage() {
   // LOCAL STATE
@@ -108,7 +109,7 @@ export default function QuizPage() {
   // RENDER
   return (
     <div className='flex flex-col items-center justify-center'>
-      {currentQuestion ? (
+      {currentQuestion && !isHost ? (
         <QuizModule
           question={currentQuestion}
           questionNumber={currentIndex + 1}
@@ -116,25 +117,16 @@ export default function QuizPage() {
           onSubmit={handleAnswer}
         />
       ) : (
+        // TODO: ADD LOGIC TO DIFFERENTIATE BETWEEN 'WAITING' NOTICE AND LEADERBOARD
         <div className='text-white'>Waiting for host to start the quiz...</div>
       )}
 
       {loading && <p className='mt-4 text-black'>Waiting for next question...</p>}
 
       {/* PLAYER SCOREBOARD */}
-      <div className='flex flex-wrap items-center justify-center gap-4 px-12'>
-        {players?.map((player: Player) => (
-          <div
-            key={player.id}
-            className='mt-4 flex flex-col items-center rounded-xl bg-sky-200 p-4 text-black shadow-xl'
-          >
-            <div className='text-2xl font-extrabold'>{player.username}</div>
-            <div className='text-lg'>Score: {player.score}</div>
-          </div>
-        ))}
-      </div>
+      {isHost && <Leaderboard />}
 
-      {/* LEAVE BUTTON */}
+      {/* LEAVE/END GAME BUTTON */}
       <motion.button
         className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
         onClick={handleLeave}
@@ -144,7 +136,7 @@ export default function QuizPage() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        Leave Game
+        {isHost ? 'End Game' : 'Leave Game'}
       </motion.button>
 
       {error && <p className='mt-4 text-red-200'>{error}</p>}

@@ -15,15 +15,14 @@ export default function Leaderboard(): ReactElement {
 
   // RENDER COMPONENT
   return (
-    <div className={'my-4 flex w-[30vw] flex-col rounded-md bg-slate-100 p-4 shadow-xl'}>
-      {stubPlayers.map((player: Player, index: number) => (
+    <div className='flex flex-wrap items-center justify-center gap-4 px-12'>
+      {players?.map((player: Player) => (
         <div
-          key={index}
-          className={'my-1 flex flex-row justify-around rounded-md bg-slate-300 p-4'}
+          key={player.id}
+          className='mt-4 flex flex-col items-center rounded-xl bg-sky-200 p-4 text-black shadow-xl'
         >
-          {player.id}
-          {player.username}
-          {player.score}
+          <div className='text-2xl font-extrabold'>{player.username}</div>
+          <div className='text-lg'>Score: {player.score}</div>
         </div>
       ))}
     </div>
