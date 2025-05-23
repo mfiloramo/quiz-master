@@ -71,7 +71,7 @@ export default function QuizPage() {
       disconnect();
       resetQuiz();
       clearSession();
-      router.push('/dashboard/library');
+      router.push('/dashboard/');
     });
 
     // CLEANUP SOCKET LISTENERS
