@@ -1,18 +1,16 @@
 import { Socket, Server } from 'socket.io';
-import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
-import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 import { SessionManager } from '../utils/SessionManager';
+import { GameSession } from '../utils/GameSession';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
-import user from '../models/User';
-import { GameSession } from '../utils/GameSession';
+import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
+import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
 // MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
   constructor(private io: Server) {}
 
   /** PUBLIC METHODS **/
-
   // CREATE NEW GAME SESSION
   public createSession(socket: Socket, data: GameSessionAttributes): void {
     // DESTRUCTURE SESSION DATA
@@ -260,7 +258,6 @@ export class WebSocketController {
   }
 
   /** PRIVATE METHODS **/
-
   // EMIT QUESTION TO ALL CLIENTS AND SET FAILSAFE TIMEOUT
   private emitQuestionWithTimeout(session: GameSession): void {
     const sessionId = session.sessionId;
