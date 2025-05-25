@@ -121,9 +121,6 @@ export default function QuizPage() {
         <div className='text-white'>Waiting for players to join...</div>
       )}
 
-      {/* DISPLAY LOADING STATUS*/}
-      {loading && <p className='mt-4 text-black'>Waiting for next question...</p>}
-
       {/* PLAYER SCOREBOARD */}
       {isHost && <Leaderboard />}
 
