@@ -12,6 +12,8 @@ import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 import Leaderboard from '@/components/leaderboard/Leaderboard';
 
+const colorMap = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
+
 export default function QuizPage() {
   // LOCAL STATE
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
@@ -188,14 +190,30 @@ export default function QuizPage() {
         />
       )}
 
-      {/* DISPLAY CURRENT ROUND QUESTION (HOST ONLY) */}
+      {/* TODO: EXTRACT BELOW TO MODULE */}
+      {/* DISPLAY CURRENT ROUND QUESTION & CHOICES (HOST ONLY) */}
       {!loading && currentQuestion && isHost && !roundComplete && (
         <div
           className={
-            'my-8 max-w-2xl rounded-xl bg-slate-200 p-4 text-center text-5xl font-bold text-slate-900 shadow-xl'
+            'my-8 max-w-2xl rounded-xl bg-slate-200 p-7 text-center text-5xl font-bold text-slate-900 shadow-xl'
           }
         >
-          <p>{currentQuestion.question}</p>
+          <h2 className='mb-2 text-xl font-bold text-gray-700'>
+            Question {currentIndex + 1} / {totalQuestions}
+          </h2>
+          <div className='mb-8 w-full rounded-lg bg-sky-100 p-6 text-center text-2xl font-bold text-black shadow-md'>
+            {<div>{currentQuestion.question}</div>}
+          </div>
+          <div className='grid w-full grid-cols-2 gap-3'>
+            {currentQuestion.options.map((option, index) => (
+              <div
+                key={index}
+                className={`rounded-lg p-6 text-lg font-bold text-white shadow-md transition-all duration-200 ${colorMap[index % colorMap.length]}`}
+              >
+                {option}
+              </div>
+            ))}
+          </div>
           {/* TODO: DISPLAY ANSWER CHOICES */}
         </div>
       )}
