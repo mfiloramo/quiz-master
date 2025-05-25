@@ -3,27 +3,27 @@ import { useSession } from '@/contexts/SessionContext';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
 export default function Leaderboard(): ReactElement {
-  // DEBUG: STUB PLAYERS
-  const stubPlayers: Player[] = [
-    { id: '1', username: 'testusername', score: 0 },
-    { id: '3', username: 'test', score: 0 },
-    { id: '4', username: 'testusername', score: 0 },
-  ];
-
   // CUSTOM HOOKS
   const { players } = useSession();
 
+  {
+    /* TODO: CHECK IF SORTING ALGORITHM IS WORKING IN REAL-TIME */
+  }
+  // SORT PLAYERS LIST BY NAME (LATER SCORE)
+  players.sort((a: Player, b: Player): number => b.score - a.score);
+
   // RENDER COMPONENT
   return (
-    <div className={'my-4 flex w-[30vw] flex-col rounded-md bg-slate-100 p-4 shadow-xl'}>
-      {stubPlayers.map((player: Player, index: number) => (
+    // MAIN CONTAINER
+    <div className='flex flex-col items-center justify-center gap-4 px-12'>
+      {/* PLAYERS LIST */}
+      {players?.map((player: Player, index: number) => (
         <div
-          key={index}
-          className={'my-1 flex flex-row justify-around rounded-md bg-slate-300 p-4'}
+          key={index} // TODO: MAKE KEY PLAYER.ID (INDEX FOR DEV MODE)
+          className='mt-4 flex flex-col items-center rounded-xl bg-sky-200 p-4 text-black shadow-xl'
         >
-          {player.id}
-          {player.username}
-          {player.score}
+          <div className='text-2xl font-extrabold'>{player.username}</div>
+          <div className='text-lg'>Score: {player.score}</div>
         </div>
       ))}
     </div>

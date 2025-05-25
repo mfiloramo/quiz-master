@@ -205,7 +205,7 @@ export class WebSocketController {
           this.io.to(session!.sessionId).emit('session-ended');
           SessionManager.deleteSession(session!.sessionId);
         }
-      }, 5000);
+      }, 1000);
     }
   }
 

@@ -14,7 +14,7 @@ export default function Home(): JSX.Element {
     <div className='h-screen bg-stub-background-home text-center text-black'>
       <div className='px-2 pt-12'>
         <div className='mx-auto max-w-5xl text-7xl font-bold'>
-          Build quizzes for your entire classroom
+          Build engaging quizzes for your entire classroom
         </div>
         <div className='mx-auto mt-2 max-w-3xl text-2xl'>
           A dynamic and fun way to create an engaging learning environment among students

@@ -129,7 +129,7 @@ export default function LobbyPage() {
 
       {/* LEAVE GAME BUTTON*/}
       <button onClick={handleLeave} className='mt-6 rounded bg-red-500 px-4 py-2 text-white'>
-        Leave Game
+        {isHost ? 'Cancel Game' : 'Leave Game'}
       </button>
     </div>
   );
