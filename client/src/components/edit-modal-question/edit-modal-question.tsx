@@ -14,6 +14,7 @@ export default function EditModalQuestion({
   const [editedQuestion, setEditedQuestion] = useState<string>(question.question);
   const [editedOptions, setEditedOptions] = useState<string[]>([...question.options]);
 
+  // TRACK QUESTIONS
   const initialIndex = question.options.findIndex((opt) => opt === question.correct);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number>(
     initialIndex !== -1 ? initialIndex : 0

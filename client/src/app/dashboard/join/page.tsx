@@ -83,9 +83,6 @@ export default function JoinPage() {
         Join Session
       </motion.button>
 
-      {/* LEADERBOARD (STUB) */}
-      <Leaderboard />
-
       {error && <p className='text-red-500'>{error}</p>}
     </div>
   );

@@ -22,7 +22,7 @@ export default function QuizPage() {
   // CUSTOM HOOKS
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession, players, setPlayers } = useSession();
+  const { sessionId, clearSession, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
   const router = useRouter();
 
@@ -110,6 +110,7 @@ export default function QuizPage() {
   return (
     <div className='flex flex-col items-center justify-center'>
       {currentQuestion && !isHost ? (
+        // RENDER QUIZ MODULE IF NOT THE HOST
         <QuizModule
           question={currentQuestion}
           questionNumber={currentIndex + 1}
@@ -117,10 +118,10 @@ export default function QuizPage() {
           onSubmit={handleAnswer}
         />
       ) : (
-        // TODO: ADD LOGIC TO DIFFERENTIATE BETWEEN 'WAITING' NOTICE AND LEADERBOARD
-        <div className='text-white'>Waiting for host to start the quiz...</div>
+        <div className='text-white'>Waiting for players to join...</div>
       )}
 
+      {/* DISPLAY LOADING STATUS*/}
       {loading && <p className='mt-4 text-black'>Waiting for next question...</p>}
 
       {/* PLAYER SCOREBOARD */}
