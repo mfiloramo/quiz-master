@@ -214,7 +214,6 @@ export default function QuizPage() {
               </div>
             ))}
           </div>
-          {/* TODO: DISPLAY ANSWER CHOICES */}
         </div>
       )}
 
