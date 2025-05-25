@@ -217,17 +217,6 @@ export class WebSocketController {
     }
   }
 
-  public setRoundTimer(socket: Socket, sessionData: any): void {
-    // DESTRUCTURE SESSION DATA
-    const { sessionId, seconds } = sessionData;
-
-    // FETCH GAME SESSION & PLAYER
-    const session = SessionManager.getSession(sessionId);
-
-    // SET ROUND TIMER SECONDS
-    session!.roundTimer = seconds;
-  }
-
   // HOST-ONLY: EJECT SPECIFIC PLAYER
   public handleEjectPlayer(socket: Socket, { sessionId, id }: { sessionId: string; id: string }): void {
     // GET SESSION
