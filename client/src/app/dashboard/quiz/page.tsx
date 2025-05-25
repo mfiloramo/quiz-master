@@ -56,7 +56,7 @@ export default function QuizPage() {
         });
       }, 1000);
 
-      return () => clearInterval(interval);
+      return (): void => clearInterval(interval);
     }
   }, [loading, secondsLeft]);
 
@@ -191,11 +191,11 @@ export default function QuizPage() {
       )}
 
       {/* TODO: EXTRACT BELOW TO MODULE */}
-      {/* DISPLAY CURRENT ROUND QUESTION & CHOICES (HOST ONLY) */}
+      {/* HOST ONLY: DISPLAY CURRENT ROUND QUESTION & CHOICES */}
       {!loading && currentQuestion && isHost && !roundComplete && (
         <div
           className={
-            'my-8 max-w-2xl rounded-xl bg-slate-200 p-7 text-center text-5xl font-bold text-slate-900 shadow-xl'
+            'min-w-2xl my-8 max-w-2xl rounded-xl bg-slate-200 p-7 text-center text-5xl font-bold text-slate-900 shadow-xl'
           }
         >
           <h2 className='mb-2 text-xl font-bold text-gray-700'>

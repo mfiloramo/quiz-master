@@ -6,9 +6,6 @@ export default function Leaderboard(): ReactElement {
   // CUSTOM HOOKS
   const { players } = useSession();
 
-  {
-    /* TODO: CHECK IF SORTING ALGORITHM IS WORKING IN REAL-TIME */
-  }
   // SORT PLAYERS LIST BY NAME (LATER SCORE)
   players.sort((a: Player, b: Player): number => b.score - a.score);
 
@@ -18,7 +15,7 @@ export default function Leaderboard(): ReactElement {
     <div className='flex flex-col items-center justify-center'>
       <h1 className='mb-6 text-5xl font-bold'>Player Leaderboard</h1>
 
-      {/* CONFIGURATION WINDOW */}
+      {/* MAIN DISPLAY */}
       <div
         className={'flex h-[40vh] w-[70vw] max-w-2xl flex-col rounded bg-slate-400 p-3 shadow-xl'}
       >
