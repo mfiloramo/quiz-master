@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
@@ -21,6 +21,9 @@ export default function QuizPage() {
   const [roundComplete, setRoundComplete] = useState(false); // NEW: TRACK IF ROUND IS OVER
   const [showLeaderboard, setShowLeaderboard] = useState(false); // NEW: SHOW LEADERBOARD FLAG
   const [error, setError] = useState<string | null>(null); // TODO: DISPLAY TOAST ERROR ON ERROR
+
+  // PAGE VARIABLES
+  const leaderboardTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // CUSTOM HOOKS
   const { user, isHost, setIsHost } = useAuth();
@@ -70,22 +73,36 @@ export default function QuizPage() {
       setShowLeaderboard(false); // RESET LEADERBOARD STATE
 
       if (!isHost) {
+        // CLEAR ANY EXISTING TIMEOUT
+        if (leaderboardTimeoutRef.current) {
+          clearTimeout(leaderboardTimeoutRef.current);
+          leaderboardTimeoutRef.current = null;
+        }
+
         // START CLIENT TIMER FOR PLAYER
         setSecondsLeft(roundTimer / 1000);
         setLoading(false); // SHOW QUESTION
 
-        // AUTO SHOW LEADERBOARD WHEN TIMER ENDS
-        setTimeout(() => {
+        // SET TIMEOUT TO SHOW LEADERBOARD AFTER roundTimer
+        leaderboardTimeoutRef.current = setTimeout(() => {
           setShowLeaderboard(true);
-          setLoading(true); // ROUND COMPLETE ON PLAYER SIDE
+          setLoading(true);
+          leaderboardTimeoutRef.current = null;
         }, roundTimer);
       } else {
-        setLoading(false); // HOST MANUALLY CONTROLS DISPLAY
+        // HOST SHOULD SEE THE NEXT QUESTION IMMEDIATELY
+        setLoading(false);
+        setShowLeaderboard(false); // MAKE SURE LEADERBOARD IS HIDDEN
       }
     });
 
     // ALL PLAYERS ANSWERED EARLY
     socket.on('all-players-answered', () => {
+      // CANCEL ANY PENDING TIMEOUT
+      if (leaderboardTimeoutRef.current) {
+        clearTimeout(leaderboardTimeoutRef.current);
+        leaderboardTimeoutRef.current = null;
+      }
       setRoundComplete(true); // ROUND ENDS EARLY
       setSecondsLeft(null);
       setShowLeaderboard(true);
@@ -127,6 +144,12 @@ export default function QuizPage() {
       socket.off('session-ended');
       socket.off('ejected-by-host');
       socket.off('all-players-answered');
+
+      // CLEAN UP CLIENT-SIDE TIMEOUT
+      if (leaderboardTimeoutRef.current) {
+        clearTimeout(leaderboardTimeoutRef.current);
+        leaderboardTimeoutRef.current = null;
+      }
     };
   }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex]);
 

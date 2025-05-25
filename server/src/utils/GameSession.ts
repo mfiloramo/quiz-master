@@ -10,7 +10,7 @@ export class GameSession {
   public isStarted: boolean = false;
   public currentQuestionIndex: number = 0;
   public roundTimer!: number; // TIMER IN MS -- DEFAULT VALUE IS 10 SECONDS
-  public currentTimeout?: NodeJS.Timeout; // NEW: STORES ROUND TIMEOUT
+  public currentTimeout?: NodeJS.Timeout; // STORES ROUND TIMEOUT
 
   constructor(
     public sessionId: string,

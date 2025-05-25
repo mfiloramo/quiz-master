@@ -7,7 +7,7 @@ import { sequelize } from '../config/sequelize';
 import user from '../models/User';
 import { GameSession } from '../utils/GameSession';
 
-
+// MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
   constructor(private io: Server) {}
 
@@ -24,7 +24,7 @@ export class WebSocketController {
       return;
     }
 
-    // CREATE NEW SESSION
+    // CREATE NEW SESSION INSTANCE
     const session = SessionManager.createSession(sessionId, socket.id, hostUserName);
 
     // CLEANUP: RESET QUESTIONS ARRAY IN CASE OF ANY STALE STATE
@@ -33,13 +33,13 @@ export class WebSocketController {
     // SET QUIZ ID SO IT CAN BE USED IN startSession()
     session.quizId = quizId;
 
-    // SET ROUND TIMER
+    // SET ROUND TIMER DURATION (CONVERT SECONDS TO MILLISECONDS)
     session.roundTimer = roundTimer * 1000;
 
-    // JOIN GAME SESSION
+    // ADD HOST TO SOCKET ROOM
     socket.join(sessionId);
 
-    // EMIT SESSION DATA
+    // EMIT SESSION CREATION CONFIRMATION TO HOST
     socket.emit('session-created', {
       sessionId,
       hostUsername: session.hostUsername,
@@ -48,9 +48,11 @@ export class WebSocketController {
 
   // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
+    // EXTRACT DATA FROM JOIN REQUEST
     const { id, sessionId, username } = data;
     const session = SessionManager.getSession(sessionId);
 
+    // VALIDATE SESSION
     if (!session) {
       socket.emit('error', 'Session not found.');
       return;
@@ -63,17 +65,17 @@ export class WebSocketController {
     //   return;
     // }
 
-    // INSTANTIATE NEW PLAYER
+    // CREATE NEW PLAYER INSTANCE
     const player = new Player(id, socket.id, username);
 
-    // ADD PLAYER TO SESSION AND JOIN
+    // ADD PLAYER TO SESSION AND JOIN SOCKET ROOM
     session.addPlayer(player);
     socket.join(sessionId);
 
-    // EMIT UPDATED PLAYER LIST
+    // BROADCAST UPDATED PLAYER LIST TO ALL CLIENTS
     this.io.to(sessionId).emit('player-joined', session.players);
 
-    // IF GAME HAS STARTED, SEND CURRENT QUESTION TO NEWLY JOINED PLAYER
+    // IF GAME HAS ALREADY STARTED, SEND CURRENT QUESTION TO NEW PLAYER
     if (session.isStarted) {
       const currentQuestion = session.questions[session.currentQuestionIndex];
       socket.emit('new-question', {
@@ -86,32 +88,39 @@ export class WebSocketController {
 
   // START GAME SESSION
   public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void> {
+    // FETCH SESSION BY ID
     const session = SessionManager.getSession(sessionId);
     if (!session) {
       socket.emit('error', 'Session not found.');
       return;
     }
 
+    // VALIDATE QUIZ ID EXISTS
     if (!session.quizId) {
       socket.emit('error', 'Quiz not set for this session.');
       return;
     }
 
     try {
+      // QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
       const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
         replacements: { quizId: session.quizId },
       });
 
+      // FORMAT RAW DATABASE QUESTION DATA
       const formattedQuestions: QuestionAttributes[] = result[0].map((question: any) => ({
         ...question,
         options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
       }));
 
+      // ASSIGN QUESTIONS AND MARK SESSION AS STARTED
       session.questions = formattedQuestions;
       session.isStarted = true;
 
+      // NOTIFY ALL CLIENTS THAT SESSION STARTED
       this.io.to(sessionId).emit('session-started');
 
+      // SEND FIRST QUESTION AND START TIMER
       const firstQuestion = formattedQuestions[0];
       if (firstQuestion) {
         this.emitQuestionWithTimeout(session);
@@ -124,9 +133,11 @@ export class WebSocketController {
 
   // PLAYER LEAVES SESSION
   public leaveSession(socket: Socket): void {
+    // LOCATE SESSION BY SOCKET ID
     const result = SessionManager.getSessionBySocketId(socket.id);
     if (!result) return;
 
+    // REMOVE PLAYER AND BROADCAST UPDATED PLAYER LIST
     const [sessionId, session] = result;
     const removed = session.removePlayerBySocketId(socket.id);
     if (removed) {
@@ -134,17 +145,17 @@ export class WebSocketController {
     }
   }
 
-  // RETURN CURRENT QUESTION TO REQUESTING PLAYER
+  // RETURN CURRENT QUESTION TO REQUESTING CLIENT
   public getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
+    // FETCH SESSION AND VALIDATE
     const session = SessionManager.getSession(sessionId);
-
     if (!session || !session.questions.length) {
       socket.emit('error', 'No current question found.');
       return;
     }
 
+    // EMIT CURRENT QUESTION TO REQUESTING CLIENT
     const currentQuestion = session.questions[session.currentQuestionIndex];
-
     socket.emit('new-question', {
       question: currentQuestion,
       index: session.currentQuestionIndex,
@@ -153,66 +164,75 @@ export class WebSocketController {
     });
   }
 
-  // GET PLAYER LIST FOR CLIENT THAT MISSED INITIAL BROADCAST
+  // GET FULL PLAYER LIST FOR CLIENT THAT JOINED MIDWAY
   public getPlayers(socket: Socket, { sessionId }: { sessionId: string }): void {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
-    socket.emit('player-joined', session.players); // SEND LATEST PLAYER LIST
+
+    // SEND LATEST PLAYER LIST
+    socket.emit('player-joined', session.players);
   }
 
   // HANDLE PLAYER ANSWER SUBMISSION
   public submitAnswer(socket: Socket, sessionData: any): void {
+    // DESTRUCTURE SESSION DATA
     const { sessionId, answer } = sessionData;
+
+    // FETCH SESSION AND PLAYER OBJECT
     const session = SessionManager.getSession(sessionId);
     const player = session?.getPlayerBySocketId(socket.id);
 
+    // PREVENT DUPLICATE OR INVALID SUBMISSIONS
     if (!player || player.hasAnswered) return;
     player.hasAnswered = true;
 
+    // INCREMENT SCORE IF ANSWER IS CORRECT
     if (answer === session?.questions[session.currentQuestionIndex].correct) {
-      session!.incrementScore(player.id);
-      this.io.to(sessionId).emit('player-joined', session!.players);
+      session.incrementScore(player.id);
+      this.io.to(sessionId).emit('player-joined', session.players);
     }
 
-    if (session!.allPlayersAnswered()) {
-      session!.clearRoundTimeout(); // CLEAR TIMEOUT IF ALL ANSWERED EARLY
+    // CHECK IF ALL PLAYERS HAVE ANSWERED
+    if (session.allPlayersAnswered()) {
+      session.clearRoundTimeout(); // CANCEL ANY ACTIVE TIMEOUT
 
+      // NOTIFY CLIENTS THAT ROUND IS COMPLETE
       this.io.to(sessionId).emit('all-players-answered');
 
+      // WAIT FOR LEADERBOARD TO SHOW, THEN ADVANCE
       setTimeout(() => {
-        session!.nextQuestion();
-        const next = session!.questions[session!.currentQuestionIndex];
+        session.nextQuestion();
+        const next = session.questions[session.currentQuestionIndex];
         if (next) {
-          this.emitQuestionWithTimeout(session!); // REUSE METHOD
+          this.emitQuestionWithTimeout(session);
         } else {
-          this.io.to(session!.sessionId).emit('session-ended');
-          SessionManager.deleteSession(session!.sessionId);
+          this.io.to(session.sessionId).emit('session-ended');
+          SessionManager.deleteSession(session.sessionId);
         }
-      }, 5000); // WAIT FOR LEADERBOARD TO SHOW
+      }, 5000); // WAIT 5 SECONDS BEFORE NEXT QUESTION
     }
   }
 
-
-  // HOST-ONLY: EJECT SPECIFIC PLAYER
+  // HOST-ONLY: EJECT SPECIFIC PLAYER FROM SESSION
   public handleEjectPlayer(socket: Socket, { sessionId, id }: { sessionId: string; id: string }): void {
-    // GET SESSION
+    // FETCH SESSION
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
-    // CHECK IF USER IS HOST
+    // VALIDATE THAT SOCKET IS HOST
     if (socket.id !== session.hostSocketId) {
       socket.emit('error', 'Only the host can eject players.');
       return;
     }
 
-    // GET PLAYER
+    // FETCH PLAYER TO EJECT
     const player = session.getPlayerById(id);
     if (!player) return;
 
-    // SEND EJECTION TO PLAYER
+    // SEND EJECTION MESSAGE TO PLAYER
     this.io.to(player.socketId).emit('ejected-by-host');
 
-    // REMOVE FROM SESSION
+    // REMOVE PLAYER FROM SESSION
     session.removePlayerByPlayerId(id);
 
     // BROADCAST UPDATED PLAYER LIST
@@ -226,10 +246,12 @@ export class WebSocketController {
 
     const [sessionId, session] = result;
 
+    // IF HOST DISCONNECTS, END SESSION FOR ALL
     if (session.hostSocketId === socket.id) {
       this.io.to(sessionId).emit('session-ended');
       SessionManager.deleteSession(sessionId);
     } else {
+      // REMOVE PLAYER ON DISCONNECT AND UPDATE LIST
       const removed = session.removePlayerBySocketId(socket.id);
       if (removed) {
         this.io.to(sessionId).emit('player-joined', session.players);
@@ -239,12 +261,12 @@ export class WebSocketController {
 
   /** PRIVATE METHODS **/
 
-  // EMIT QUESTION WITH TIMEOUT
+  // EMIT QUESTION TO ALL CLIENTS AND SET FAILSAFE TIMEOUT
   private emitQuestionWithTimeout(session: GameSession): void {
     const sessionId = session.sessionId;
     const currentQuestion = session.questions[session.currentQuestionIndex];
 
-    // EMIT QUESTION TO ALL CLIENTS
+    // EMIT NEW QUESTION WITH INDEX AND TIMER
     this.io.to(sessionId).emit('new-question', {
       question: currentQuestion,
       index: session.currentQuestionIndex,
@@ -252,29 +274,30 @@ export class WebSocketController {
       roundTimer: session.roundTimer
     });
 
-    // CLEAR ANY EXISTING TIMEOUT BEFORE SETTING A NEW ONE
+    // CLEAR ANY EXISTING TIMEOUT TO AVOID CONFLICTS
     session.clearRoundTimeout();
 
-    // SET TIMEOUT TO FORCE NEXT QUESTION IF NOT ALL PLAYERS ANSWER
+    // SET TIMEOUT TO FORCE PROGRESSION IF NOT ALL ANSWER
     session.currentTimeout = setTimeout(() => {
+      // ONLY PROCEED IF SOME PLAYERS DID NOT ANSWER
       if (!session.allPlayersAnswered()) {
-        // MARK ALL AS ANSWERED TO PREVENT RE-EMIT
-        session.players.forEach(p => (p.hasAnswered = true));
+        session.players.forEach(p => (p.hasAnswered = true)); // MARK ALL AS ANSWERED
 
+        // EMIT ROUND COMPLETE TO CLIENTS
         this.io.to(sessionId).emit('all-players-answered');
 
+        // WAIT FOR LEADERBOARD, THEN ADVANCE
         setTimeout(() => {
           session.nextQuestion();
           const next = session.questions[session.currentQuestionIndex];
           if (next) {
-            this.emitQuestionWithTimeout(session); // RECURSE
+            this.emitQuestionWithTimeout(session);
           } else {
             this.io.to(sessionId).emit('session-ended');
             SessionManager.deleteSession(sessionId);
           }
-        }, 5000); // WAIT FOR LEADERBOARD TO SHOW
+        }, 5000); // WAIT 5 SECONDS FOR LEADERBOARD
       }
     }, session.roundTimer);
   }
-
 }
