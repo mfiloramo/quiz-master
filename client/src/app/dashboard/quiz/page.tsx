@@ -16,8 +16,11 @@ export default function QuizPage() {
   // LOCAL STATE
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false); // CONTROLS GENERAL LOADING/WAITING STATE
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null); // CLIENT-SIDE TIMER
+  const [roundComplete, setRoundComplete] = useState(false); // NEW: TRACK IF ROUND IS OVER
+  const [showLeaderboard, setShowLeaderboard] = useState(false); // NEW: SHOW LEADERBOARD FLAG
+  const [error, setError] = useState<string | null>(null); // TODO: DISPLAY TOAST ERROR ON ERROR
 
   // CUSTOM HOOKS
   const { user, isHost, setIsHost } = useAuth();
@@ -38,17 +41,60 @@ export default function QuizPage() {
     socket.emit('get-players', { sessionId });
   }, [socket, sessionId]);
 
+  // SHOW ROUND TIMER COUNTDOWN (CLIENT-SIDE)
+  useEffect(() => {
+    if (!loading && secondsLeft !== null) {
+      const interval = setInterval(() => {
+        setSecondsLeft((prev) => {
+          if (prev !== null && prev > 0) return prev - 1;
+          return 0;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [loading, secondsLeft]);
+
   // SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket) return;
 
     // RECEIVE QUESTION
     socket.on('new-question', (data) => {
+      const { index, question, total, roundTimer } = data;
       setLockedIn(false);
-      setCurrentIndex(data.index);
-      setCurrentQuestion(data.question);
-      setTotalQuestions(data.total);
-      setLoading(false);
+      setCurrentIndex(index);
+      setCurrentQuestion(question);
+      setTotalQuestions(total);
+      setRoundComplete(false); // RESET ROUND STATE
+      setShowLeaderboard(false); // RESET LEADERBOARD STATE
+
+      if (!isHost) {
+        // START CLIENT TIMER FOR PLAYER
+        setSecondsLeft(roundTimer / 1000);
+        setLoading(false); // SHOW QUESTION
+
+        // AUTO SHOW LEADERBOARD WHEN TIMER ENDS
+        setTimeout(() => {
+          setShowLeaderboard(true);
+          setLoading(true); // ROUND COMPLETE ON PLAYER SIDE
+        }, roundTimer);
+      } else {
+        setLoading(false); // HOST MANUALLY CONTROLS DISPLAY
+      }
+    });
+
+    // ALL PLAYERS ANSWERED EARLY
+    socket.on('all-players-answered', () => {
+      setRoundComplete(true); // ROUND ENDS EARLY
+      setSecondsLeft(null);
+      setShowLeaderboard(true);
+      setLoading(true); // SHOW LEADERBOARD FOR HOST
+
+      // DO NOT RESET TO QUESTION AFTER THIS TIMEOUT
+      setTimeout(() => {
+        // HOST STAYS IN SHOW-LEADERBOARD STATE UNTIL NEXT QUESTION
+      }, 5000);
     });
 
     // RECEIVE UPDATED PLAYER LIST
@@ -80,6 +126,7 @@ export default function QuizPage() {
       socket.off('player-joined');
       socket.off('session-ended');
       socket.off('ejected-by-host');
+      socket.off('all-players-answered');
     };
   }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex]);
 
@@ -90,8 +137,7 @@ export default function QuizPage() {
       id: user!.id,
       answer,
     });
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
+    setLoading(true); // PREVENT DOUBLE SUBMISSION
     if (isHost) {
       socket?.emit('get-current-question', { sessionId });
     }
@@ -109,20 +155,35 @@ export default function QuizPage() {
   // RENDER
   return (
     <div className='flex flex-col items-center justify-center'>
-      {currentQuestion && !isHost ? (
-        // RENDER QUIZ MODULE IF NOT THE HOST
+      {/* RENDER QUIZ MODULE IF NOT THE HOST */}
+      {currentQuestion && !isHost && !loading && !roundComplete && (
         <QuizModule
           question={currentQuestion}
           questionNumber={currentIndex + 1}
           totalQuestions={totalQuestions}
           onSubmit={handleAnswer}
         />
-      ) : (
-        <div className='text-white'>Waiting for players to join...</div>
       )}
 
-      {/* PLAYER SCOREBOARD */}
-      {isHost && <Leaderboard />}
+      {/* DISPLAY CURRENT ROUND QUESTION (HOST ONLY) */}
+      {!loading && currentQuestion && isHost && !roundComplete && (
+        <div
+          className={
+            'my-8 max-w-2xl rounded-xl bg-slate-200 p-4 text-center text-5xl font-bold text-slate-900 shadow-xl'
+          }
+        >
+          <p>{currentQuestion.question}</p>
+          {/* TODO: DISPLAY ANSWER CHOICES */}
+        </div>
+      )}
+
+      {/* DISPLAY TIMER (PLAYER ONLY) */}
+      {!loading && !isHost && secondsLeft !== null && (
+        <div className='my-4 text-xl text-white'>Time Left: {secondsLeft}s</div>
+      )}
+
+      {/* DISPLAY LEADERBOARD WHEN ROUND ENDS */}
+      {showLeaderboard && isHost && <Leaderboard />}
 
       {/* LEAVE/END GAME BUTTON */}
       <motion.button
@@ -137,6 +198,7 @@ export default function QuizPage() {
         {isHost ? 'End Game' : 'Leave Game'}
       </motion.button>
 
+      {/* ERROR MESSAGE */}
       {error && <p className='mt-4 text-red-200'>{error}</p>}
     </div>
   );

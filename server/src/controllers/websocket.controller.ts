@@ -5,10 +5,13 @@ import { SessionManager } from '../utils/SessionManager';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
 import user from '../models/User';
+import { GameSession } from '../utils/GameSession';
 
 
 export class WebSocketController {
   constructor(private io: Server) {}
+
+  /** PUBLIC METHODS **/
 
   // CREATE NEW GAME SESSION
   public createSession(socket: Socket, data: GameSessionAttributes): void {
@@ -82,50 +85,36 @@ export class WebSocketController {
   }
 
   // START GAME SESSION
-  public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void>
-  {
-    // GET REQUESTED SESSION
+  public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void> {
     const session = SessionManager.getSession(sessionId);
-
-    // CHECK FOR EXISTING SESSION
     if (!session) {
       socket.emit('error', 'Session not found.');
       return;
     }
 
-    // CHECK IF QUIZ ID IS PROVIDED
     if (!session.quizId) {
       socket.emit('error', 'Quiz not set for this session.');
       return;
     }
 
-    // QUERY DATABASE FOR ALL QUESTIONS IN SELECTED QUIZ
     try {
       const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
         replacements: { quizId: session.quizId },
       });
 
-      // FORMAT DATABASE OUTPUT
       const formattedQuestions: QuestionAttributes[] = result[0].map((question: any) => ({
         ...question,
         options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
       }));
 
-      // ADD QUESTIONS AND isStarted TO SESSION
       session.questions = formattedQuestions;
       session.isStarted = true;
 
-      // BROADCAST SESSION STARTED TO ALL CLIENTS
       this.io.to(sessionId).emit('session-started');
 
-      // EMIT FIRST QUIZ QUESTION
       const firstQuestion = formattedQuestions[0];
       if (firstQuestion) {
-        this.io.to(sessionId).emit('new-question', {
-          question: firstQuestion,
-          index: 0,
-          total: formattedQuestions.length,
-        });
+        this.emitQuestionWithTimeout(session);
       }
     } catch (error: any) {
       console.error('Error starting session:', error);
@@ -160,6 +149,7 @@ export class WebSocketController {
       question: currentQuestion,
       index: session.currentQuestionIndex,
       total: session.questions.length,
+      roundTimer: session.roundTimer
     });
   }
 
@@ -172,50 +162,36 @@ export class WebSocketController {
 
   // HANDLE PLAYER ANSWER SUBMISSION
   public submitAnswer(socket: Socket, sessionData: any): void {
-    // DESTRUCTURE SESSION DATA
     const { sessionId, answer } = sessionData;
-
-    // FETCH GAME SESSION & PLAYER
     const session = SessionManager.getSession(sessionId);
-    const player = session!.getPlayerBySocketId(socket.id);
+    const player = session?.getPlayerBySocketId(socket.id);
 
-    // PREVENT DUPLICATE ANSWERS
-    if (!player || player.hasAnswered) {
-      return;
-    } else {
-      player.hasAnswered = true;
-    }
+    if (!player || player.hasAnswered) return;
+    player.hasAnswered = true;
 
-    // INCREMENT PLAYER SCORE IF CORRECT
-    if (answer === session?.questions[session?.currentQuestionIndex].correct) {
-      session?.incrementScore(player.id);
+    if (answer === session?.questions[session.currentQuestionIndex].correct) {
+      session!.incrementScore(player.id);
       this.io.to(sessionId).emit('player-joined', session!.players);
     }
 
-    // ADVANCE TO NEXT QUESTION ONCE ALL PLAYERS ANSWER
     if (session!.allPlayersAnswered()) {
-      // EMIT ALL PLAYERS ANSWERED
-      this.io.to(session!.sessionId).emit('all-players-answered');
+      session!.clearRoundTimeout(); // CLEAR TIMEOUT IF ALL ANSWERED EARLY
 
-      // WAIT
+      this.io.to(sessionId).emit('all-players-answered');
+
       setTimeout(() => {
         session!.nextQuestion();
         const next = session!.questions[session!.currentQuestionIndex];
-
-        // WAIT FOR NEXT QUESTION
         if (next) {
-          this.io.to(session!.sessionId).emit('new-question', {
-            question: next,
-            index: session!.currentQuestionIndex,
-            total: session!.questions.length,
-          });
+          this.emitQuestionWithTimeout(session!); // REUSE METHOD
         } else {
           this.io.to(session!.sessionId).emit('session-ended');
           SessionManager.deleteSession(session!.sessionId);
         }
-      }, session?.roundTimer);
+      }, 5000); // WAIT FOR LEADERBOARD TO SHOW
     }
   }
+
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER
   public handleEjectPlayer(socket: Socket, { sessionId, id }: { sessionId: string; id: string }): void {
@@ -260,4 +236,45 @@ export class WebSocketController {
       }
     }
   }
+
+  /** PRIVATE METHODS **/
+
+  // EMIT QUESTION WITH TIMEOUT
+  private emitQuestionWithTimeout(session: GameSession): void {
+    const sessionId = session.sessionId;
+    const currentQuestion = session.questions[session.currentQuestionIndex];
+
+    // EMIT QUESTION TO ALL CLIENTS
+    this.io.to(sessionId).emit('new-question', {
+      question: currentQuestion,
+      index: session.currentQuestionIndex,
+      total: session.questions.length,
+      roundTimer: session.roundTimer
+    });
+
+    // CLEAR ANY EXISTING TIMEOUT BEFORE SETTING A NEW ONE
+    session.clearRoundTimeout();
+
+    // SET TIMEOUT TO FORCE NEXT QUESTION IF NOT ALL PLAYERS ANSWER
+    session.currentTimeout = setTimeout(() => {
+      if (!session.allPlayersAnswered()) {
+        // MARK ALL AS ANSWERED TO PREVENT RE-EMIT
+        session.players.forEach(p => (p.hasAnswered = true));
+
+        this.io.to(sessionId).emit('all-players-answered');
+
+        setTimeout(() => {
+          session.nextQuestion();
+          const next = session.questions[session.currentQuestionIndex];
+          if (next) {
+            this.emitQuestionWithTimeout(session); // RECURSE
+          } else {
+            this.io.to(sessionId).emit('session-ended');
+            SessionManager.deleteSession(sessionId);
+          }
+        }, 5000); // WAIT FOR LEADERBOARD TO SHOW
+      }
+    }, session.roundTimer);
+  }
+
 }
