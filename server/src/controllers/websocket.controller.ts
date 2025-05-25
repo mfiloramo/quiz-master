@@ -188,26 +188,26 @@ export class WebSocketController {
 
     // INCREMENT SCORE IF ANSWER IS CORRECT
     if (answer === session?.questions[session.currentQuestionIndex].correct) {
-      session.incrementScore(player.id);
-      this.io.to(sessionId).emit('player-joined', session.players);
+      session!.incrementScore(player.id);
+      this.io.to(sessionId).emit('player-joined', session!.players);
     }
 
     // CHECK IF ALL PLAYERS HAVE ANSWERED
-    if (session.allPlayersAnswered()) {
-      session.clearRoundTimeout(); // CANCEL ANY ACTIVE TIMEOUT
+    if (session!.allPlayersAnswered()) {
+      session!.clearRoundTimeout(); // CANCEL ANY ACTIVE TIMEOUT
 
       // NOTIFY CLIENTS THAT ROUND IS COMPLETE
       this.io.to(sessionId).emit('all-players-answered');
 
       // WAIT FOR LEADERBOARD TO SHOW, THEN ADVANCE
       setTimeout(() => {
-        session.nextQuestion();
-        const next = session.questions[session.currentQuestionIndex];
+        session!.nextQuestion();
+        const next = session!.questions[session!.currentQuestionIndex];
         if (next) {
-          this.emitQuestionWithTimeout(session);
+          this.emitQuestionWithTimeout(session!);
         } else {
-          this.io.to(session.sessionId).emit('session-ended');
-          SessionManager.deleteSession(session.sessionId);
+          this.io.to(session!.sessionId).emit('session-ended');
+          SessionManager.deleteSession(session!.sessionId);
         }
       }, 5000); // WAIT 5 SECONDS BEFORE NEXT QUESTION
     }
