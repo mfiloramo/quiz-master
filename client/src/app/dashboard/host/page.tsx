@@ -10,7 +10,7 @@ import { useQuiz } from '@/contexts/QuizContext';
 export default function HostPage() {
   // LOCAL STATE
   const [error, setError] = useState<string>('');
-  const [roundTimer, setRoundTimer] = useState<number>(10000);
+  const [roundTimer, setRoundTimer] = useState<number>(5);
 
   // CUSTOM HOOKS
   const router = useRouter();
@@ -58,8 +58,8 @@ export default function HostPage() {
             className={'rounded bg-slate-50'}
           >
             {Array.from({ length: 21 }, (_, i) => (
-              <option key={i} value={i}>
-                {i}
+              <option key={i} value={i + 5}>
+                {i + 5}
               </option>
             ))}
           </select>

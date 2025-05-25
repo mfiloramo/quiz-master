@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { useSession } from '@/contexts/SessionContext';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
@@ -15,17 +15,24 @@ export default function Leaderboard(): ReactElement {
   // RENDER COMPONENT
   return (
     // MAIN CONTAINER
-    <div className='flex flex-col items-center justify-center gap-4 px-12'>
-      {/* PLAYERS LIST */}
-      {players?.map((player: Player, index: number) => (
-        <div
-          key={index} // TODO: MAKE KEY PLAYER.ID (INDEX FOR DEV MODE)
-          className='mt-4 flex flex-col items-center rounded-xl bg-sky-200 p-4 text-black shadow-xl'
-        >
-          <div className='text-2xl font-extrabold'>{player.username}</div>
-          <div className='text-lg'>Score: {player.score}</div>
-        </div>
-      ))}
+    <div className='flex flex-col items-center justify-center'>
+      <h1 className='mb-6 text-5xl font-bold'>Player Leaderboard</h1>
+
+      {/* CONFIGURATION WINDOW */}
+      <div
+        className={'flex h-[40vh] w-[70vw] max-w-2xl flex-col rounded bg-slate-400 p-3 shadow-xl'}
+      >
+        {/* PLAYER RANKING */}
+        {players.map((player: Player, index: number) => (
+          <div
+            key={index}
+            className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}
+          >
+            <div>{player.username}</div>
+            <div>Score: {player.score}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
