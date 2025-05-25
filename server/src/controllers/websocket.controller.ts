@@ -13,7 +13,7 @@ export class WebSocketController {
   // CREATE NEW GAME SESSION
   public createSession(socket: Socket, data: GameSessionAttributes): void {
     // DESTRUCTURE SESSION DATA
-    const { sessionId, hostUserName, quizId } = data;
+    const { sessionId, hostUserName, quizId, roundTimer } = data;
 
     // CHECK FOR EXISTING SESSION
     if (SessionManager.getSession(sessionId)) {
@@ -29,6 +29,9 @@ export class WebSocketController {
 
     // SET QUIZ ID SO IT CAN BE USED IN startSession()
     session.quizId = quizId;
+
+    // SET ROUND TIMER
+    session.roundTimer = roundTimer * 1000;
 
     // JOIN GAME SESSION
     socket.join(sessionId);
@@ -191,10 +194,15 @@ export class WebSocketController {
 
     // ADVANCE TO NEXT QUESTION ONCE ALL PLAYERS ANSWER
     if (session!.allPlayersAnswered()) {
+      // EMIT ALL PLAYERS ANSWERED
+      this.io.to(session!.sessionId).emit('all-players-answered');
+
+      // WAIT
       setTimeout(() => {
         session!.nextQuestion();
         const next = session!.questions[session!.currentQuestionIndex];
 
+        // WAIT FOR NEXT QUESTION
         if (next) {
           this.io.to(session!.sessionId).emit('new-question', {
             question: next,
@@ -205,8 +213,19 @@ export class WebSocketController {
           this.io.to(session!.sessionId).emit('session-ended');
           SessionManager.deleteSession(session!.sessionId);
         }
-      }, 1000);
+      }, session?.roundTimer);
     }
+  }
+
+  public setRoundTimer(socket: Socket, sessionData: any): void {
+    // DESTRUCTURE SESSION DATA
+    const { sessionId, seconds } = sessionData;
+
+    // FETCH GAME SESSION & PLAYER
+    const session = SessionManager.getSession(sessionId);
+
+    // SET ROUND TIMER SECONDS
+    session!.roundTimer = seconds;
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER

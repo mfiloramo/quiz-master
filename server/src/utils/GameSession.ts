@@ -9,10 +9,10 @@ export class GameSession {
   public hostUsername: string;
   public isStarted: boolean = false;
   public currentQuestionIndex: number = 0;
+  public roundTimer: number = 10000; // TIMER IN MS -- DEFAULT VALUE IS 10 SECONDS
 
   constructor(
-    public sessionId: string,
-    public hostSocketId: string,
+    public sessionId: string,    public hostSocketId: string,
     hostUsername: string
   ) {
     this.hostUsername = hostUsername;

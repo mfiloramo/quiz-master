@@ -13,14 +13,14 @@ export default function QuizModule({
   totalQuestions,
   onSubmit,
 }: QuizModuleProps) {
-  // STATE
+  // LOCAL STATE
   const [selected, setSelected] = useState<string | null>(null);
 
   // CUSTOM HOOKS
   const { lockedIn, setLockedIn } = useQuiz();
 
   // HANDLER FUNCTIONS
-  const handleClick = (option: string) => {
+  const handleClick = (option: string): void => {
     if (lockedIn) return;
     setSelected(option);
     setLockedIn(true);
