@@ -7,7 +7,8 @@ import { useQuiz } from '@/contexts/QuizContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import QuizModule from '@/components/quiz-module/quiz-module';
-import Leaderboard from '@/components/leaderboard/Leaderboard';
+import Leaderboard from '@/components/leaderboard/leaderboard';
+import HostQuestionDisplay from '@/components/host-question-display/host-question-display';
 import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
@@ -28,6 +29,7 @@ export default function QuizPage(): JSX.Element {
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
   const [error, setError] = useState<string | null>(null);
+  const [userAnswer, setUserAnswer] = useState<string | null>(null); // TRACK USER ANSWER FOR PLAYER FEEDBACK
 
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
@@ -75,14 +77,14 @@ export default function QuizPage(): JSX.Element {
         setPhase(QuizPhase.Question);
         setLoading(false);
         setSecondsLeft(roundTimer / 1000);
+        setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
       }
     );
 
     socket.on('all-players-answered', () => {
-      // SHOW ANSWER SUMMARY IMMEDIATELY AFTER ALL ANSWER
       setSecondsLeft(null);
       setLoading(true);
-      setPhase(QuizPhase.AnswerSummary);
+      setPhase(QuizPhase.AnswerSummary); // TRANSITION TO ANSWER SUMMARY
     });
 
     socket.on('player-joined', (updatedPlayers: Player[]) => {
@@ -114,8 +116,7 @@ export default function QuizPage(): JSX.Element {
     };
   }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex, sessionId]);
 
-  // PHASE-BASED PROGRESSION EFFECT
-  // ADVANCES FROM ANSWER SUMMARY → LEADERBOARD → NEXT QUESTION (REQUESTED FROM BACKEND)
+  // PHASE-BASED PROGRESSION
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 
@@ -135,9 +136,10 @@ export default function QuizPage(): JSX.Element {
     };
   }, [phase, socket, sessionId]);
 
-  // HANDLE ANSWER SUBMISSION
+  // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
     if (!user) return;
+    setUserAnswer(answer);
     socket?.emit('submit-answer', {
       sessionId,
       id: user.id,
@@ -149,7 +151,7 @@ export default function QuizPage(): JSX.Element {
     }
   };
 
-  // HANDLE USER LEAVING
+  // HANDLE LEAVING SESSION
   const handleLeave = (): void => {
     disconnect();
     resetQuiz();
@@ -158,10 +160,10 @@ export default function QuizPage(): JSX.Element {
     router.push('/dashboard');
   };
 
-  // RENDER PAGE
+  // MAIN RENDER
   return (
     <div className='flex flex-col items-center justify-center'>
-      {/* RENDER QUIZ MODULE IF NOT HOST */}
+      {/* PLAYER QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && !isHost && (
         <QuizModule
           question={currentQuestion}
@@ -171,43 +173,67 @@ export default function QuizPage(): JSX.Element {
         />
       )}
 
-      {/* HOST ONLY: DISPLAY CURRENT ROUND QUESTION & CHOICES */}
+      {/* HOST QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && isHost && (
-        <div className='min-w-2xl my-8 max-w-2xl rounded-xl bg-slate-200 p-7 text-center text-5xl font-bold text-slate-900 shadow-xl'>
-          <h2 className='mb-2 text-xl font-bold text-gray-700'>
-            Question {currentIndex + 1} / {totalQuestions}
-          </h2>
-          <div className='mb-8 w-full rounded-lg bg-sky-100 p-6 text-center text-2xl font-bold text-black shadow-md'>
-            <div>{currentQuestion.question}</div>
-          </div>
-          <div className='grid w-full grid-cols-2 gap-3'>
-            {currentQuestion.options.map((option: string, index: number) => (
-              <div
-                key={index}
-                className={`rounded-lg p-6 text-lg font-bold text-white shadow-md transition-all duration-200 ${colorMap[index % colorMap.length]}`}
-              >
-                {option}
-              </div>
-            ))}
-          </div>
-        </div>
+        <HostQuestionDisplay
+          question={currentQuestion.question}
+          options={currentQuestion.options}
+          colorMap={colorMap}
+        />
       )}
 
-      {/* DISPLAY TIMER (PLAYER ONLY) */}
+      {/* HOST ANSWER SUMMARY VIEW */}
+      {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
+        <HostQuestionDisplay
+          question={currentQuestion.question}
+          options={currentQuestion.options}
+          correctAnswer={currentQuestion.correct}
+          colorMap={colorMap}
+        />
+      )}
+
+      {/* PLAYER TIMER DISPLAY */}
       {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
         <div className='my-4 text-xl text-white'>Time Left: {secondsLeft}s</div>
       )}
 
-      {/* DISPLAY ANSWER SUMMARY */}
-      {phase === QuizPhase.AnswerSummary &&
-        currentQuestion &&
-        // <AnswerSummary question={currentQuestion} />
-        'I am the answer summary'}
+      {/* PLAYER ANSWER SUMMARY */}
+      {phase === QuizPhase.AnswerSummary && currentQuestion && !isHost && (
+        <div className='min-w-2xl my-8 rounded-xl bg-white p-6 text-center text-2xl font-medium text-gray-900 shadow-md'>
+          {userAnswer ? (
+            (() => {
+              const correct = userAnswer === currentQuestion.correct;
+              return (
+                <>
+                  <p>Your answer:</p>
+                  <div
+                    className={`mb-4 mt-2 inline-block rounded-full px-4 py-2 font-bold text-white ${
+                      correct ? 'bg-green-500' : 'bg-red-500'
+                    }`}
+                  >
+                    {userAnswer}
+                  </div>
+                  {correct ? (
+                    <p className='text-green-700'>CORRECT!</p>
+                  ) : (
+                    <p className='text-red-700'>
+                      INCORRECT — THE RIGHT ANSWER WAS{' '}
+                      <span className='font-bold'>{currentQuestion.correct}</span>.
+                    </p>
+                  )}
+                </>
+              );
+            })()
+          ) : (
+            <p>WAITING FOR YOUR ANSWER…</p>
+          )}
+        </div>
+      )}
 
-      {/* DISPLAY LEADERBOARD */}
+      {/* LEADERBOARD DISPLAY */}
       {phase === QuizPhase.Leaderboard && <Leaderboard />}
 
-      {/* LEAVE/END GAME BUTTON */}
+      {/* LEAVE/END BUTTON */}
       <motion.button
         className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
         onClick={handleLeave}
@@ -220,7 +246,7 @@ export default function QuizPage(): JSX.Element {
         {isHost ? 'End Game' : 'Leave Game'}
       </motion.button>
 
-      {/* ERROR MESSAGE */}
+      {/* ERROR DISPLAY */}
       {error && <p className='mt-4 text-red-200'>{error}</p>}
     </div>
   );
