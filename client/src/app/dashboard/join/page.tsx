@@ -6,7 +6,7 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from '@/contexts/SessionContext';
 import { motion } from 'framer-motion';
-import Leaderboard from '@/components/leaderboard/Leaderboard';
+import Leaderboard from '@/components/leaderboard/leaderboard';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
 export default function JoinPage() {

@@ -37,7 +37,7 @@ export default function DashboardHome(): JSX.Element {
 
   // CHECK IF USER IS LOGGED IN
   useEffect(() => {
-    // TODO: TEMPORARY -- IMPLEMENT ALTERNATIVE SETISHOST(FALSE) FALLBACK
+    // TODO: TEMPORARY -- IMPLEMENT ALTERNATIVE setIsHost(false) FALLBACK (???)
     setIsHost(false);
     const token = localStorage.getItem('token');
 
