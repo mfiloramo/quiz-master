@@ -1,52 +1,53 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, JSX } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import QuizModule from '@/components/quiz-module/quiz-module';
+import Leaderboard from '@/components/leaderboard/Leaderboard';
 import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
-import Leaderboard from '@/components/leaderboard/Leaderboard';
 
-const colorMap = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
+const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
-export default function QuizPage() {
-  // LOCAL STATE
+// DEFINE UI PHASE ENUM
+enum QuizPhase {
+  Question = 'QUESTION',
+  AnswerSummary = 'ANSWER_SUMMARY',
+  Leaderboard = 'LEADERBOARD',
+}
+
+export default function QuizPage(): JSX.Element {
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
-  const [loading, setLoading] = useState(false); // CONTROLS GENERAL LOADING/WAITING STATE
-  const [secondsLeft, setSecondsLeft] = useState<number | null>(null); // CLIENT-SIDE TIMER
-  const [roundComplete, setRoundComplete] = useState(false); // NEW: TRACK IF ROUND IS OVER
-  const [showLeaderboard, setShowLeaderboard] = useState(false); // NEW: SHOW LEADERBOARD FLAG
-  const [error, setError] = useState<string | null>(null); // TODO: DISPLAY TOAST ERROR ON ERROR
+  const [loading, setLoading] = useState<boolean>(false);
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
+  const [error, setError] = useState<string | null>(null);
 
-  // PAGE VARIABLES
-  const leaderboardTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // CUSTOM HOOKS
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
   const router = useRouter();
 
-  // REQUEST QUESTION ON INITIAL MOUNT
+  // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {
     if (!socket || !sessionId) return;
     socket.emit('get-current-question', { sessionId });
   }, [socket, sessionId]);
 
-  // REQUEST FULL PLAYER LIST ON INITIAL MOUNT (FOR MISSED JOIN EMITS)
+  // ON MOUNT, REQUEST PLAYER LIST
   useEffect(() => {
     if (!socket || !sessionId) return;
     socket.emit('get-players', { sessionId });
   }, [socket, sessionId]);
 
-  // SHOW ROUND TIMER COUNTDOWN (CLIENT-SIDE)
+  // TIMER COUNTDOWN DURING QUESTION PHASE
   useEffect(() => {
     if (!loading && secondsLeft !== null) {
       const interval = setInterval(() => {
@@ -55,73 +56,39 @@ export default function QuizPage() {
           return 0;
         });
       }, 1000);
-
-      return (): void => clearInterval(interval);
+      return () => clearInterval(interval);
     }
   }, [loading, secondsLeft]);
 
-  // SOCKET EVENT LISTENERS
+  // HANDLE SOCKET EVENTS
   useEffect(() => {
     if (!socket) return;
 
-    // RECEIVE QUESTION
-    socket.on('new-question', (data) => {
-      const { index, question, total, roundTimer } = data;
-      setLockedIn(false);
-      setCurrentIndex(index);
-      setCurrentQuestion(question);
-      setTotalQuestions(total);
-      setRoundComplete(false); // RESET ROUND STATE
-      setShowLeaderboard(false); // RESET LEADERBOARD STATE
-
-      if (!isHost) {
-        // CLEAR ANY EXISTING TIMEOUT
-        if (leaderboardTimeoutRef.current) {
-          clearTimeout(leaderboardTimeoutRef.current);
-          leaderboardTimeoutRef.current = null;
-        }
-
-        // START CLIENT TIMER FOR PLAYER
-        setSecondsLeft(roundTimer / 1000);
-        setLoading(false); // SHOW QUESTION
-
-        // SET TIMEOUT TO SHOW LEADERBOARD AFTER roundTimer
-        leaderboardTimeoutRef.current = setTimeout(() => {
-          setShowLeaderboard(true);
-          setLoading(true);
-          leaderboardTimeoutRef.current = null;
-        }, roundTimer);
-      } else {
-        // HOST SHOULD SEE THE NEXT QUESTION IMMEDIATELY
+    socket.on(
+      'new-question',
+      (data: { index: number; question: QuizQuestion; total: number; roundTimer: number }) => {
+        const { index, question, total, roundTimer } = data;
+        setLockedIn(false);
+        setCurrentIndex(index);
+        setCurrentQuestion(question);
+        setTotalQuestions(total);
+        setPhase(QuizPhase.Question);
         setLoading(false);
-        setShowLeaderboard(false); // MAKE SURE LEADERBOARD IS HIDDEN
+        setSecondsLeft(roundTimer / 1000);
       }
-    });
+    );
 
-    // ALL PLAYERS ANSWERED EARLY
     socket.on('all-players-answered', () => {
-      // CANCEL ANY PENDING TIMEOUT
-      if (leaderboardTimeoutRef.current) {
-        clearTimeout(leaderboardTimeoutRef.current);
-        leaderboardTimeoutRef.current = null;
-      }
-      setRoundComplete(true); // ROUND ENDS EARLY
+      // SHOW ANSWER SUMMARY IMMEDIATELY AFTER ALL ANSWER
       setSecondsLeft(null);
-      setShowLeaderboard(true);
-      setLoading(true); // SHOW LEADERBOARD FOR HOST
-
-      // DO NOT RESET TO QUESTION AFTER THIS TIMEOUT
-      setTimeout(() => {
-        // HOST STAYS IN SHOW-LEADERBOARD STATE UNTIL NEXT QUESTION
-      }, 5000);
+      setLoading(true);
+      setPhase(QuizPhase.AnswerSummary);
     });
 
-    // RECEIVE UPDATED PLAYER LIST
     socket.on('player-joined', (updatedPlayers: Player[]) => {
       setPlayers(updatedPlayers);
     });
 
-    // PLAYER EJECTED BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
       disconnect();
@@ -130,7 +97,6 @@ export default function QuizPage() {
       router.push('/dashboard');
     });
 
-    // SESSION ENDED BY HOST DISCONNECT
     socket.on('session-ended', () => {
       alert('Session has ended.');
       disconnect();
@@ -139,30 +105,45 @@ export default function QuizPage() {
       router.push('/dashboard/');
     });
 
-    // CLEANUP SOCKET LISTENERS
     return () => {
       socket.off('new-question');
       socket.off('player-joined');
       socket.off('session-ended');
       socket.off('ejected-by-host');
       socket.off('all-players-answered');
-
-      // CLEAN UP CLIENT-SIDE TIMEOUT
-      if (leaderboardTimeoutRef.current) {
-        clearTimeout(leaderboardTimeoutRef.current);
-        leaderboardTimeoutRef.current = null;
-      }
     };
-  }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex]);
+  }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex, sessionId]);
+
+  // PHASE-BASED PROGRESSION EFFECT
+  // ADVANCES FROM ANSWER SUMMARY → LEADERBOARD → NEXT QUESTION (REQUESTED FROM BACKEND)
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+
+    if (phase === QuizPhase.AnswerSummary) {
+      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 5000);
+    }
+
+    if (phase === QuizPhase.Leaderboard) {
+      timer = setTimeout(() => {
+        setLoading(true);
+        socket?.emit('next-question', { sessionId });
+      }, 5000);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [phase, socket, sessionId]);
 
   // HANDLE ANSWER SUBMISSION
   const handleAnswer = (answer: string): void => {
+    if (!user) return;
     socket?.emit('submit-answer', {
       sessionId,
-      id: user!.id,
+      id: user.id,
       answer,
     });
-    setLoading(true); // PREVENT DOUBLE SUBMISSION
+    setLoading(true);
     if (isHost) {
       socket?.emit('get-current-question', { sessionId });
     }
@@ -177,11 +158,11 @@ export default function QuizPage() {
     router.push('/dashboard');
   };
 
-  // RENDER
+  // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
-      {/* RENDER QUIZ MODULE IF NOT THE HOST */}
-      {currentQuestion && !isHost && !loading && !roundComplete && (
+      {/* RENDER QUIZ MODULE IF NOT HOST */}
+      {phase === QuizPhase.Question && currentQuestion && !isHost && (
         <QuizModule
           question={currentQuestion}
           questionNumber={currentIndex + 1}
@@ -190,22 +171,17 @@ export default function QuizPage() {
         />
       )}
 
-      {/* TODO: EXTRACT BELOW TO MODULE */}
       {/* HOST ONLY: DISPLAY CURRENT ROUND QUESTION & CHOICES */}
-      {!loading && currentQuestion && isHost && !roundComplete && (
-        <div
-          className={
-            'min-w-2xl my-8 max-w-2xl rounded-xl bg-slate-200 p-7 text-center text-5xl font-bold text-slate-900 shadow-xl'
-          }
-        >
+      {phase === QuizPhase.Question && currentQuestion && isHost && (
+        <div className='min-w-2xl my-8 max-w-2xl rounded-xl bg-slate-200 p-7 text-center text-5xl font-bold text-slate-900 shadow-xl'>
           <h2 className='mb-2 text-xl font-bold text-gray-700'>
             Question {currentIndex + 1} / {totalQuestions}
           </h2>
           <div className='mb-8 w-full rounded-lg bg-sky-100 p-6 text-center text-2xl font-bold text-black shadow-md'>
-            {<div>{currentQuestion.question}</div>}
+            <div>{currentQuestion.question}</div>
           </div>
           <div className='grid w-full grid-cols-2 gap-3'>
-            {currentQuestion.options.map((option, index) => (
+            {currentQuestion.options.map((option: string, index: number) => (
               <div
                 key={index}
                 className={`rounded-lg p-6 text-lg font-bold text-white shadow-md transition-all duration-200 ${colorMap[index % colorMap.length]}`}
@@ -218,12 +194,18 @@ export default function QuizPage() {
       )}
 
       {/* DISPLAY TIMER (PLAYER ONLY) */}
-      {!loading && !isHost && secondsLeft !== null && (
+      {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
         <div className='my-4 text-xl text-white'>Time Left: {secondsLeft}s</div>
       )}
 
-      {/* DISPLAY LEADERBOARD WHEN ROUND ENDS */}
-      {showLeaderboard && isHost && <Leaderboard />}
+      {/* DISPLAY ANSWER SUMMARY */}
+      {phase === QuizPhase.AnswerSummary &&
+        currentQuestion &&
+        // <AnswerSummary question={currentQuestion} />
+        'I am the answer summary'}
+
+      {/* DISPLAY LEADERBOARD */}
+      {phase === QuizPhase.Leaderboard && <Leaderboard />}
 
       {/* LEAVE/END GAME BUTTON */}
       <motion.button

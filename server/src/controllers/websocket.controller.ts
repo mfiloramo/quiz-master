@@ -162,6 +162,22 @@ export class WebSocketController {
     });
   }
 
+  // HANDLE ADVANCEMENT TO NEXT QUESTION (CALLED BY FRONTEND AFTER LEADERBOARD)
+  public handleNextQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
+    const session = SessionManager.getSession(sessionId);
+    if (!session) return;
+
+    session.nextQuestion();
+
+    const next = session.questions[session.currentQuestionIndex];
+    if (next) {
+      this.emitQuestionWithTimeout(session);
+    } else {
+      this.io.to(session.sessionId).emit('session-ended');
+      SessionManager.deleteSession(session.sessionId);
+    }
+  }
+
   // GET FULL PLAYER LIST FOR CLIENT THAT JOINED MIDWAY
   public getPlayers(socket: Socket, { sessionId }: { sessionId: string }): void {
     const session = SessionManager.getSession(sessionId);
@@ -196,18 +212,6 @@ export class WebSocketController {
 
       // NOTIFY CLIENTS THAT ROUND IS COMPLETE
       this.io.to(sessionId).emit('all-players-answered');
-
-      // WAIT FOR LEADERBOARD TO SHOW, THEN ADVANCE
-      setTimeout(() => {
-        session!.nextQuestion();
-        const next = session!.questions[session!.currentQuestionIndex];
-        if (next) {
-          this.emitQuestionWithTimeout(session!);
-        } else {
-          this.io.to(session!.sessionId).emit('session-ended');
-          SessionManager.deleteSession(session!.sessionId);
-        }
-      }, 5000); // WAIT 5 SECONDS BEFORE NEXT QUESTION
     }
   }
 
@@ -258,17 +262,17 @@ export class WebSocketController {
   }
 
   /** PRIVATE METHODS **/
-  // EMIT QUESTION TO ALL CLIENTS AND SET FAILSAFE TIMEOUT
+// EMIT QUESTION TO ALL CLIENTS AND SET FAILSAFE TIMEOUT
   private emitQuestionWithTimeout(session: GameSession): void {
     const sessionId = session.sessionId;
     const currentQuestion = session.questions[session.currentQuestionIndex];
 
-    // EMIT NEW QUESTION WITH INDEX AND TIMER
+    // EMIT NEW QUESTION TO ALL CLIENTS
     this.io.to(sessionId).emit('new-question', {
       question: currentQuestion,
       index: session.currentQuestionIndex,
       total: session.questions.length,
-      roundTimer: session.roundTimer
+      roundTimer: session.roundTimer,
     });
 
     // CLEAR ANY EXISTING TIMEOUT TO AVOID CONFLICTS
@@ -276,24 +280,10 @@ export class WebSocketController {
 
     // SET TIMEOUT TO FORCE PROGRESSION IF NOT ALL ANSWER
     session.currentTimeout = setTimeout(() => {
-      // ONLY PROCEED IF SOME PLAYERS DID NOT ANSWER
       if (!session.allPlayersAnswered()) {
-        session.players.forEach(p => (p.hasAnswered = true)); // MARK ALL AS ANSWERED
-
-        // EMIT ROUND COMPLETE TO CLIENTS
+        session.players.forEach((p) => (p.hasAnswered = true));
+        this.io.to(sessionId).emit('player-joined', session.players);
         this.io.to(sessionId).emit('all-players-answered');
-
-        // WAIT FOR LEADERBOARD, THEN ADVANCE
-        setTimeout(() => {
-          session.nextQuestion();
-          const next = session.questions[session.currentQuestionIndex];
-          if (next) {
-            this.emitQuestionWithTimeout(session);
-          } else {
-            this.io.to(sessionId).emit('session-ended');
-            SessionManager.deleteSession(sessionId);
-          }
-        }, 5000); // WAIT 5 SECONDS FOR LEADERBOARD
       }
     }, session.roundTimer);
   }
