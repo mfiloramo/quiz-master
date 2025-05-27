@@ -4,7 +4,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { QuestionListingType } from '@/types/QuestionListing.type';
 import QuestionListing from '@/components/question-listing/question-listing';
 import { useQuiz } from '@/contexts/QuizContext';
-import EditModalQuestion from '@/components/edit-modal-question/edit-modal-question';
+import EditQuestionModal from '@/components/edit-question-modal/edit-question-modal';
 import { motion } from 'framer-motion';
 
 export default function EditQuiz(): ReactElement {
@@ -79,7 +79,7 @@ export default function EditQuiz(): ReactElement {
 
       {/* MODAL: EDIT OR ADD */}
       {editingQuestion && (
-        <EditModalQuestion
+        <EditQuestionModal
           question={editingQuestion}
           onClose={() => setEditingQuestion(null)}
           onSave={updateQuestionsModal}

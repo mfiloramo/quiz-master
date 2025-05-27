@@ -1,6 +1,7 @@
 import React, { JSX } from 'react';
 import { motion } from 'framer-motion';
 
+// TODO: EXTRACT TO EXPORTED TYPE
 type Props = {
   question: string;
   options: string[];

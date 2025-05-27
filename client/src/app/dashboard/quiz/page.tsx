@@ -9,18 +9,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import QuizModule from '@/components/quiz-module/quiz-module';
 import Leaderboard from '@/components/leaderboard/leaderboard';
 import HostQuestionDisplay from '@/components/host-question-display/host-question-display';
+import { QuizPhase } from '@/enums/QuizPhase.enum';
 import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
-
-// DEFINE UI PHASE ENUM
-enum QuizPhase {
-  Question = 'QUESTION',
-  AnswerSummary = 'ANSWER_SUMMARY',
-  Leaderboard = 'LEADERBOARD',
-}
 
 export default function QuizPage(): JSX.Element {
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
@@ -163,6 +157,7 @@ export default function QuizPage(): JSX.Element {
   // MAIN RENDER
   return (
     <div className='flex flex-col items-center justify-center'>
+      {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT*/}
       {/* PLAYER QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && !isHost && (
         <QuizModule
@@ -197,6 +192,7 @@ export default function QuizPage(): JSX.Element {
         <div className='my-4 text-xl text-white'>Time Left: {secondsLeft}s</div>
       )}
 
+      {/* TODO: EXTRACT TO COMPONENT */}
       {/* PLAYER ANSWER SUMMARY */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && !isHost && (
         <div className='min-w-2xl my-8 rounded-xl bg-white p-6 text-center text-2xl font-medium text-gray-900 shadow-md'>
