@@ -14,6 +14,7 @@ import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import PlayerAnswerSummary from '@/components/player-answer-summary/player-answer-summary';
 
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
@@ -209,34 +210,11 @@ export default function QuizPage(): JSX.Element {
         />
       )}
 
-      {/* TODO: EXTRACT TO COMPONENT */}
       {/* PLAYER ANSWER SUMMARY */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && !isHost && (
         <div className='min-w-2xl my-8 rounded-xl bg-white p-6 text-center text-2xl font-medium text-gray-900 shadow-md'>
           {userAnswer ? (
-            (() => {
-              const correct = userAnswer === currentQuestion.correct;
-              return (
-                <>
-                  <p>Your answer:</p>
-                  <div
-                    className={`mb-4 mt-2 inline-block rounded-full px-4 py-2 font-bold text-white ${
-                      correct ? 'bg-green-500' : 'bg-red-500'
-                    }`}
-                  >
-                    {userAnswer}
-                  </div>
-                  {correct ? (
-                    <p className='text-green-700'>CORRECT!</p>
-                  ) : (
-                    <p className='text-red-700'>
-                      Incorrect -- the correct answer is:{' '}
-                      <span className='font-bold'>{currentQuestion.correct}</span>.
-                    </p>
-                  )}
-                </>
-              );
-            })()
+            <PlayerAnswerSummary userAnswer={userAnswer} correctAnswer={currentQuestion.correct} />
           ) : (
             <p>Time is up!</p>
           )}

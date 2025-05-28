@@ -12,7 +12,7 @@ export default function Leaderboard(): ReactElement {
   // RENDER COMPONENT
   return (
     // MAIN CONTAINER
-    <div className='flex flex-col items-center justify-center'>
+    <div className='flex h-fit flex-col items-center justify-center'>
       <h1 className='mb-6 text-5xl font-bold'>Player Leaderboard</h1>
 
       {/* MAIN DISPLAY */}
