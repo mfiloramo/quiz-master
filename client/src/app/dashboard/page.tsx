@@ -19,6 +19,11 @@ export default function DashboardHome(): JSX.Element {
       description: 'Join a game someone is hosting.',
     },
     {
+      label: '✨ Create Quiz',
+      href: '/dashboard/create',
+      description: 'Create a new quiz and test your friends.',
+    },
+    {
       label: '🧭 Discover',
       href: '/dashboard/discover',
       description: 'Find new quizzes curated just for you.',
@@ -37,7 +42,6 @@ export default function DashboardHome(): JSX.Element {
 
   // CHECK IF USER IS LOGGED IN
   useEffect(() => {
-    // TODO: TEMPORARY -- IMPLEMENT ALTERNATIVE setIsHost(false) FALLBACK (???)
     setIsHost(false);
     const token = localStorage.getItem('token');
 

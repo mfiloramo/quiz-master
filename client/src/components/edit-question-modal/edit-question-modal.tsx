@@ -3,7 +3,7 @@
 import React, { ReactElement, useState } from 'react';
 import { EditModalProps } from '@/types/QuestionListing.type';
 
-export default function EditModalQuestion({
+export default function EditQuestionModal({
   quizId,
   question,
   onClose,

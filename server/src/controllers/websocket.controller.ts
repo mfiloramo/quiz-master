@@ -206,12 +206,15 @@ export class WebSocketController {
       this.io.to(sessionId).emit('player-joined', session!.players);
     }
 
+    // ADD PLAYER ANSWER TO PLAYERS ANSWERED LIST
+    session?.playerAnswers.push(answer);
+
     // CHECK IF ALL PLAYERS HAVE ANSWERED
     if (session!.allPlayersAnswered()) {
       session!.clearRoundTimeout(); // CANCEL ANY ACTIVE TIMEOUT
 
-      // NOTIFY CLIENTS THAT ROUND IS COMPLETE
-      this.io.to(sessionId).emit('all-players-answered');
+      // NOTIFY CLIENTS THAT ROUND IS COMPLETE AND PROVIDE HOST ANSWERS
+      this.io.to(sessionId).emit('all-players-answered', session?.playerAnswers);
     }
   }
 
@@ -272,7 +275,7 @@ export class WebSocketController {
       question: currentQuestion,
       index: session.currentQuestionIndex,
       total: session.questions.length,
-      roundTimer: session.roundTimer,
+      roundTimer: session.roundTimer, // TODO: USE FOR TIMER ANIMATION
     });
 
     // CLEAR ANY EXISTING TIMEOUT TO AVOID CONFLICTS

@@ -29,6 +29,7 @@ export class AuthController {
 
       const newUserId = result[0]?.id;
 
+      // TODO: DISABLE AND ADD ADMIN APPROVAL
       // SEND CONFIRMATION EMAIL
       await EmailService.sendConfirmationEmail({
         userId: newUserId,
@@ -118,6 +119,7 @@ export class AuthController {
   // ACTIVATE USER ACCOUNT
   static async activateUserAccount(req: Request, res: Response): Promise<any> {
     try {
+      // TODO: DISABLE AND ADD ADMIN APPROVAL
       // CHECK FOR VALID SECRET_REGISTRATION_KEY
       if (!process.env.SECRET_REGISTRATION_KEY) {
         throw new Error('SECRET_REGISTRATION_KEY is not set');

@@ -6,12 +6,11 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from '@/contexts/SessionContext';
 import { motion } from 'framer-motion';
-import Leaderboard from '@/components/leaderboard/leaderboard';
-import { Player } from '@/interfaces/PlayerListProps.interface';
 
 export default function JoinPage() {
   // LOCAL STATE
   const [sessionIdInput, setSessionIdInput] = useState('');
+  const [usernameInput, setUsernameInput] = useState<string>('');
   const [error, setError] = useState('');
 
   // CUSTOM HOOKS
@@ -43,11 +42,14 @@ export default function JoinPage() {
       return;
     }
 
+    const id = user?.id ?? Math.floor(1000 + Math.random() * 9000);
+    console.log('Joining with ID:', id, 'Username:', usernameInput || user?.username);
+
     // EMIT JOIN REQUEST
     socket.emit('join-session', {
-      id: user!.id,
-      username: user!.username,
-      sessionId: sessionIdInput,
+      id,
+      username: usernameInput || user?.username,
+      sessionId: sessionIdInput.trim(),
     });
 
     // ON SUCCESSFUL JOIN, SAVE SESSION ID AND REDIRECT
@@ -66,6 +68,15 @@ export default function JoinPage() {
   return (
     <div className='flex flex-col items-center justify-center'>
       <h1 className='mb-4 text-2xl font-bold'>Join Game</h1>
+      <div className={'mb-2 text-xl font-bold'}>Player Name</div>
+      <input
+        type={'text'}
+        placeholder={'Player Name'}
+        onChange={(e) => setUsernameInput(e.target.value)}
+        className='mb-4 rounded border p-2'
+      />
+
+      <div className={'mb-2 text-xl font-bold'}>Session ID</div>
       <input
         type='text'
         placeholder='Session ID'
