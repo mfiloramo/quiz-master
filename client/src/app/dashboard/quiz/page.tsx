@@ -200,10 +200,7 @@ export default function QuizPage(): JSX.Element {
       {/* HOST ANSWER SUMMARY VIEW */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
         <>
-          {/* PLAYER ANSWERS GRAPH */}
-          <PlayerAnswersGraph playerAnswers={playerAnswers} />
-
-          {/* CORRECT QUESTION DISPLAY */}
+          <PlayerAnswersGraph playerAnswers={playerAnswers} options={currentQuestion.options} />
           <HostQuestionDisplay
             question={currentQuestion.question}
             options={currentQuestion.options}
