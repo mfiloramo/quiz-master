@@ -10,7 +10,7 @@ import QuizModule from '@/components/quiz-module/quiz-module';
 import Leaderboard from '@/components/leaderboard/leaderboard';
 import HostQuestionDisplay from '@/components/host-question-display/host-question-display';
 import { QuizPhase } from '@/enums/QuizPhase.enum';
-import { QuizQuestion } from '@/types/Quiz.types';
+import { QuizQuestion, QuizSession } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
@@ -62,21 +62,18 @@ export default function QuizPage(): JSX.Element {
   // HANDLE SOCKET EVENTS
   useEffect(() => {
     if (!socket) return;
-    socket.on(
-      'new-question',
-      (data: { index: number; question: QuizQuestion; total: number; roundTimer: number }) => {
-        const { index, question, total, roundTimer } = data;
-        setLockedIn(false);
-        setCurrentIndex(index);
-        setCurrentQuestion(question);
-        setTotalQuestions(total);
-        setPhase(QuizPhase.Question);
-        setLoading(false);
-        setRoundTimerSetting(roundTimer / 1000);
-        setSecondsLeft(roundTimer / 1000);
-        setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
-      }
-    );
+    socket.on('new-question', (data: QuizSession) => {
+      const { index, question, total, roundTimer } = data;
+      setLockedIn(false);
+      setCurrentIndex(index);
+      setCurrentQuestion(question);
+      setTotalQuestions(total);
+      setPhase(QuizPhase.Question);
+      setLoading(false);
+      setRoundTimerSetting(roundTimer / 1000);
+      setSecondsLeft(roundTimer / 1000);
+      setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
+    });
 
     socket.on('all-players-answered', () => {
       setSecondsLeft(null);
@@ -163,14 +160,12 @@ export default function QuizPage(): JSX.Element {
       {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT*/}
       {/* PLAYER QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && !isHost && (
-        <>
-          <QuizModule
-            question={currentQuestion}
-            questionNumber={currentIndex + 1}
-            totalQuestions={totalQuestions}
-            onSubmit={handleAnswer}
-          />
-        </>
+        <QuizModule
+          question={currentQuestion}
+          questionNumber={currentIndex + 1}
+          totalQuestions={totalQuestions}
+          onSubmit={handleAnswer}
+        />
       )}
 
       {/* PLAYER TIMER DISPLAY */}
@@ -200,14 +195,17 @@ export default function QuizPage(): JSX.Element {
 
       {/* HOST ANSWER SUMMARY VIEW */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
-        <HostQuestionDisplay
-          question={currentQuestion.question}
-          options={currentQuestion.options}
-          correctAnswer={currentQuestion.correct}
-          questionNumber={currentIndex + 1}
-          totalQuestions={totalQuestions}
-          colorMap={colorMap}
-        />
+        <>
+          {/* INSERT ANSWER BAR GRAPH HERE */}
+          <HostQuestionDisplay
+            question={currentQuestion.question}
+            options={currentQuestion.options}
+            correctAnswer={currentQuestion.correct}
+            questionNumber={currentIndex + 1}
+            totalQuestions={totalQuestions}
+            colorMap={colorMap}
+          />
+        </>
       )}
 
       {/* PLAYER ANSWER SUMMARY */}
