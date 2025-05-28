@@ -272,7 +272,7 @@ export class WebSocketController {
       question: currentQuestion,
       index: session.currentQuestionIndex,
       total: session.questions.length,
-      roundTimer: session.roundTimer,
+      roundTimer: session.roundTimer, // TODO: USE FOR TIMER ANIMATION
     });
 
     // CLEAR ANY EXISTING TIMEOUT TO AVOID CONFLICTS

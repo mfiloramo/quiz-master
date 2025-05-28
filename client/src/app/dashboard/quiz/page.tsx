@@ -13,6 +13,7 @@ import { QuizPhase } from '@/enums/QuizPhase.enum';
 import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
@@ -21,6 +22,7 @@ export default function QuizPage(): JSX.Element {
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(null);
   const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
   const [error, setError] = useState<string | null>(null);
   const [userAnswer, setUserAnswer] = useState<string | null>(null); // TRACK USER ANSWER FOR PLAYER FEEDBACK
@@ -59,7 +61,6 @@ export default function QuizPage(): JSX.Element {
   // HANDLE SOCKET EVENTS
   useEffect(() => {
     if (!socket) return;
-
     socket.on(
       'new-question',
       (data: { index: number; question: QuizQuestion; total: number; roundTimer: number }) => {
@@ -70,6 +71,7 @@ export default function QuizPage(): JSX.Element {
         setTotalQuestions(total);
         setPhase(QuizPhase.Question);
         setLoading(false);
+        setRoundTimerSetting(roundTimer / 1000);
         setSecondsLeft(roundTimer / 1000);
         setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
       }
@@ -160,12 +162,28 @@ export default function QuizPage(): JSX.Element {
       {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT*/}
       {/* PLAYER QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && !isHost && (
-        <QuizModule
-          question={currentQuestion}
-          questionNumber={currentIndex + 1}
-          totalQuestions={totalQuestions}
-          onSubmit={handleAnswer}
-        />
+        <>
+          <QuizModule
+            question={currentQuestion}
+            questionNumber={currentIndex + 1}
+            totalQuestions={totalQuestions}
+            onSubmit={handleAnswer}
+          />
+        </>
+      )}
+
+      {/* PLAYER TIMER DISPLAY */}
+      {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
+        <div className={'mt-8'}>
+          <CountdownCircleTimer
+            isPlaying
+            duration={roundTimerSetting!}
+            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+            colorsTime={[7, 5, 2, 0]}
+          >
+            {({ remainingTime }) => remainingTime}
+          </CountdownCircleTimer>
+        </div>
       )}
 
       {/* HOST QUESTION VIEW */}
@@ -177,11 +195,6 @@ export default function QuizPage(): JSX.Element {
           totalQuestions={totalQuestions}
           colorMap={colorMap}
         />
-      )}
-
-      {/* PLAYER TIMER DISPLAY */}
-      {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
-        <div className='my-4 text-xl text-white'>Time Left: {secondsLeft}s</div>
       )}
 
       {/* HOST ANSWER SUMMARY VIEW */}
@@ -235,7 +248,7 @@ export default function QuizPage(): JSX.Element {
 
       {/* LEAVE/END BUTTON */}
       <motion.button
-        className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
+        className='mt-7 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
         onClick={handleLeave}
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
