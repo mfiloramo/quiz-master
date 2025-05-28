@@ -1,22 +1,30 @@
 import React, { JSX } from 'react';
 import { motion } from 'framer-motion';
 
+// TODO: EXTRACT TO EXPORTED TYPE
 type Props = {
   question: string;
   options: string[];
   correctAnswer?: string;
+  questionNumber: number;
+  totalQuestions: number;
   colorMap: string[];
 };
 
 export default function HostQuestionDisplay({
   question,
   options,
+  questionNumber,
+  totalQuestions,
   correctAnswer,
   colorMap,
 }: Props): JSX.Element {
   return (
     <div className='my-8 w-full max-w-3xl rounded-xl bg-slate-200 p-7 text-center text-5xl font-bold text-slate-900 shadow-xl'>
-      <h2 className='mb-2 text-xl font-bold text-gray-700'>Question</h2>
+      <h2 className='mb-2 text-xl font-bold text-gray-700'>
+        {' '}
+        Question {questionNumber} / {totalQuestions}
+      </h2>
 
       <div className='mb-8 w-full rounded-lg bg-sky-100 p-6 text-center text-2xl font-bold text-black shadow-md'>
         {question}

@@ -9,27 +9,26 @@ import { useAuth } from '@/contexts/AuthContext';
 import QuizModule from '@/components/quiz-module/quiz-module';
 import Leaderboard from '@/components/leaderboard/leaderboard';
 import HostQuestionDisplay from '@/components/host-question-display/host-question-display';
-import { QuizQuestion } from '@/types/Quiz.types';
+import { QuizPhase } from '@/enums/QuizPhase.enum';
+import { QuizQuestion, QuizSession } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import PlayerAnswerSummary from '@/components/player-answer-summary/player-answer-summary';
+import PlayerAnswersGraph from '@/components/player-answers-graph/player-answers-graph';
 
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
-
-// DEFINE UI PHASE ENUM
-enum QuizPhase {
-  Question = 'QUESTION',
-  AnswerSummary = 'ANSWER_SUMMARY',
-  Leaderboard = 'LEADERBOARD',
-}
 
 export default function QuizPage(): JSX.Element {
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(null);
   const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
   const [error, setError] = useState<string | null>(null);
-  const [userAnswer, setUserAnswer] = useState<string | null>(null); // TRACK USER ANSWER FOR PLAYER FEEDBACK
+  const [userAnswer, setUserAnswer] = useState<string | null>(null);
+  const [playerAnswers, setPlayerAnswers] = useState<string[]>([]);
 
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
@@ -65,26 +64,24 @@ export default function QuizPage(): JSX.Element {
   // HANDLE SOCKET EVENTS
   useEffect(() => {
     if (!socket) return;
+    socket.on('new-question', (data: QuizSession) => {
+      const { index, question, total, roundTimer } = data;
+      setLockedIn(false);
+      setCurrentIndex(index);
+      setCurrentQuestion(question);
+      setTotalQuestions(total);
+      setPhase(QuizPhase.Question);
+      setLoading(false);
+      setRoundTimerSetting(roundTimer / 1000);
+      setSecondsLeft(roundTimer / 1000);
+      setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
+    });
 
-    socket.on(
-      'new-question',
-      (data: { index: number; question: QuizQuestion; total: number; roundTimer: number }) => {
-        const { index, question, total, roundTimer } = data;
-        setLockedIn(false);
-        setCurrentIndex(index);
-        setCurrentQuestion(question);
-        setTotalQuestions(total);
-        setPhase(QuizPhase.Question);
-        setLoading(false);
-        setSecondsLeft(roundTimer / 1000);
-        setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
-      }
-    );
-
-    socket.on('all-players-answered', () => {
+    socket.on('all-players-answered', (answers: string[]): void => {
       setSecondsLeft(null);
       setLoading(true);
       setPhase(QuizPhase.AnswerSummary); // TRANSITION TO ANSWER SUMMARY
+      setPlayerAnswers(answers);
     });
 
     socket.on('player-joined', (updatedPlayers: Player[]) => {
@@ -116,7 +113,7 @@ export default function QuizPage(): JSX.Element {
     };
   }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex, sessionId]);
 
-  // PHASE-BASED PROGRESSION
+  // PHASE-BASED PROGRESSION ENGINE
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 
@@ -140,6 +137,7 @@ export default function QuizPage(): JSX.Element {
   const handleAnswer = (answer: string): void => {
     if (!user) return;
     setUserAnswer(answer);
+    setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
     socket?.emit('submit-answer', {
       sessionId,
       id: user.id,
@@ -163,6 +161,7 @@ export default function QuizPage(): JSX.Element {
   // MAIN RENDER
   return (
     <div className='flex flex-col items-center justify-center'>
+      {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT*/}
       {/* PLAYER QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && !isHost && (
         <QuizModule
@@ -173,59 +172,53 @@ export default function QuizPage(): JSX.Element {
         />
       )}
 
+      {/* PLAYER TIMER DISPLAY */}
+      {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
+        <div className={'mt-8'}>
+          <CountdownCircleTimer
+            isPlaying
+            duration={roundTimerSetting!}
+            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+            colorsTime={[7, 5, 2, 0]}
+          >
+            {({ remainingTime }) => remainingTime}
+          </CountdownCircleTimer>
+        </div>
+      )}
+
       {/* HOST QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && isHost && (
         <HostQuestionDisplay
           question={currentQuestion.question}
           options={currentQuestion.options}
+          questionNumber={currentIndex + 1}
+          totalQuestions={totalQuestions}
           colorMap={colorMap}
         />
       )}
 
       {/* HOST ANSWER SUMMARY VIEW */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
-        <HostQuestionDisplay
-          question={currentQuestion.question}
-          options={currentQuestion.options}
-          correctAnswer={currentQuestion.correct}
-          colorMap={colorMap}
-        />
-      )}
-
-      {/* PLAYER TIMER DISPLAY */}
-      {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
-        <div className='my-4 text-xl text-white'>Time Left: {secondsLeft}s</div>
+        <>
+          <PlayerAnswersGraph playerAnswers={playerAnswers} options={currentQuestion.options} />
+          <HostQuestionDisplay
+            question={currentQuestion.question}
+            options={currentQuestion.options}
+            correctAnswer={currentQuestion.correct}
+            questionNumber={currentIndex + 1}
+            totalQuestions={totalQuestions}
+            colorMap={colorMap}
+          />
+        </>
       )}
 
       {/* PLAYER ANSWER SUMMARY */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && !isHost && (
         <div className='min-w-2xl my-8 rounded-xl bg-white p-6 text-center text-2xl font-medium text-gray-900 shadow-md'>
           {userAnswer ? (
-            (() => {
-              const correct = userAnswer === currentQuestion.correct;
-              return (
-                <>
-                  <p>Your answer:</p>
-                  <div
-                    className={`mb-4 mt-2 inline-block rounded-full px-4 py-2 font-bold text-white ${
-                      correct ? 'bg-green-500' : 'bg-red-500'
-                    }`}
-                  >
-                    {userAnswer}
-                  </div>
-                  {correct ? (
-                    <p className='text-green-700'>CORRECT!</p>
-                  ) : (
-                    <p className='text-red-700'>
-                      INCORRECT — THE RIGHT ANSWER WAS{' '}
-                      <span className='font-bold'>{currentQuestion.correct}</span>.
-                    </p>
-                  )}
-                </>
-              );
-            })()
+            <PlayerAnswerSummary userAnswer={userAnswer} correctAnswer={currentQuestion.correct} />
           ) : (
-            <p>WAITING FOR YOUR ANSWER…</p>
+            <p>Time is up!</p>
           )}
         </div>
       )}
@@ -235,7 +228,7 @@ export default function QuizPage(): JSX.Element {
 
       {/* LEAVE/END BUTTON */}
       <motion.button
-        className='mt-12 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
+        className='mt-7 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
         onClick={handleLeave}
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}

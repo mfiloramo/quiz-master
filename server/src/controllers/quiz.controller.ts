@@ -65,14 +65,14 @@ export class QuizController {
   // UPDATE QUIZ BY ID
   static async updateQuiz(req: Request, res: Response): Promise<void> {
     try {
-      const { quizId, title, description } = req.body;
+      const { id, title, description, visibility } = req.body;
       await sequelize.query(
-        "EXECUTE UpdateQuiz :quizId, :title, :description",
+        "EXECUTE UpdateQuiz :id, :title, :description, :visibility",
         {
-          replacements: { quizId, title, description },
+          replacements: { id, title, description, visibility },
         },
       );
-      res.status(200).send(`Quiz with ID: ${quizId} updated successfully`);
+      res.status(200).send(`Quiz with ID: ${id} updated successfully`);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");

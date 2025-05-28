@@ -46,3 +46,11 @@ export type QuizContextType = {
   lockedIn: boolean;
   setLockedIn: Dispatch<SetStateAction<boolean>>;
 };
+
+// TYPE FOR QUIZ SESSION
+export type QuizSession = {
+  index: number;
+  question: QuizQuestion;
+  total: number;
+  roundTimer: number;
+};
