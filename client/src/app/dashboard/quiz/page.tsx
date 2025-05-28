@@ -15,6 +15,7 @@ import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import PlayerAnswerSummary from '@/components/player-answer-summary/player-answer-summary';
+import PlayerAnswersGraph from '@/components/player-answers-graph/player-answers-graph';
 
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
@@ -26,7 +27,8 @@ export default function QuizPage(): JSX.Element {
   const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(null);
   const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
   const [error, setError] = useState<string | null>(null);
-  const [userAnswer, setUserAnswer] = useState<string | null>(null); // TRACK USER ANSWER FOR PLAYER FEEDBACK
+  const [userAnswer, setUserAnswer] = useState<string | null>(null);
+  const [playerAnswers, setPlayerAnswers] = useState<string[]>([]);
 
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
@@ -75,10 +77,11 @@ export default function QuizPage(): JSX.Element {
       setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
     });
 
-    socket.on('all-players-answered', () => {
+    socket.on('all-players-answered', (answers: string[]): void => {
       setSecondsLeft(null);
       setLoading(true);
       setPhase(QuizPhase.AnswerSummary); // TRANSITION TO ANSWER SUMMARY
+      setPlayerAnswers(answers);
     });
 
     socket.on('player-joined', (updatedPlayers: Player[]) => {
@@ -134,6 +137,7 @@ export default function QuizPage(): JSX.Element {
   const handleAnswer = (answer: string): void => {
     if (!user) return;
     setUserAnswer(answer);
+    setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
     socket?.emit('submit-answer', {
       sessionId,
       id: user.id,
@@ -196,7 +200,10 @@ export default function QuizPage(): JSX.Element {
       {/* HOST ANSWER SUMMARY VIEW */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
         <>
-          {/* INSERT ANSWER BAR GRAPH HERE */}
+          {/* PLAYER ANSWERS GRAPH */}
+          <PlayerAnswersGraph playerAnswers={playerAnswers} />
+
+          {/* CORRECT QUESTION DISPLAY */}
           <HostQuestionDisplay
             question={currentQuestion.question}
             options={currentQuestion.options}
