@@ -173,6 +173,8 @@ export default function QuizPage(): JSX.Element {
         <HostQuestionDisplay
           question={currentQuestion.question}
           options={currentQuestion.options}
+          questionNumber={currentIndex + 1}
+          totalQuestions={totalQuestions}
           colorMap={colorMap}
         />
       )}
@@ -188,6 +190,8 @@ export default function QuizPage(): JSX.Element {
           question={currentQuestion.question}
           options={currentQuestion.options}
           correctAnswer={currentQuestion.correct}
+          questionNumber={currentIndex + 1}
+          totalQuestions={totalQuestions}
           colorMap={colorMap}
         />
       )}
@@ -221,7 +225,7 @@ export default function QuizPage(): JSX.Element {
               );
             })()
           ) : (
-            <p>Waiting for your answer...</p>
+            <p>Time is up!</p>
           )}
         </div>
       )}
