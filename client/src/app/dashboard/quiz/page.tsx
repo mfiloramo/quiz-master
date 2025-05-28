@@ -110,7 +110,7 @@ export default function QuizPage(): JSX.Element {
     };
   }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex, sessionId]);
 
-  // PHASE-BASED PROGRESSION
+  // PHASE-BASED PROGRESSION ENGINE
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 
@@ -177,6 +177,11 @@ export default function QuizPage(): JSX.Element {
         />
       )}
 
+      {/* PLAYER TIMER DISPLAY */}
+      {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
+        <div className='my-4 text-xl text-white'>Time Left: {secondsLeft}s</div>
+      )}
+
       {/* HOST ANSWER SUMMARY VIEW */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
         <HostQuestionDisplay
@@ -185,11 +190,6 @@ export default function QuizPage(): JSX.Element {
           correctAnswer={currentQuestion.correct}
           colorMap={colorMap}
         />
-      )}
-
-      {/* PLAYER TIMER DISPLAY */}
-      {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
-        <div className='my-4 text-xl text-white'>Time Left: {secondsLeft}s</div>
       )}
 
       {/* TODO: EXTRACT TO COMPONENT */}
@@ -213,7 +213,7 @@ export default function QuizPage(): JSX.Element {
                     <p className='text-green-700'>CORRECT!</p>
                   ) : (
                     <p className='text-red-700'>
-                      INCORRECT — THE RIGHT ANSWER WAS{' '}
+                      Incorrect -- the correct answer is:{' '}
                       <span className='font-bold'>{currentQuestion.correct}</span>.
                     </p>
                   )}
@@ -221,7 +221,7 @@ export default function QuizPage(): JSX.Element {
               );
             })()
           ) : (
-            <p>WAITING FOR YOUR ANSWER…</p>
+            <p>Waiting for your answer...</p>
           )}
         </div>
       )}

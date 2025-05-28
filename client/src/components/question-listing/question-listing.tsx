@@ -19,7 +19,7 @@ export default function QuestionListing({
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete question');
-      onDelete();
+      onDelete!();
     } catch (err) {
       console.error(err);
     }
@@ -29,7 +29,7 @@ export default function QuestionListing({
     <div className='mb-4 max-w-3xl rounded-lg border border-gray-300 bg-white p-4 shadow-md'>
       <div className='mb-2 flex justify-between'>
         <span className='font-semibold'>
-          Q{index + 1}: {question}
+          Q{index! + 1}: {question}
         </span>
         <div className='flex gap-2'>
           <Pencil className='cursor-pointer text-blue-500' onClick={onEdit} />
