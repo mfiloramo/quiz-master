@@ -32,7 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <WebSocketProvider>
       <SessionProvider>
         <QuizProvider>
-          <div className='flex min-h-[calc(100vh-4rem)] bg-gradient-to-b from-sky-300 to-sky-800 text-black caret-transparent'>
+          <div className='bg-stub-background-dashboard flex min-h-[calc(100vh-4rem)] text-black caret-transparent'>
             {!hideSidebar && <SideNavbar dashboardLinks={dashboardLinks} />}
             <div className='flex-1 p-6'>{children}</div>
           </div>

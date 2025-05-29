@@ -56,7 +56,7 @@ export default function Navbar(): JSX.Element {
           {/* JOIN GAME BUTTON */}
           {!isLoggedIn && (
             <Link
-              className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-black'
+              className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-white'
               href={'/dashboard/join'}
               key={'join'}
             >
