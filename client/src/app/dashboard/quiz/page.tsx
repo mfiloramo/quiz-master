@@ -77,6 +77,7 @@ export default function QuizPage(): JSX.Element {
       setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
     });
 
+    // ALL PLAYERS ANSWERED
     socket.on('all-players-answered', (answers: string[]): void => {
       setSecondsLeft(null);
       setLoading(true);
@@ -84,10 +85,12 @@ export default function QuizPage(): JSX.Element {
       setPlayerAnswers(answers);
     });
 
+    // PLAYER JOINED
     socket.on('player-joined', (updatedPlayers: Player[]) => {
       setPlayers(updatedPlayers);
     });
 
+    // PLAYER EJECTED BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
       disconnect();
@@ -96,6 +99,7 @@ export default function QuizPage(): JSX.Element {
       router.push('/dashboard');
     });
 
+    // SESSION ENDED
     socket.on('session-ended', () => {
       alert('Session has ended.');
       disconnect();
@@ -104,6 +108,7 @@ export default function QuizPage(): JSX.Element {
       router.push('/dashboard/');
     });
 
+    // CLEANUP SOCKET LISTENERS
     return () => {
       socket.off('new-question');
       socket.off('player-joined');
