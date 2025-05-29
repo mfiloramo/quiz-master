@@ -20,9 +20,9 @@ export default function Navbar(): JSX.Element {
   // RENDER COMPONENT
   return (
     <>
-      {/* NAVBAR MAIN CONTAINER */}
+      {/** NAVBAR MAIN CONTAINER **/}
       <div className='fixed left-0 top-0 z-50 flow-root h-16 w-full bg-gradient-to-b from-sky-800 to-sky-600 shadow-2xl'>
-        {/* LEFT BUTTONS CONTAINER */}
+        {/** LEFT BUTTONS CONTAINER **/}
         <div className='float-left ml-4 mt-2 flex items-center'>
           {/* APP LOGO */}
           <Link href={'/'}>
@@ -35,7 +35,7 @@ export default function Navbar(): JSX.Element {
             />
           </Link>
 
-          {/* LEFT BUTTONS */}
+          {/** LEFT BUTTONS **/}
           {navLinksLeft
             .filter((button) => button.label !== 'Dashboard' || isLoggedIn)
             .map(
@@ -51,9 +51,9 @@ export default function Navbar(): JSX.Element {
             )}
         </div>
 
-        {/* RIGHT BUTTONS CONTAINER */}
+        {/** RIGHT BUTTONS CONTAINER **/}
         <div className='float-right mr-7 mt-4 flex items-center'>
-          {/* RIGHT BUTTONS */}
+          {/* JOIN GAME BUTTON */}
           {!isLoggedIn && (
             <Link
               className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-black'
@@ -64,6 +64,7 @@ export default function Navbar(): JSX.Element {
             </Link>
           )}
 
+          {/* SIGN UP BUTTON */}
           <Link
             className='ml-4 rounded-lg bg-green-600 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-[#1BB755] active:bg-green-600'
             href={'/auth/register'}
@@ -72,6 +73,7 @@ export default function Navbar(): JSX.Element {
             {'Sign Up'}
           </Link>
 
+          {/* LOGOUT BUTTON */}
           {isLoggedIn ? (
             <button
               onClick={logout}
@@ -80,6 +82,7 @@ export default function Navbar(): JSX.Element {
               Log Out
             </button>
           ) : (
+            // LOGIN BUTTON
             <Link
               className='ml-4 text-sky-100 transition hover:text-white active:text-sky-100'
               href={'/auth/login'}
