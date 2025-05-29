@@ -54,7 +54,7 @@ export default function QuizModule({
       </div>
       {lockedIn && (
         <p className='mt-4 font-semibold text-green-700'>
-          Answer submitted. Waiting for next question...
+          Answer submitted. Waiting for other players to answer...
         </p>
       )}
     </div>

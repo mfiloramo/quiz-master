@@ -22,19 +22,17 @@ const barColors = ['#ef4444', '#3b82f6', '#facc15', '#22c55e'];
 export default function PlayerAnswersGraph({ playerAnswers, options }: Props): ReactElement {
   // BUILD THE DATA ARRAY BASED ON PLAYER ANSWERS
   const data = useMemo(() => {
-    if (options) {
-      const counts: Record<string, number> = {};
-      options.forEach((option) => (counts[option] = 0));
-      playerAnswers.forEach((answer) => {
-        if (counts.hasOwnProperty(answer)) {
-          counts[answer] += 1;
-        }
-      });
-      return options.map((option) => ({
-        option,
-        count: counts[option],
-      }));
-    }
+    const counts: Record<string, number> = {};
+    options.forEach((option) => (counts[option] = 0));
+    playerAnswers.forEach((answer) => {
+      if (counts.hasOwnProperty(answer)) {
+        counts[answer] += 1;
+      }
+    });
+    return options.map((option) => ({
+      option,
+      count: counts[option],
+    }));
   }, [playerAnswers, options]);
 
   return (

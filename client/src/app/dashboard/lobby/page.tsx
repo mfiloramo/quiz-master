@@ -122,15 +122,25 @@ export default function LobbyPage() {
 
       {/* START QUIZ BUTTON (HOST ONLY) */}
       {isHost && (
-        <button onClick={handleStart} className='mt-4 rounded bg-green-500 px-4 py-2 text-white'>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={handleStart}
+          className='mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-400 active:bg-green-300'
+        >
           Start Quiz
-        </button>
+        </motion.button>
       )}
 
       {/* LEAVE GAME BUTTON*/}
-      <button onClick={handleLeave} className='mt-6 rounded bg-red-500 px-4 py-2 text-white'>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={handleLeave}
+        className='mt-6 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-400 active:bg-red-300'
+      >
         {isHost ? 'Cancel Game' : 'Leave Game'}
-      </button>
+      </motion.button>
     </div>
   );
 }

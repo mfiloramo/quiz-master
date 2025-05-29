@@ -178,7 +178,7 @@ export default function QuizPage(): JSX.Element {
           <CountdownCircleTimer
             isPlaying
             duration={roundTimerSetting!}
-            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+            colors={['#3b8600', '#F7B801', '#A30000', '#A30000']}
             colorsTime={[7, 5, 2, 0]}
           >
             {({ remainingTime }) => remainingTime}
