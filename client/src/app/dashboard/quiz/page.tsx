@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, JSX } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
@@ -63,7 +63,10 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE SOCKET EVENTS
   useEffect(() => {
+    // VALIDATE SOCKET
     if (!socket) return;
+
+    // NEW QUESTION EMITTED FROM SERVER
     socket.on('new-question', (data: QuizSession) => {
       const { index, question, total, roundTimer } = data;
       setLockedIn(false);
@@ -85,12 +88,12 @@ export default function QuizPage(): JSX.Element {
       setPlayerAnswers(answers);
     });
 
-    // PLAYER JOINED
+    // PLAYER JOINED SESSION
     socket.on('player-joined', (updatedPlayers: Player[]) => {
       setPlayers(updatedPlayers);
     });
 
-    // PLAYER EJECTED BY HOST
+    // PLAYER EJECTED FROM SESSION BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
       disconnect();
@@ -101,11 +104,14 @@ export default function QuizPage(): JSX.Element {
 
     // SESSION ENDED
     socket.on('session-ended', () => {
-      alert('Session has ended.');
-      disconnect();
-      resetQuiz();
-      clearSession();
-      router.push('/dashboard/');
+      setPhase(QuizPhase.Leaderboard);
+      setTimeout(() => {
+        alert('Session has ended.');
+        disconnect();
+        resetQuiz();
+        clearSession();
+        router.push('/dashboard/');
+      }, 10000);
     });
 
     // CLEANUP SOCKET LISTENERS
