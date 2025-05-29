@@ -126,7 +126,7 @@ export default function LobbyPage() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleStart}
-          className='mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-400 active:bg-green-300'
+          className='mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-400 active:bg-green-500'
         >
           Start Quiz
         </motion.button>
@@ -137,7 +137,7 @@ export default function LobbyPage() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.97 }}
         onClick={handleLeave}
-        className='mt-6 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-400 active:bg-red-300'
+        className='mt-6 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-400 active:bg-red-500'
       >
         {isHost ? 'Cancel Game' : 'Leave Game'}
       </motion.button>

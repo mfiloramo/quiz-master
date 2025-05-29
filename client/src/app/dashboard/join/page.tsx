@@ -89,7 +89,7 @@ export default function JoinPage() {
         whileTap={{ scale: 0.97 }}
         transition={{ duration: 0.01 }}
         onClick={handleJoin}
-        className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'
+        className='mb-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-400 active:bg-blue-500'
       >
         Join Session
       </motion.button>

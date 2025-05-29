@@ -134,7 +134,7 @@ export default function CreateQuiz(): ReactElement {
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.001 }}
               type='submit'
-              className='mt-3 h-12 w-24 cursor-pointer rounded-lg bg-cyan-600 text-xl font-medium text-cyan-200 shadow transition hover:bg-cyan-500 active:bg-cyan-400'
+              className='mt-3 h-12 w-24 cursor-pointer rounded-lg bg-cyan-600 text-xl font-medium text-cyan-200 shadow transition hover:bg-cyan-500 active:bg-cyan-600'
             >
               Submit
             </motion.button>

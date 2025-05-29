@@ -36,22 +36,34 @@ export default function Navbar(): JSX.Element {
           </Link>
 
           {/* LEFT BUTTONS */}
-          {navLinksLeft.map(
-            (button: NavLinkType): ReactElement => (
-              <Link
-                className='ml-5 text-sky-100 transition hover:text-white active:text-sky-100'
-                href={button.path}
-                key={button.label}
-              >
-                {button.label}
-              </Link>
-            )
-          )}
+          {navLinksLeft
+            .filter((button) => button.label !== 'Dashboard' || isLoggedIn)
+            .map(
+              (button: NavLinkType): ReactElement => (
+                <Link
+                  className='ml-5 text-sky-100 transition hover:text-white active:text-sky-100'
+                  href={button.path}
+                  key={button.label}
+                >
+                  {button.label}
+                </Link>
+              )
+            )}
         </div>
 
         {/* RIGHT BUTTONS CONTAINER */}
         <div className='float-right mr-7 mt-4 flex items-center'>
           {/* RIGHT BUTTONS */}
+          {!isLoggedIn && (
+            <Link
+              className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-black'
+              href={'/dashboard/join'}
+              key={'join'}
+            >
+              {'Join Game'}
+            </Link>
+          )}
+
           <Link
             className='ml-4 rounded-lg bg-green-600 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-[#1BB755] active:bg-green-600'
             href={'/auth/register'}

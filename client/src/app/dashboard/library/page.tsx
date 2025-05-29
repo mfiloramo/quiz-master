@@ -83,7 +83,7 @@ export default function LibraryPage(): ReactElement {
       {/* ACTION BUTTONS */}
       <div className='mt-8 flex gap-4'>
         <motion.button
-          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400 active:bg-green-300'
+          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400 active:bg-green-500'
           onClick={navToHostQuiz}
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
@@ -94,7 +94,7 @@ export default function LibraryPage(): ReactElement {
           HOST QUIZ
         </motion.button>
         <motion.button
-          className='h-16 w-40 rounded-lg bg-amber-500 font-bold text-white transition hover:bg-amber-400 active:bg-amber-300'
+          className='h-16 w-40 rounded-lg bg-amber-500 font-bold text-white transition hover:bg-amber-400 active:bg-amber-500'
           onClick={navToEdit}
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}

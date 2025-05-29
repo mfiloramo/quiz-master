@@ -71,7 +71,7 @@ export default function HostPage() {
       <div>
         <motion.button
           onClick={createSession}
-          className='my-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-400 active:bg-blue-300'
+          className='my-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-400 active:bg-blue-500'
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
