@@ -61,7 +61,7 @@ export class GameSession {
 
   // RESET ANSWER FLAGS
   public resetAnswers(): void {
-    this.players.forEach((player: Player) => (player.hasAnswered = false));
+    this.players.forEach((player: Player): boolean => (player.hasAnswered = false));
   }
 
   // ADVANCE TO NEXT QUESTION

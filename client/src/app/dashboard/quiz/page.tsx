@@ -104,7 +104,10 @@ export default function QuizPage(): JSX.Element {
 
     // SESSION ENDED
     socket.on('session-ended', () => {
+      // SHOW FINAL SCOREBOARD
       setPhase(QuizPhase.Leaderboard);
+
+      // END SESSION AFTER TIMEOUT
       setTimeout(() => {
         alert('Session has ended.');
         disconnect();
@@ -126,12 +129,15 @@ export default function QuizPage(): JSX.Element {
 
   // PHASE-BASED PROGRESSION ENGINE
   useEffect(() => {
+    // INITIALIZE NEW TIMER
     let timer: NodeJS.Timeout | null = null;
 
+    // MOVE TO LEADERBOARD AFTER ANSWER SUMMARY
     if (phase === QuizPhase.AnswerSummary) {
       timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 5000);
     }
 
+    // MOVE TO NEXT QUESTION AFTER LEADERBOARD
     if (phase === QuizPhase.Leaderboard) {
       timer = setTimeout(() => {
         setLoading(true);
@@ -139,6 +145,7 @@ export default function QuizPage(): JSX.Element {
       }, 5000);
     }
 
+    // CLEAR TIMER ON CLEANUP
     return () => {
       if (timer) clearTimeout(timer);
     };
