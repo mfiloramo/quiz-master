@@ -46,10 +46,15 @@ export default function PlayerAnswersGraph({ playerAnswers, options }: Props): R
         margin={{ top: 20, right: 30, left: 60, bottom: 20 }}
       >
         {/* GRID BEHIND THE BARS */}
-        <CartesianGrid strokeDasharray='3 3' />
+        <CartesianGrid stroke='white' strokeDasharray='3 3' />
 
         {/* X AXIS FOR NUMERIC COUNTS */}
-        <XAxis type='number' allowDecimals={false} />
+        <XAxis
+          type='number'
+          allowDecimals={false}
+          stroke='white' // Axis line and ticks
+          tick={{ fill: 'black', fontSize: 14 }} // Tick labels
+        />
 
         {/* Y AXIS FOR OPTION LABELS WITH WORD WRAPPING */}
         <YAxis
@@ -62,7 +67,7 @@ export default function PlayerAnswersGraph({ playerAnswers, options }: Props): R
               </tspan>
             ));
             return (
-              <text x={x} y={y} dy={4} textAnchor='end' fill='#666'>
+              <text x={x} y={y} dy={4} textAnchor='end' fill='white'>
                 {lines}
               </text>
             );

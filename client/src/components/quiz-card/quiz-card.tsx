@@ -39,8 +39,8 @@ export default function MainQuizCard({
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.001 }}
       onClick={() => onSelect(quiz)}
-      className={`mb-4 w-[30rem] cursor-pointer rounded-lg p-4 shadow-md transition ${
-        selected ? 'bg-sky-300' : 'bg-white hover:bg-cyan-100'
+      className={`mb-4 w-[55vw] max-w-[40rem] cursor-pointer rounded-lg p-4 shadow-md transition sm:w-[55vw] md:w-[60vw] ${
+        selected ? 'bg-sky-300/75' : 'bg-white/75 hover:bg-cyan-100/75'
       }`}
     >
       {/* HEADER (TITLE + ICONS) */}
