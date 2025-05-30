@@ -115,7 +115,7 @@ export default function EditQuiz(): ReactElement {
       <div className={'flex flex-row justify-start'}>
         {/* ADD QUESTION BUTTON */}
         <motion.button
-          className='m-4 h-12 w-fit rounded bg-cyan-700 px-4 py-2 text-white shadow-lg transition hover:bg-cyan-600 active:bg-cyan-500'
+          className='m-4 h-12 w-fit rounded bg-cyan-700 px-4 py-2 text-white shadow-lg transition hover:bg-cyan-600 active:bg-cyan-700'
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
           transition={{ duration: 0.005 }}
@@ -152,14 +152,19 @@ export default function EditQuiz(): ReactElement {
         )}
 
         {/* SAVE QUIZ BUTTON */}
-        <div
+        <motion.button
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.005 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           className={
             'm-4 h-12 cursor-pointer rounded bg-emerald-600 px-4 py-3 text-lg font-bold text-white shadow-lg transition hover:bg-emerald-500 active:bg-emerald-400'
           }
           onClick={handleSave}
         >
           Save Quiz
-        </div>
+        </motion.button>
       </div>
 
       {/* MODAL: EDIT OR ADD */}

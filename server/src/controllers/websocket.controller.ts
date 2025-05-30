@@ -47,8 +47,11 @@ export class WebSocketController {
   // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
     // EXTRACT DATA FROM JOIN REQUEST
-    const { id, sessionId, username } = data;
+    let { id, sessionId, username } = data;
     const session = SessionManager.getSession(sessionId);
+
+    // ASSIGN UUID TO UNREGISTERED PLAYERS
+    if (!id) id = Math.floor(100 + Math.random() * 900);
 
     // VALIDATE SESSION
     if (!session) {
@@ -219,7 +222,7 @@ export class WebSocketController {
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER FROM SESSION
-  public handleEjectPlayer(socket: Socket, { sessionId, id }: { sessionId: string; id: string }): void {
+  public handleEjectPlayer(socket: Socket, { id, sessionId }: Player & GameSession): void {
     // FETCH SESSION
     const session = SessionManager.getSession(sessionId);
     if (!session) return;

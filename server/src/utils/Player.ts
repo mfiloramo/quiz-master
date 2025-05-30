@@ -1,6 +1,6 @@
 export class Player {
   constructor(
-    public id: string,
+    public id: number,
     public socketId: string, // SOCKET ID FOR DISCONNECT TRACKING
     public username: string,
     public score: number = 0,

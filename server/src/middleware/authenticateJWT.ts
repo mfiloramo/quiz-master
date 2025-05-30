@@ -13,7 +13,7 @@ export const authenticateJWT: any = (
   const authHeader: string | string[] | undefined = req.headers.authorization;
 
   if (authHeader) {
-    const token = authHeader.split(" ")[1]; // BEARER TOKEN
+    const token = authHeader.split(' ')[1]; // BEARER TOKEN
     try {
       // VERIFY TOKEN
       const decoded: string | jwt.JwtPayload = jwt.verify(token, JWT_SECRET);

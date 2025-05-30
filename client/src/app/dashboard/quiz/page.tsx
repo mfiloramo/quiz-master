@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, JSX } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
@@ -63,7 +63,10 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE SOCKET EVENTS
   useEffect(() => {
+    // VALIDATE SOCKET
     if (!socket) return;
+
+    // NEW QUESTION EMITTED FROM SERVER
     socket.on('new-question', (data: QuizSession) => {
       const { index, question, total, roundTimer } = data;
       setLockedIn(false);
@@ -77,6 +80,7 @@ export default function QuizPage(): JSX.Element {
       setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
     });
 
+    // ALL PLAYERS ANSWERED
     socket.on('all-players-answered', (answers: string[]): void => {
       setSecondsLeft(null);
       setLoading(true);
@@ -84,10 +88,12 @@ export default function QuizPage(): JSX.Element {
       setPlayerAnswers(answers);
     });
 
+    // PLAYER JOINED SESSION
     socket.on('player-joined', (updatedPlayers: Player[]) => {
       setPlayers(updatedPlayers);
     });
 
+    // PLAYER EJECTED FROM SESSION BY HOST
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
       disconnect();
@@ -96,14 +102,22 @@ export default function QuizPage(): JSX.Element {
       router.push('/dashboard');
     });
 
+    // SESSION ENDED
     socket.on('session-ended', () => {
-      alert('Session has ended.');
-      disconnect();
-      resetQuiz();
-      clearSession();
-      router.push('/dashboard/');
+      // SHOW FINAL SCOREBOARD
+      setPhase(QuizPhase.Leaderboard);
+
+      // END SESSION AFTER TIMEOUT
+      setTimeout(() => {
+        alert('Session has ended.');
+        disconnect();
+        resetQuiz();
+        clearSession();
+        router.push('/dashboard/');
+      }, 10000);
     });
 
+    // CLEANUP SOCKET LISTENERS
     return () => {
       socket.off('new-question');
       socket.off('player-joined');
@@ -115,12 +129,15 @@ export default function QuizPage(): JSX.Element {
 
   // PHASE-BASED PROGRESSION ENGINE
   useEffect(() => {
+    // INITIALIZE NEW TIMER
     let timer: NodeJS.Timeout | null = null;
 
+    // MOVE TO LEADERBOARD AFTER ANSWER SUMMARY
     if (phase === QuizPhase.AnswerSummary) {
       timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 5000);
     }
 
+    // MOVE TO NEXT QUESTION AFTER LEADERBOARD
     if (phase === QuizPhase.Leaderboard) {
       timer = setTimeout(() => {
         setLoading(true);
@@ -128,6 +145,7 @@ export default function QuizPage(): JSX.Element {
       }, 5000);
     }
 
+    // CLEAR TIMER ON CLEANUP
     return () => {
       if (timer) clearTimeout(timer);
     };
@@ -135,6 +153,7 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
+    console.log('user playing is:', user);
     if (!user) return;
     setUserAnswer(answer);
     setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
@@ -178,7 +197,7 @@ export default function QuizPage(): JSX.Element {
           <CountdownCircleTimer
             isPlaying
             duration={roundTimerSetting!}
-            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+            colors={['#3b8600', '#F7B801', '#A30000', '#A30000']}
             colorsTime={[7, 5, 2, 0]}
           >
             {({ remainingTime }) => remainingTime}

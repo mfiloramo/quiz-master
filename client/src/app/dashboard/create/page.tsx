@@ -75,7 +75,7 @@ export default function CreateQuiz(): ReactElement {
     // MAIN CONTAINER
     <div className='m-3 flex flex-col items-start'>
       {/* PAGE TITLE */}
-      <div className='flex flex-row text-5xl font-bold'>Quiz Creator</div>
+      <div className='mb-4 flex flex-row text-4xl font-bold'>Create Your Own Quiz</div>
 
       {/* FORM AND IMAGE MODULE CONTAINER */}
       <div className='my-3 flex w-[70vw] max-w-6xl flex-col justify-items-start rounded-xl md:flex-row'>
@@ -89,7 +89,7 @@ export default function CreateQuiz(): ReactElement {
         <div className='min-w-5xl flex h-[50vh] w-full max-w-5xl flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'>
           <form className='my-2 w-full' onSubmit={handleSubmit}>
             {/* TITLE INPUT */}
-            <div className='w-full text-2xl font-bold'>
+            <div className='w-full text-2xl'>
               Title (required)
               <input
                 name='title'
@@ -103,7 +103,7 @@ export default function CreateQuiz(): ReactElement {
             </div>
 
             {/* DESCRIPTION INPUT */}
-            <div className='mt-5 w-full text-2xl font-bold'>
+            <div className='mt-5 w-full text-2xl'>
               Description
               <input
                 name='description'
@@ -116,7 +116,7 @@ export default function CreateQuiz(): ReactElement {
             </div>
 
             {/* QUIZ VISIBILITY TOGGLE */}
-            <div className={'mt-5 text-lg font-bold'}>
+            <div className={'mt-5 text-lg'}>
               <input
                 name={'visibility'}
                 type={'checkbox'}
@@ -134,7 +134,7 @@ export default function CreateQuiz(): ReactElement {
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.001 }}
               type='submit'
-              className='mt-3 h-12 w-24 cursor-pointer rounded-lg bg-cyan-600 text-xl font-medium text-cyan-200 shadow transition hover:bg-cyan-500 active:bg-cyan-400'
+              className='mt-3 h-12 w-24 cursor-pointer rounded-lg bg-cyan-600 text-xl font-medium text-cyan-50 shadow transition hover:bg-cyan-500 active:bg-cyan-600'
             >
               Submit
             </motion.button>

@@ -64,7 +64,7 @@ export default function DiscoverPage(): ReactElement {
       {/* ACTION BUTTONS */}
       <div className='mt-8 flex gap-4'>
         <button
-          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white hover:bg-green-400'
+          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400'
           onClick={navToPlayQuiz}
         >
           HOST QUIZ

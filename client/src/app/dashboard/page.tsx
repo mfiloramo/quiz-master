@@ -61,13 +61,13 @@ export default function DashboardHome(): JSX.Element {
 
   // RENDER PAGE
   return (
-    <div className='flex flex-col gap-6'>
+    <div className='flex w-fit flex-col gap-6'>
       <h1 className='text-4xl font-bold text-sky-950'>Welcome to Your Dashboard</h1>
-      <p className='max-w-2xl text-lg text-slate-900'>
+      <p className='max-w-2xl rounded-xl bg-sky-50/50 p-5 text-lg text-slate-950'>
         Use the sidebar to navigate through your dashboard features like discovering new quizzes,
         managing your library, or adjusting settings.
       </p>
-      <ul className='mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3'>
+      <ul className='mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3'>
         {DashboardCards.map((card, index) => (
           <DashboardCard
             key={index}

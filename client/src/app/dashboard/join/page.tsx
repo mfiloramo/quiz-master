@@ -67,34 +67,39 @@ export default function JoinPage() {
   // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
-      <h1 className='mb-4 text-2xl font-bold'>Join Game</h1>
-      <div className={'mb-2 text-xl font-bold'}>Player Name</div>
-      <input
-        type={'text'}
-        placeholder={'Player Name'}
-        onChange={(e) => setUsernameInput(e.target.value)}
-        className='mb-4 rounded border p-2'
-      />
+      <h1 className='mb-[20vh] text-4xl font-bold'>Join Game</h1>
+      <div className='flex flex-col items-center justify-center'>
+        <div className='flex flex-col items-center justify-center'>
+          <div className={'mb-2 text-xl font-bold'}>Player Name</div>
+          <input
+            type={'text'}
+            placeholder={'Player Name'}
+            onChange={(e) => setUsernameInput(e.target.value)}
+            required={true}
+            className='mb-4 rounded border p-2'
+          />
 
-      <div className={'mb-2 text-xl font-bold'}>Session ID</div>
-      <input
-        type='text'
-        placeholder='Session ID'
-        value={sessionIdInput}
-        onChange={(e) => setSessionIdInput(e.target.value)}
-        className='mb-4 rounded border p-2'
-      />
-      <motion.button
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        transition={{ duration: 0.01 }}
-        onClick={handleJoin}
-        className='mb-4 rounded bg-blue-500 px-4 py-2 text-white'
-      >
-        Join Session
-      </motion.button>
+          <div className={'mb-2 text-xl font-bold'}>Session ID</div>
+          <input
+            type='text'
+            placeholder='Session ID'
+            value={sessionIdInput}
+            onChange={(e) => setSessionIdInput(e.target.value)}
+            className='mb-4 rounded border p-2'
+          />
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.01 }}
+            onClick={handleJoin}
+            className='mb-4 rounded bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-400 active:bg-blue-500'
+          >
+            Join Session
+          </motion.button>
 
-      {error && <p className='text-red-500'>{error}</p>}
+          {error && <p className='text-red-500'>{error}</p>}
+        </div>
+      </div>
     </div>
   );
 }

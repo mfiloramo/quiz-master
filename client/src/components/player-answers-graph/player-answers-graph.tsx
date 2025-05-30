@@ -22,8 +22,8 @@ const barColors = ['#ef4444', '#3b82f6', '#facc15', '#22c55e'];
 export default function PlayerAnswersGraph({ playerAnswers, options }: Props): ReactElement {
   // BUILD THE DATA ARRAY BASED ON PLAYER ANSWERS
   const data = useMemo(() => {
+    const counts: Record<string, number> = {};
     if (options) {
-      const counts: Record<string, number> = {};
       options.forEach((option) => (counts[option] = 0));
       playerAnswers.forEach((answer) => {
         if (counts.hasOwnProperty(answer)) {
@@ -34,7 +34,7 @@ export default function PlayerAnswersGraph({ playerAnswers, options }: Props): R
         option,
         count: counts[option],
       }));
-    }
+    } else return;
   }, [playerAnswers, options]);
 
   return (
@@ -75,7 +75,7 @@ export default function PlayerAnswersGraph({ playerAnswers, options }: Props): R
         {/* BAR ELEMENTS WITH COLOR MAPPING */}
         <Bar dataKey='count' barSize={30}>
           {data!.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={barColors[index] || '#8884d8'} />
+            <Cell key={`cell-${index}`} fill={barColors[index] || '#FFFFFFFF'} />
           ))}
         </Bar>
       </BarChart>

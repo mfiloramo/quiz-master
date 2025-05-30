@@ -1,5 +1,5 @@
 export interface ConfirmationEmailInterface {
-  readonly userId: string,
+  readonly userId: number,
   readonly userName: string,
   readonly userEmail: string
 

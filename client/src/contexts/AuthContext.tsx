@@ -31,7 +31,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      console.log(decoded);
       setUser(decoded);
       setIsLoggedIn(true);
     } catch (err) {
