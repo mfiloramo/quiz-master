@@ -72,10 +72,10 @@ export default function QuizPage(): JSX.Element {
       setLockedIn(false);
       setCurrentIndex(index);
       setCurrentQuestion(question);
+      setRoundTimerSetting(roundTimer / 1000);
       setTotalQuestions(total);
       setPhase(QuizPhase.Question);
       setLoading(false);
-      setRoundTimerSetting(roundTimer / 1000);
       setSecondsLeft(roundTimer / 1000);
       setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
     });
@@ -153,7 +153,6 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
-    console.log('user playing is:', user);
     if (!user) return;
     setUserAnswer(answer);
     setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
@@ -179,6 +178,7 @@ export default function QuizPage(): JSX.Element {
 
   // MAIN RENDER
   return (
+    // MAIN CONTAINER
     <div className='flex flex-col items-center justify-center'>
       {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT*/}
       {/* PLAYER QUESTION VIEW */}
