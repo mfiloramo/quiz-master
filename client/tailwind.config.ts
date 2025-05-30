@@ -15,6 +15,7 @@ export default {
       backgroundImage: {
         'stub-background-home': "url('/backgrounds/stub-background-home.png')",
         'stub-background-dashboard': "url('/backgrounds/stub-background-dashboard.png')",
+        'stub-background-lobby': "url('/backgrounds/stub-background-lobby.png')",
       },
       keyframes: {
         marquee: {
