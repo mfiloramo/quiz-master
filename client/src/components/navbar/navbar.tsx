@@ -53,16 +53,16 @@ export default function Navbar(): JSX.Element {
 
         {/** RIGHT BUTTONS CONTAINER **/}
         <div className='float-right mr-7 mt-4 flex items-center'>
-          {/* JOIN GAME BUTTON */}
-          {!isLoggedIn && (
-            <Link
-              className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-white'
-              href={'/dashboard/join'}
-              key={'join'}
-            >
-              {'Join Game'}
-            </Link>
-          )}
+          {/* JOIN GAME BUTTON -- DISABLED FOR SECURITY */}
+          {/*{!isLoggedIn && (*/}
+          {/*  <Link*/}
+          {/*    className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-white'*/}
+          {/*    href={'/dashboard/join'}*/}
+          {/*    key={'join'}*/}
+          {/*  >*/}
+          {/*    {'Join Game'}*/}
+          {/*  </Link>*/}
+          {/*)}*/}
 
           {/* SIGN UP BUTTON */}
           <Link

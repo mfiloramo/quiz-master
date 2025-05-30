@@ -66,7 +66,7 @@ export default function LobbyPage() {
   };
 
   // EJECT SPECIFIC PLAYER
-  const ejectPlayer = (id: string): void => {
+  const ejectPlayer = (id: number): void => {
     if (!isHost) return;
     socket?.emit('eject-player', { sessionId, id });
   };
@@ -125,8 +125,9 @@ export default function LobbyPage() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
+          transition={{ duration: 0.001 }}
           onClick={handleStart}
-          className='mt-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-400 active:bg-green-500'
+          className='mt-4 rounded bg-green-500 px-4 py-2 text-white transition hover:bg-green-400 active:bg-green-500'
         >
           Start Quiz
         </motion.button>
@@ -136,8 +137,9 @@ export default function LobbyPage() {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.97 }}
+        transition={{ duration: 0.001 }}
         onClick={handleLeave}
-        className='mt-6 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-400 active:bg-red-500'
+        className='mt-6 rounded bg-red-500 px-4 py-2 text-white transition hover:bg-red-400 active:bg-red-500'
       >
         {isHost ? 'Cancel Game' : 'Leave Game'}
       </motion.button>

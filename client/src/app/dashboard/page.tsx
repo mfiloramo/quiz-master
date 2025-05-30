@@ -63,7 +63,7 @@ export default function DashboardHome(): JSX.Element {
   return (
     <div className='flex w-fit flex-col gap-6'>
       <h1 className='text-4xl font-bold text-sky-950'>Welcome to Your Dashboard</h1>
-      <p className='max-w-2xl rounded-xl bg-opacity-0 bg-gradient-to-br from-cyan-100/50 to-cyan-200/50 p-5 text-lg text-slate-900'>
+      <p className='max-w-2xl rounded-xl bg-sky-50/50 p-5 text-lg text-slate-950'>
         Use the sidebar to navigate through your dashboard features like discovering new quizzes,
         managing your library, or adjusting settings.
       </p>

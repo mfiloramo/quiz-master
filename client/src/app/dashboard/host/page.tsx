@@ -49,7 +49,9 @@ export default function HostPage() {
 
       {/* CONFIGURATION WINDOW */}
       <div
-        className={'flex h-[40vh] w-[70vw] max-w-2xl flex-col rounded bg-slate-400 p-3 shadow-xl'}
+        className={
+          'flex h-[40vh] w-[70vw] max-w-2xl flex-col rounded-xl bg-slate-400 p-3 shadow-xl'
+        }
       >
         {/* ROUND TIMER CONFIGURATION */}
         <div className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}>
@@ -70,10 +72,11 @@ export default function HostPage() {
       {/* START/CANCEL BUTTONS */}
       <div>
         <motion.button
-          onClick={createSession}
-          className='my-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-400 active:bg-blue-500'
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
+          transition={{ duration: 0.001 }}
+          onClick={createSession}
+          className='my-4 rounded bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-400 active:bg-blue-500'
         >
           Create Session
         </motion.button>

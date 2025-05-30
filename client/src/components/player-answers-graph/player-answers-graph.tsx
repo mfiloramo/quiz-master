@@ -23,16 +23,18 @@ export default function PlayerAnswersGraph({ playerAnswers, options }: Props): R
   // BUILD THE DATA ARRAY BASED ON PLAYER ANSWERS
   const data = useMemo(() => {
     const counts: Record<string, number> = {};
-    options.forEach((option) => (counts[option] = 0));
-    playerAnswers.forEach((answer) => {
-      if (counts.hasOwnProperty(answer)) {
-        counts[answer] += 1;
-      }
-    });
-    return options.map((option) => ({
-      option,
-      count: counts[option],
-    }));
+    if (options) {
+      options.forEach((option) => (counts[option] = 0));
+      playerAnswers.forEach((answer) => {
+        if (counts.hasOwnProperty(answer)) {
+          counts[answer] += 1;
+        }
+      });
+      return options.map((option) => ({
+        option,
+        count: counts[option],
+      }));
+    } else return;
   }, [playerAnswers, options]);
 
   return (
@@ -73,7 +75,7 @@ export default function PlayerAnswersGraph({ playerAnswers, options }: Props): R
         {/* BAR ELEMENTS WITH COLOR MAPPING */}
         <Bar dataKey='count' barSize={30}>
           {data!.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={barColors[index] || '#8884d8'} />
+            <Cell key={`cell-${index}`} fill={barColors[index] || '#FFFFFFFF'} />
           ))}
         </Bar>
       </BarChart>

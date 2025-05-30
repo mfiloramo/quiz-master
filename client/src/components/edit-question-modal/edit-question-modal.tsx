@@ -158,16 +158,22 @@ export default function EditQuestionModal({
 
         {/* ACTION BUTTONS */}
         <div className='flex justify-end gap-2'>
-          <button onClick={onClose} className='rounded bg-gray-500 px-4 py-2 text-white'>
+          <button onClick={onClose} className='rounded bg-gray-500 px-4 py-2 text-white transition'>
             Cancel
           </button>
           {mode === 'edit' && (
-            <button onClick={handleSave} className='rounded bg-blue-600 px-4 py-2 text-white'>
+            <button
+              onClick={handleSave}
+              className='rounded bg-blue-600 px-4 py-2 text-white transition'
+            >
               Save
             </button>
           )}
           {mode === 'add' && (
-            <button onClick={handleAdd} className='rounded bg-cyan-600 px-4 py-2 text-white'>
+            <button
+              onClick={handleAdd}
+              className='rounded bg-cyan-600 px-4 py-2 text-white transition'
+            >
               Add
             </button>
           )}

@@ -34,7 +34,7 @@ export class GameSession {
   }
 
   // REMOVE PLAYER BY PLAYER ID
-  public removePlayerByPlayerId(id: string): boolean {
+  public removePlayerByPlayerId(id: number): boolean {
     const initialLength: number = this.players.length;
     this.players = this.players.filter((player: Player): boolean =>
       player.id !== id);
@@ -42,17 +42,17 @@ export class GameSession {
   }
 
   // GET PLAYER BY ID
-  public getPlayerById(id: string): Player | undefined {
+  public getPlayerById(id: number): Player | undefined {
     return this.players.find(player => player.id === id);
   }
 
   // GET PLAYER BY SOCKET ID
-  public getPlayerBySocketId(id: string): Player | undefined {
-    return this.players.find(player => player.socketId === id);
+  public getPlayerBySocketId(socketId: string): Player | undefined {
+    return this.players.find(player => player.socketId === socketId);
   }
 
   // INCREMENT PLAYER SCORE
-  public incrementScore(id: string) {
+  public incrementScore(id: number) {
     const player = this.getPlayerById(id);
     if (player) {
       player.score += 1;

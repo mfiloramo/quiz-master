@@ -4,6 +4,7 @@ import React, { ReactElement } from 'react';
 import { Trash2 } from 'lucide-react';
 import { QuizCardProps } from '@/types/Quiz.types';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export default function MainQuizCard({
   quiz,
@@ -33,7 +34,10 @@ export default function MainQuizCard({
 
   return (
     // QUIZ CARD CONTAINER
-    <div
+    <motion.div
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ duration: 0.001 }}
       onClick={() => onSelect(quiz)}
       className={`mb-4 w-[30rem] cursor-pointer rounded-lg p-4 shadow-md transition ${
         selected ? 'bg-sky-300' : 'bg-white hover:bg-cyan-100'
@@ -51,6 +55,6 @@ export default function MainQuizCard({
 
       {/* DESCRIPTION */}
       <p className={`${selected} ? 'text-white' : 'text-black'`}>{quiz.description}</p>
-    </div>
+    </motion.div>
   );
 }
