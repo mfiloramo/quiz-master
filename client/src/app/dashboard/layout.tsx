@@ -19,8 +19,9 @@ const dashboardLinks: DashboardItem[] = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useAuth();
-
   const pathname = usePathname();
+
+  const isLobbyPage = pathname.startsWith('/dashboard/lobby');
 
   // DEFINE PATHS WHERE SIDEBAR SHOULD BE HIDDEN
   const hideSidebar =
@@ -32,7 +33,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <WebSocketProvider>
       <SessionProvider>
         <QuizProvider>
-          <div className='bg-stub-background-dashboard flex min-h-[calc(100vh-4rem)] text-black caret-transparent'>
+          <div
+            className={`bg-cover bg-center bg-no-repeat ${isLobbyPage ? 'bg-stub-background-lobby' : 'bg-stub-background-dashboard'} flex min-h-[calc(100vh-4rem)] text-black caret-transparent`}
+          >
             {!hideSidebar && <SideNavbar dashboardLinks={dashboardLinks} />}
             <div className='flex-1 p-6'>{children}</div>
           </div>
