@@ -3,12 +3,13 @@
 import { JSX, ReactElement } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { NavLinkType } from '@/types/NavLink.type';
 import { useAuth } from '@/contexts/AuthContext';
+import { FaUserCircle } from 'react-icons/fa';
+import { NavLinkType } from '@/types/NavLink.type';
 
 export default function Navbar(): JSX.Element {
   // USE AUTH CONTEXT FOR LOGIN STATE AND LOGOUT ACTION
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, user } = useAuth();
 
   const navLinksLeft: NavLinkType[] = [
     { path: '/', label: 'Home' },
@@ -65,19 +66,28 @@ export default function Navbar(): JSX.Element {
           {/*)}*/}
 
           {/* SIGN UP BUTTON */}
-          <Link
-            className='ml-4 rounded-lg bg-green-600 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-[#1BB755] active:bg-green-600'
-            href={'/auth/register'}
-            key={'register'}
-          >
-            {'Sign Up'}
-          </Link>
+          {isLoggedIn ? (
+            // PROFILE INDICATOR
+            <div className={'text-md mr-2 mt-1.5 flex flex-row font-bold text-sky-200'}>
+              <FaUserCircle className='-mt-0.5 mr-3' size={28} />
+              {`Welcome, ${user?.username}`}
+            </div>
+          ) : (
+            // SIGN UP BUTTON
+            <Link
+              className='ml-4 rounded-lg bg-green-600 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-[#1BB755] active:bg-green-600'
+              href={'/auth/register'}
+              key={'register'}
+            >
+              {'Sign Up'}
+            </Link>
+          )}
 
           {/* LOGOUT BUTTON */}
           {isLoggedIn ? (
             <button
               onClick={logout}
-              className='ml-4 text-sky-100 transition hover:text-white active:text-sky-100'
+              className='ml-4 mt-1.5 text-sky-100 transition hover:text-white active:text-sky-100'
             >
               Log Out
             </button>
