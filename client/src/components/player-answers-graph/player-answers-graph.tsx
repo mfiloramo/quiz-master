@@ -19,24 +19,29 @@ type Props = {
 // COLOR MAPPING FOR EACH BAR
 const barColors = ['#ef4444', '#3b82f6', '#facc15', '#22c55e'];
 
-export default function PlayerAnswersGraph({ playerAnswers, options }: Props): ReactElement {
+export default function PlayerAnswersGraph({
+  playerAnswers,
+  options,
+}: Props): ReactElement | undefined {
+  if (!playerAnswers) playerAnswers = [];
+
   // BUILD THE DATA ARRAY BASED ON PLAYER ANSWERS
   const data = useMemo(() => {
+    // PLAYER ANSWERS IS UNDEFINED
     const counts: Record<string, number> = {};
-    if (options) {
-      options.forEach((option) => (counts[option] = 0));
-      playerAnswers.forEach((answer) => {
-        if (counts.hasOwnProperty(answer)) {
-          counts[answer] += 1;
-        }
-      });
-      return options.map((option) => ({
-        option,
-        count: counts[option],
-      }));
-    } else return;
+    options.forEach((option) => (counts[option] = 0));
+    playerAnswers.forEach((answer) => {
+      if (counts.hasOwnProperty(answer)) {
+        counts[answer] += 1;
+      }
+    });
+    return options.map((option) => ({
+      option,
+      count: counts[option],
+    }));
   }, [playerAnswers, options]);
 
+  // RENDER COMPONENT
   return (
     // RESPONSIVE CONTAINER WITH DYNAMIC HEIGHT BASED ON OPTION COUNT
     <ResponsiveContainer width='100%' height={options.length * 80}>
@@ -52,8 +57,8 @@ export default function PlayerAnswersGraph({ playerAnswers, options }: Props): R
         <XAxis
           type='number'
           allowDecimals={false}
-          stroke='white' // Axis line and ticks
-          tick={{ fill: 'black', fontSize: 14 }} // Tick labels
+          stroke='white' // AXIS LINE AND TICKS
+          tick={{ fill: 'black', fontSize: 14 }} // TICK LABELS
         />
 
         {/* Y AXIS FOR OPTION LABELS WITH WORD WRAPPING */}

@@ -66,10 +66,15 @@ export default function JoinPage() {
 
   // RENDER PAGE
   return (
+    // MAIN CONTAINER
     <div className='flex flex-col items-center justify-center'>
+      {/* TITLE */}
       <h1 className='mb-[20vh] text-4xl font-bold'>Join Game</h1>
-      <div className='flex flex-col items-center justify-center'>
+      {/* INNER CONTAINER */}
+      <div className='flex flex-col items-center justify-center rounded-xl bg-white/30 px-6 py-4'>
+        {/* INNER CONTAINER ITEMS */}
         <div className='flex flex-col items-center justify-center'>
+          {/* PLAYER NAME INPUT */}
           <div className={'mb-2 text-xl font-bold'}>Player Name</div>
           <input
             type={'text'}
@@ -78,7 +83,7 @@ export default function JoinPage() {
             required={true}
             className='mb-4 rounded border p-2'
           />
-
+          {/* SESSION ID INPUT */}
           <div className={'mb-2 text-xl font-bold'}>Session ID</div>
           <input
             type='text'
@@ -87,6 +92,7 @@ export default function JoinPage() {
             onChange={(e) => setSessionIdInput(e.target.value)}
             className='mb-4 rounded border p-2'
           />
+          {/* JOIN SESSION BUTTON */}
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
@@ -97,6 +103,7 @@ export default function JoinPage() {
             Join Session
           </motion.button>
 
+          {/* SHOW ERROR IF ERROR*/}
           {error && <p className='text-red-500'>{error}</p>}
         </div>
       </div>

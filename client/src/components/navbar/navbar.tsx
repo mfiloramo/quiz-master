@@ -87,7 +87,7 @@ export default function Navbar(): JSX.Element {
           {isLoggedIn ? (
             <button
               onClick={logout}
-              className='ml-4 mt-1.5 text-sky-100 transition hover:text-white active:text-sky-100'
+              className='ml-4 mt-1 text-sky-100 transition hover:text-white active:text-sky-100'
             >
               Log Out
             </button>
