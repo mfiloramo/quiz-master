@@ -172,6 +172,7 @@ export class WebSocketController {
 
     session.nextQuestion();
 
+    // ADVANCE TO NEXT QUESTION OR END SESSION
     const next = session.questions[session.currentQuestionIndex];
     if (next) {
       this.emitQuestionWithTimeout(session);
@@ -273,24 +274,34 @@ export class WebSocketController {
     const sessionId = session.sessionId;
     const currentQuestion = session.questions[session.currentQuestionIndex];
 
+    // RESET ROUND STATE
+    session.playerAnswers = []; // CLEAR PREVIOUS ANSWERS
+    session.players.forEach((p) => (p.hasAnswered = false)); // RESET PLAYER FLAGS
+
     // EMIT NEW QUESTION TO ALL CLIENTS
     this.io.to(sessionId).emit('new-question', {
       question: currentQuestion,
       index: session.currentQuestionIndex,
       total: session.questions.length,
-      roundTimer: session.roundTimer, // TODO: USE FOR TIMER ANIMATION
+      roundTimer: session.roundTimer, // FOR TIMER DISPLAY ON CLIENT
     });
 
     // CLEAR ANY EXISTING TIMEOUT TO AVOID CONFLICTS
     session.clearRoundTimeout();
 
-    // SET TIMEOUT TO FORCE PROGRESSION IF NOT ALL ANSWER
+    // SET TIMEOUT TO FORCE PROGRESSION IF NOT ALL PLAYERS ANSWER IN TIME
     session.currentTimeout = setTimeout(() => {
       if (!session.allPlayersAnswered()) {
+        // MARK ALL PLAYERS AS ANSWERED TO PREVENT FUTURE INPUT
         session.players.forEach((p) => (p.hasAnswered = true));
+
+        // EMIT UPDATED PLAYER LIST (IN CASE HOST NEEDS TO SEE STATUS)
         this.io.to(sessionId).emit('player-joined', session.players);
-        this.io.to(sessionId).emit('all-players-answered');
+
+        // EMIT WHATEVER ANSWERS HAVE BEEN RECEIVED (INCLUDING PARTIAL)
+        this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
       }
     }, session.roundTimer);
   }
+
 }

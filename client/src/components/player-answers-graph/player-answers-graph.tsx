@@ -23,8 +23,6 @@ export default function PlayerAnswersGraph({
   playerAnswers,
   options,
 }: Props): ReactElement | undefined {
-  if (!playerAnswers) playerAnswers = [];
-
   // BUILD THE DATA ARRAY BASED ON PLAYER ANSWERS
   const data = useMemo(() => {
     // PLAYER ANSWERS IS UNDEFINED
