@@ -109,7 +109,7 @@ export default function LobbyPage() {
             <motion.li
               key={index}
               onClick={() => isHost && ejectPlayer(player.id)} // ONLY HOST CAN KICK
-              className='mb-2 cursor-pointer rounded-xl border-2 border-black p-2 font-bold shadow'
+              className={`mb-2 ${isHost ? 'cursor-pointer' : 'cursor-none'} rounded-xl border-2 border-black p-2 font-bold shadow`}
               style={{ backgroundColor: color.bg, color: color.text }}
               animate={{ rotate: [-5, 5, -5] }}
               transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
