@@ -16,6 +16,7 @@ import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import PlayerAnswerSummary from '@/components/player-answer-summary/player-answer-summary';
 import PlayerAnswersGraph from '@/components/player-answers-graph/player-answers-graph';
+import FinalScoreboard from '@/components/final-scoreboard/final-scoreboard';
 
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
@@ -32,7 +33,7 @@ export default function QuizPage(): JSX.Element {
 
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession, setPlayers } = useSession();
+  const { sessionId, clearSession, players, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
   const router = useRouter();
 
@@ -81,11 +82,17 @@ export default function QuizPage(): JSX.Element {
     });
 
     // ALL PLAYERS ANSWERED
-    socket.on('all-players-answered', (answers: string[]): void => {
+    socket.on('all-players-answered', (answers: string[] | undefined): void => {
       setSecondsLeft(null);
       setLoading(true);
-      setPhase(QuizPhase.AnswerSummary); // TRANSITION TO ANSWER SUMMARY
-      setPlayerAnswers(answers);
+      setPhase(QuizPhase.AnswerSummary);
+
+      if (Array.isArray(answers)) {
+        setPlayerAnswers(answers);
+      } else {
+        console.warn('Received undefined or invalid player answers from server:', answers);
+        setPlayerAnswers([]);
+      }
     });
 
     // PLAYER JOINED SESSION
@@ -105,7 +112,7 @@ export default function QuizPage(): JSX.Element {
     // SESSION ENDED
     socket.on('session-ended', () => {
       // SHOW FINAL SCOREBOARD
-      setPhase(QuizPhase.Leaderboard);
+      setPhase(QuizPhase.FinalScoreboard);
 
       // END SESSION AFTER TIMEOUT
       setTimeout(() => {
@@ -113,8 +120,9 @@ export default function QuizPage(): JSX.Element {
         disconnect();
         resetQuiz();
         clearSession();
-        router.push('/dashboard/');
-      }, 10000);
+        if (isHost) router.push('/dashboard/library');
+        else router.push('/dashboard/join');
+      }, 8000);
     });
 
     // CLEANUP SOCKET LISTENERS
@@ -132,21 +140,21 @@ export default function QuizPage(): JSX.Element {
     // INITIALIZE NEW TIMER
     let timer: NodeJS.Timeout | null = null;
 
-    // MOVE TO LEADERBOARD AFTER ANSWER SUMMARY
+    // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
-      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 5000);
+      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 1000);
     }
 
-    // SHOW PLAYER LEADERBOARD
+    // PHASE: LEADERBOARD -> NEXT QUESTION / FINAL SCORES
     if (phase === QuizPhase.Leaderboard) {
       timer = setTimeout(() => {
         setLoading(true);
 
-        // ADVANCE TO NEXT QUESTION IF HOST
+        // ADVANCE TO NEXT QUESTION IF QUIZ STILL HAS QUESTIONS
         if (isHost) {
           socket?.emit('next-question', { sessionId });
         }
-      }, 5000);
+      }, 1000);
     }
 
     // CLEAR TIMER ON CLEANUP
@@ -235,8 +243,6 @@ export default function QuizPage(): JSX.Element {
         </>
       )}
 
-      {/* TODO: ADD ANOTHER PHASE FOR FINAL SCOREBOARD MODULE */}
-
       {/* PLAYER ANSWER SUMMARY */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && !isHost && (
         <div className='min-w-2xl my-8 rounded-xl bg-white p-6 text-center text-2xl font-medium text-gray-900 shadow-md'>
@@ -250,6 +256,9 @@ export default function QuizPage(): JSX.Element {
 
       {/* LEADERBOARD DISPLAY */}
       {phase === QuizPhase.Leaderboard && <Leaderboard />}
+
+      {/* FINAL SCOREBOARD (HOST DISPLAY) */}
+      {phase === QuizPhase.FinalScoreboard && isHost && <FinalScoreboard />}
 
       {/* LEAVE/END BUTTON */}
       <motion.button

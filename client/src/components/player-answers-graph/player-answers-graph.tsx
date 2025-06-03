@@ -23,7 +23,7 @@ export default function PlayerAnswersGraph({
   playerAnswers,
   options,
 }: Props): ReactElement | undefined {
-  if (!playerAnswers) playerAnswers = [];
+  console.log('playerAnswers', playerAnswers);
 
   // BUILD THE DATA ARRAY BASED ON PLAYER ANSWERS
   const data = useMemo(() => {
