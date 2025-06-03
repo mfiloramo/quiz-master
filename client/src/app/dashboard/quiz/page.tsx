@@ -137,11 +137,15 @@ export default function QuizPage(): JSX.Element {
       timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 5000);
     }
 
-    // MOVE TO NEXT QUESTION AFTER LEADERBOARD
+    // SHOW PLAYER LEADERBOARD
     if (phase === QuizPhase.Leaderboard) {
       timer = setTimeout(() => {
         setLoading(true);
-        socket?.emit('next-question', { sessionId });
+
+        // ADVANCE TO NEXT QUESTION IF HOST
+        if (isHost) {
+          socket?.emit('next-question', { sessionId });
+        }
       }, 5000);
     }
 
@@ -230,6 +234,8 @@ export default function QuizPage(): JSX.Element {
           />
         </>
       )}
+
+      {/* TODO: ADD ANOTHER PHASE FOR FINAL SCOREBOARD MODULE */}
 
       {/* PLAYER ANSWER SUMMARY */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && !isHost && (
