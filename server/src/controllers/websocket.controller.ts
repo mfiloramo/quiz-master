@@ -6,6 +6,9 @@ import { sequelize } from '../config/sequelize';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
+
+type Test = { answer: string,sessionId: string | null, id: number | string }
+
 // MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
   constructor(private io: Server) {}
@@ -192,7 +195,7 @@ export class WebSocketController {
   }
 
   // HANDLE PLAYER ANSWER SUBMISSION
-  public submitAnswer(socket: Socket, sessionData: any): void {
+  public submitAnswer(socket: Socket, sessionData: Test): void {
     // DESTRUCTURE SESSION DATA
     const { sessionId, answer } = sessionData;
 
@@ -207,7 +210,7 @@ export class WebSocketController {
     // INCREMENT SCORE IF ANSWER IS CORRECT
     if (answer === session?.questions[session.currentQuestionIndex].correct) {
       session!.incrementScore(player.id);
-      this.io.to(sessionId).emit('player-joined', session!.players);
+      this.io.to(sessionId!).emit('player-joined', session!.players);
     }
 
     // ADD PLAYER ANSWER TO PLAYERS ANSWERED LIST
