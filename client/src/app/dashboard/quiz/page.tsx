@@ -18,6 +18,7 @@ import PlayerAnswerSummary from '@/components/player-answer-summary/player-answe
 import PlayerAnswersGraph from '@/components/player-answers-graph/player-answers-graph';
 import FinalScoreboard from '@/components/final-scoreboard/final-scoreboard';
 
+// PAGE CONSTANTS
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
 export default function QuizPage(): JSX.Element {
@@ -31,6 +32,7 @@ export default function QuizPage(): JSX.Element {
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
   const [playerAnswers, setPlayerAnswers] = useState<string[]>([]);
 
+  // CUSTOM HOOKS/CONTEXTS
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession, players, setPlayers } = useSession();
@@ -138,7 +140,7 @@ export default function QuizPage(): JSX.Element {
   // PHASE-BASED PROGRESSION ENGINE
   useEffect(() => {
     // INITIALIZE NEW TIMER
-    let timer: NodeJS.Timeout | null = null;
+    let timer: NodeJS.Timeout | null | number = null;
 
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {

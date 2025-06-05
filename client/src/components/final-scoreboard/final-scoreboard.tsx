@@ -5,12 +5,11 @@ import { motion } from 'framer-motion';
 import { useSession } from '@/contexts/SessionContext';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
-// TEMP STUB
-// const playerFinalists = [
-//   { username: 'TestAccount', score: 99 },
-//   { username: 'second', score: 50 },
-//   { username: 'third', score: 2 },
-// ];
+// COMPONENT CONSTANTS
+const displayOrder = [1, 0, 2];
+const barHeights = ['70%', '100%', '40%'];
+const barColors = ['bg-amber-500', 'bg-green-600', 'bg-red-500'];
+const delays = [1.0, 1.5, 0.5];
 
 export default function FinalScoreboard(): ReactElement {
   // CUSTOM HOOKS
@@ -21,16 +20,9 @@ export default function FinalScoreboard(): ReactElement {
     return <p className='text-white'>No players available.</p>;
   }
 
-  // COMPONENT CONSTANTS
-  // Final render order: [second, first, third]
-  const displayOrder = [1, 0, 2];
-  const barHeights = ['70%', '100%', '40%']; // Height for 2nd, 1st, 3rd
-  const barColors = ['bg-amber-500', 'bg-green-600', 'bg-red-500']; // Color for 2nd, 1st, 3rd
-  const delays = [1.0, 1.5, 0.5];
-
   // SORT PLAYERS LIST BY NAME (LATER SCORE)
-  const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
-  const playerFinalists = sortedPlayers.slice(0, 3);
+  const sortedPlayers: Player[] = [...players].sort((a, b) => b.score - a.score);
+  const playerFinalists: Player[] = sortedPlayers.slice(0, 3);
 
   // RENDER COMPONENT
   return (
@@ -39,7 +31,7 @@ export default function FinalScoreboard(): ReactElement {
 
       {/* INNER CONTAINER */}
       <div className='flex h-[40vh] w-fit max-w-2xl items-end justify-between gap-6 rounded bg-slate-400 px-8 py-4 shadow-xl'>
-        {displayOrder.map((i) => (
+        {displayOrder.map((i: number) => (
           <motion.div
             key={i}
             initial={{ height: '0%' }}

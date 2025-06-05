@@ -10,7 +10,7 @@ const SessionContext = createContext<SessionContextType | null>(null);
 // PROVIDER COMPONENT
 export function SessionProvider({ children }: { children: ReactNode }) {
   // LOCAL STATES
-  const [sessionId, setSessionIdState] = useState<string | null>(null);
+  const [sessionId, setSessionIdState] = useState<any>(null);
   const [players, setPlayersState] = useState<Player[]>([]);
 
   // HANDLER FUNCTIONS
