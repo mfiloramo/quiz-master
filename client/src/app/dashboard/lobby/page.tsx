@@ -16,6 +16,7 @@ export default function LobbyPage() {
   const { isHost } = useAuth();
   const { selectedQuiz, resetQuiz } = useQuiz();
 
+
   // INITIALIZE SOCKET EVENT LISTENERS
   useEffect(() => {
     if (!socket) return;

@@ -31,6 +31,7 @@ export default function FinalScoreboard(): JSX.Element {
 
       {/* INNER CONTAINER */}
       <div className='flex h-[40vh] w-fit max-w-2xl items-end justify-between gap-6 rounded bg-slate-400 px-8 py-4 shadow-xl'>
+        {/* PLAYER FINALISTS DISPLAY */}
         {displayOrder.map(
           (i: number) =>
             playerFinalists[i] && (
