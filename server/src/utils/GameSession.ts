@@ -7,16 +7,16 @@ export class GameSession {
   public questions: QuestionAttributes[] = [];
   public playerAnswers: string[] = [];
   public quizId?: number;
-  public hostUsername?: string;
+  public hostUsername: string;
   public isStarted: boolean = false;
-  public currentQuestionIndex?: number = 0;
+  public currentQuestionIndex: number = 0;
   public roundTimer!: number; // TIMER IN MS -- DEFAULT VALUE IS 10 SECONDS
   public currentTimeout?: NodeJS.Timeout;
 
   constructor(
-    public sessionId?: string,
-    public hostSocketId?: string,
-    hostUsername?: string
+    public sessionId: string,
+    public hostSocketId: string,
+    hostUsername: string
   ) {
     this.hostUsername = hostUsername;
   }
