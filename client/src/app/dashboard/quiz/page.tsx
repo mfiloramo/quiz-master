@@ -165,7 +165,7 @@ export default function QuizPage(): JSX.Element {
   // PHASE-BASED PROGRESSION ENGINE
   useEffect(() => {
     // INITIALIZE NEW TIMER
-    let timer: NodeJS.Timeout | null | number = null;
+    let timer: NodeJS.Timeout | number | null = null;
 
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
