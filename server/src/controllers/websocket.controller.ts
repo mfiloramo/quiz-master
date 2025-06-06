@@ -122,6 +122,10 @@ export class WebSocketController {
       return;
     }
 
+    // GUARD AGAINST DUPLICATE TRIGGERS
+    if (session.isStarted) return; // ALREADY STARTED — SKIP
+    session.isStarted = true;
+
     // VALIDATE QUIZ ID EXISTS
     if (!session.quizId) {
       socket.emit('error', 'Quiz not set for this session.');
@@ -258,8 +262,19 @@ export class WebSocketController {
     }
   }
 
+  // HANDLE HOST LEAVING
+  public handleHostLeft(socket: Socket, { sessionId }: { sessionId: string }) {
+    const session = SessionManager.getSession(sessionId);
+    if (!session) return;
+
+    session.clearGameStartTimeout(); // IMPORTANT: CANCEL TIMER
+    this.io.to(sessionId).emit('session-ended');
+    SessionManager.deleteSession(sessionId);
+  }
+
+
   // HOST-ONLY: EJECT SPECIFIC PLAYER FROM SESSION
-  public handleEjectPlayer(socket: Socket, { id, sessionId }: Player & GameSession): void {
+  public handleEjectPlayer(socket: Socket, { id, sessionId }: { id : number, sessionId: string }): void {
     // FETCH SESSION
     const session = SessionManager.getSession(sessionId);
     if (!session) return;

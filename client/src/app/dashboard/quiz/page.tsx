@@ -144,9 +144,11 @@ export default function QuizPage(): JSX.Element {
       // END SESSION AFTER TIMEOUT
       setTimeout(() => {
         alert('Session has ended.');
+
         disconnect();
         resetQuiz();
         clearSession();
+
         if (isHost) router.push('/dashboard/library');
         else router.push('/dashboard/join');
       }, 8000);
@@ -208,10 +210,13 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE LEAVING SESSION
   const handleLeave = (): void => {
+    if (isHost) setIsHost(false);
+    socket?.emit('host-left', { sessionId });
+
     disconnect();
     resetQuiz();
     clearSession();
-    if (isHost) setIsHost(false);
+
     router.push('/dashboard');
   };
 

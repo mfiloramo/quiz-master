@@ -98,9 +98,10 @@ export default function LobbyPage() {
 
   // HANDLE LEAVE SESSION
   const handleLeave = () => {
+    socket?.emit('host-left', { sessionId });
     disconnect();
-    resetQuiz(); // RESET QUIZ STATE
-    clearSession(); // CLEAR SESSION STATE
+    resetQuiz();
+    clearSession();
     router.push('/dashboard');
   };
 
