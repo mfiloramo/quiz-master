@@ -42,7 +42,7 @@ export default function QuizPage(): JSX.Element {
   const router = useRouter();
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession, players, setPlayers } = useSession();
+  const { sessionId, clearSession, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
 
   const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });

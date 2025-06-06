@@ -2,8 +2,8 @@
 
 import React, { ReactElement, useEffect, useState } from 'react';
 import { QuestionListingType } from '@/types/QuestionListing.type';
-import QuestionListing from '@/components/question-listing/question-listing';
-import EditQuestionModal from '@/components/edit-question-modal/edit-question-modal';
+import QuestionListing from '@/components/QuestionListing/QuestionListing';
+import EditQuestionModal from '@/components/EditQuestionModal/EditQuestionModal';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
