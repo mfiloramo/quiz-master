@@ -1,14 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 export default function LobbyPage() {
+  const [gameStartTimer, setGameStartTimer] = useState<number | null>(null);
+  const [timerKey, setTimerKey] = useState<number>(0); // KEY TO FORCE RERENDER OF COUNTDOWN COMPONENT
+
   // CUSTOM HOOKS
   const router = useRouter();
   const { socket, disconnect } = useWebSocket();
@@ -16,11 +20,33 @@ export default function LobbyPage() {
   const { isHost } = useAuth();
   const { selectedQuiz, resetQuiz } = useQuiz();
 
+  // INITIALIZE SOCKET EVENT LISTENERS FOR TIMER
+  useEffect(() => {
+    if (!socket || !sessionId) return;
 
-  // INITIALIZE SOCKET EVENT LISTENERS
+    const handleGameStartTimer = (time: number) => {
+      console.log('[DEBUG] RECEIVED game-start-timer OR game-start-timer-reset:', time);
+      setGameStartTimer(time);
+      setTimerKey((prev) => prev + 1); // FORCE COUNTDOWN COMPONENT TO RERENDER AND RESET
+    };
+
+    socket.on('game-start-timer', handleGameStartTimer);
+    socket.on('game-start-timer-reset', handleGameStartTimer);
+
+    // REQUEST CURRENT TIMER FROM SERVER ON MOUNT
+    socket.emit('get-game-start-timer', { sessionId });
+
+    return () => {
+      socket.off('game-start-timer', handleGameStartTimer);
+      socket.off('game-start-timer-reset', handleGameStartTimer);
+    };
+  }, [socket, sessionId]);
+
+  // INITIALIZE SOCKET EVENT LISTENERS FOR PLAYER AND SESSION EVENTS
   useEffect(() => {
     if (!socket) return;
 
+    // DEBUG
     socket.once('session-started', () => {
       router.push('/dashboard/quiz');
     });
@@ -121,6 +147,21 @@ export default function LobbyPage() {
         })}
       </ul>
 
+      {/* GAME START TIMER */}
+      <div className='mt-8'>
+        {gameStartTimer !== null && (
+          <CountdownCircleTimer
+            key={timerKey} // FORCE RESET OF TIMER ON TIMER CHANGE
+            isPlaying
+            duration={Math.floor(gameStartTimer / 1000)}
+            colors={['#3b8600', '#F7B801', '#A30000', '#A30000']}
+            colorsTime={[7, 5, 2, 0]}
+          >
+            {({ remainingTime }) => remainingTime}
+          </CountdownCircleTimer>
+        )}
+      </div>
+
       {/* START QUIZ BUTTON (HOST ONLY) */}
       {isHost && (
         <motion.button
@@ -134,7 +175,7 @@ export default function LobbyPage() {
         </motion.button>
       )}
 
-      {/* LEAVE GAME BUTTON*/}
+      {/* LEAVE GAME BUTTON */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.97 }}

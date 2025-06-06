@@ -38,8 +38,6 @@ export default function HostPage() {
       gameStartTimer,
     });
 
-    console.log(gameStartTimer);
-
     setSessionId(sessionId);
     setIsHost(true);
     router.push('/dashboard/lobby');

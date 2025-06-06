@@ -9,10 +9,11 @@ import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
 // MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
-  constructor(private io: Server) {}
+  constructor(private io: Server) {
+  }
 
   /** PUBLIC METHODS **/
-  // CREATE NEW GAME SESSION
+// CREATE NEW GAME SESSION
   public createSession(socket: Socket, data: GameSessionAttributes): void {
     // DESTRUCTURE SESSION DATA
     const { sessionId, hostUserName, quizId, roundTimer, gameStartTimer } = data;
@@ -36,7 +37,7 @@ export class WebSocketController {
     session.roundTimer = roundTimer * 1000;
 
     // SET GAME START TIMER IN LOBBY (CONVERT SECONDS TO MILLISECONDS)
-    session.gameStartTimer = gameStartTimer * 1000
+    session.gameStartTimer = gameStartTimer * 1000;
 
     // BEGIN GAME START TIMER COUNTDOWN
     if (!session.isStarted) {
@@ -57,6 +58,7 @@ export class WebSocketController {
       hostUsername: session.hostUsername,
     });
   }
+
 
 // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
@@ -108,6 +110,7 @@ export class WebSocketController {
       this.startSession(socket, { sessionId }).then(r => r);
     }, session.gameStartTimer);
 
+    socket.emit('game-start-timer', session.gameStartTimer);
     this.io.to(sessionId).emit('game-start-timer-reset', session.gameStartTimer);
   }
 
@@ -164,11 +167,19 @@ export class WebSocketController {
     if (!result) return;
 
     // REMOVE PLAYER AND BROADCAST UPDATED PLAYER LIST
-    const [sessionId, session] = result;
+    const [ sessionId, session ] = result;
     const removed = session.removePlayerBySocketId(socket.id);
     if (removed) {
       this.io.to(sessionId).emit('player-joined', session.players);
     }
+  }
+
+  // GET GAME START TIMER
+  public getGameStartTimer(socket: Socket, { sessionId }: { sessionId: string }): void {
+    const session = SessionManager.getSession(sessionId);
+    if (!session) return;
+
+    socket.emit('game-start-timer', session.gameStartTimer);
   }
 
   // RETURN CURRENT QUESTION TO REQUESTING CLIENT
@@ -278,7 +289,7 @@ export class WebSocketController {
     const result = SessionManager.getSessionBySocketId(socket.id);
     if (!result) return;
 
-    const [sessionId, session] = result;
+    const [ sessionId, session ] = result;
 
     // IF HOST DISCONNECTS, END SESSION FOR ALL
     if (session.hostSocketId === socket.id) {
