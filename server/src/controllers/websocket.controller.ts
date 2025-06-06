@@ -272,7 +272,6 @@ export class WebSocketController {
     SessionManager.deleteSession(sessionId);
   }
 
-
   // HOST-ONLY: EJECT SPECIFIC PLAYER FROM SESSION
   public handleEjectPlayer(socket: Socket, { id, sessionId }: { id : number, sessionId: string }): void {
     // FETCH SESSION

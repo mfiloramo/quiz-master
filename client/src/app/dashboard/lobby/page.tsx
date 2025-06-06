@@ -36,12 +36,14 @@ export default function LobbyPage() {
       setTimerKey((prev) => prev + 1); // FORCE COUNTDOWN COMPONENT TO RERENDER AND RESET
     };
 
+    // START TIMER SOCKET LISTENERS
     socket.on('game-start-timer', handleGameStartTimer);
     socket.on('game-start-timer-reset', handleGameStartTimer);
 
     // REQUEST CURRENT TIMER FROM SERVER ON MOUNT
     socket.emit('get-game-start-timer', { sessionId });
 
+    // CLEANUP SOCKET LISTENERS
     return () => {
       socket.off('game-start-timer', handleGameStartTimer);
       socket.off('game-start-timer-reset', handleGameStartTimer);
@@ -50,19 +52,22 @@ export default function LobbyPage() {
 
   // INITIALIZE SOCKET EVENT LISTENERS FOR PLAYER AND SESSION EVENTS
   useEffect(() => {
+    // VALIDATE SOCKET
     if (!socket) return;
 
-    // DEBUG
+    // START SESSION
     socket.once('session-started', () => {
       router.push('/dashboard/quiz');
     });
 
+    // REFRESH PLAYERS LIST
     socket.emit('get-players', { sessionId });
 
+    // LOBBY SOCKET LISTENERS
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
     socket.on('ejected-by-host', () => {
-      alert('You were removed from the session by the host.'); // TODO: ALERT() NOT POPPING UP ON PLAYER EJECTION
+      alert('You were removed from the session by the host.');
       resetQuiz(); // RESET QUIZ STATE ON EJECTION
       disconnect();
       router.push('/dashboard');
