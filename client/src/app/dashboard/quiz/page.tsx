@@ -33,11 +33,11 @@ export default function QuizPage(): JSX.Element {
   const [playerAnswers, setPlayerAnswers] = useState<string[]>([]);
 
   // CUSTOM HOOKS/CONTEXTS
+  const router = useRouter();
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession, players, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
-  const router = useRouter();
 
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {

@@ -17,6 +17,7 @@ export const webSocketRouter = (io: Server): void => {
     socket.on('submit-answer', (data: any) => controller.submitAnswer(socket, data));
     socket.on('eject-player', (data: any) => controller.handleEjectPlayer(socket, data));
     socket.on('get-players', (data: any) => controller.getPlayers(socket, data));
+    socket.on('get-game-start-timer', data => controller.getGameStartTimer(socket, data));
     socket.on('disconnect', () => {
       console.log(`Socket disconnected: ${socket.id}`);
       controller.handleDisconnect(socket)

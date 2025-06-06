@@ -12,6 +12,7 @@ export default function HostPage() {
   // LOCAL STATE
   const [error, setError] = useState<string>('');
   const [roundTimer, setRoundTimer] = useState<number>(5);
+  const [gameStartTimer, setGameStartTimer] = useState<number>(10);
 
   // CUSTOM HOOKS
   const router = useRouter();
@@ -34,6 +35,7 @@ export default function HostPage() {
       hostUserName: user!.username,
       quizId: selectedQuiz.id,
       roundTimer,
+      gameStartTimer,
     });
 
     setSessionId(sessionId);
@@ -63,6 +65,21 @@ export default function HostPage() {
             {Array.from({ length: 21 }, (_, i) => (
               <option key={i} value={i + 5}>
                 {i + 5}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* GAME START TIMER CONFIGURATION */}
+        <div className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}>
+          Game Start Timer (seconds)
+          <select
+            onChange={(e: any) => setGameStartTimer(parseInt(e.target.value))}
+            className={'rounded bg-slate-50'}
+          >
+            {Array.from({ length: 31 }, (_, i) => (
+              <option key={i} value={i + 10}>
+                {i + 10}
               </option>
             ))}
           </select>

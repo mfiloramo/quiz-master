@@ -9,13 +9,14 @@ import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
 // MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
-  constructor(private io: Server) {}
+  constructor(private io: Server) {
+  }
 
   /** PUBLIC METHODS **/
-  // CREATE NEW GAME SESSION
+// CREATE NEW GAME SESSION
   public createSession(socket: Socket, data: GameSessionAttributes): void {
     // DESTRUCTURE SESSION DATA
-    const { sessionId, hostUserName, quizId, roundTimer } = data;
+    const { sessionId, hostUserName, quizId, roundTimer, gameStartTimer } = data;
 
     // CHECK FOR EXISTING SESSION
     if (SessionManager.getSession(sessionId)) {
@@ -35,9 +36,22 @@ export class WebSocketController {
     // SET ROUND TIMER DURATION (CONVERT SECONDS TO MILLISECONDS)
     session.roundTimer = roundTimer * 1000;
 
+    // SET GAME START TIMER IN LOBBY (CONVERT SECONDS TO MILLISECONDS)
+    session.gameStartTimer = gameStartTimer * 1000;
+
+    // BEGIN GAME START TIMER COUNTDOWN
+    if (!session.isStarted) {
+      session.clearGameStartTimeout();
+
+      session.currentGameStartTimeout = setTimeout(() => {
+        this.startSession(socket, { sessionId }).then(r => r);
+      }, session.gameStartTimer);
+    }
+
     // ADD HOST TO SOCKET ROOM
     socket.join(sessionId);
 
+    // TODO: IS THIS NEEDED?
     // EMIT SESSION CREATION CONFIRMATION TO HOST
     socket.emit('session-created', {
       sessionId,
@@ -45,7 +59,8 @@ export class WebSocketController {
     });
   }
 
-  // JOIN EXISTING GAME SESSION
+
+// JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
     // EXTRACT DATA FROM JOIN REQUEST
     let { id, sessionId, username } = data;
@@ -77,7 +92,7 @@ export class WebSocketController {
     // BROADCAST UPDATED PLAYER LIST TO ALL CLIENTS
     this.io.to(sessionId).emit('player-joined', session.players);
 
-    // IF GAME HAS ALREADY STARTED, SEND CURRENT QUESTION TO NEW PLAYER
+    // TODO: IF GAME HAS ALREADY STARTED, SEND CURRENT QUESTION TO NEW PLAYER
     if (session.isStarted) {
       const currentQuestion = session.questions[session.currentQuestionIndex];
       socket.emit('new-question', {
@@ -85,8 +100,20 @@ export class WebSocketController {
         index: session.currentQuestionIndex,
         total: session.questions.length,
       });
+      return; // GAME ALREADY STARTED — DO NOT RESET TIMER
     }
+
+    // RESET GAME START TIMER COUNTDOWN WHENEVER A NEW PLAYER JOINS
+    session.clearGameStartTimeout();
+
+    session.currentGameStartTimeout = setTimeout(() => {
+      this.startSession(socket, { sessionId }).then(r => r);
+    }, session.gameStartTimer);
+
+    socket.emit('game-start-timer', session.gameStartTimer);
+    this.io.to(sessionId).emit('game-start-timer-reset', session.gameStartTimer);
   }
+
 
   // START GAME SESSION
   public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void> {
@@ -140,11 +167,19 @@ export class WebSocketController {
     if (!result) return;
 
     // REMOVE PLAYER AND BROADCAST UPDATED PLAYER LIST
-    const [sessionId, session] = result;
+    const [ sessionId, session ] = result;
     const removed = session.removePlayerBySocketId(socket.id);
     if (removed) {
       this.io.to(sessionId).emit('player-joined', session.players);
     }
+  }
+
+  // GET GAME START TIMER
+  public getGameStartTimer(socket: Socket, { sessionId }: { sessionId: string }): void {
+    const session = SessionManager.getSession(sessionId);
+    if (!session) return;
+
+    socket.emit('game-start-timer', session.gameStartTimer);
   }
 
   // RETURN CURRENT QUESTION TO REQUESTING CLIENT
@@ -254,7 +289,7 @@ export class WebSocketController {
     const result = SessionManager.getSessionBySocketId(socket.id);
     if (!result) return;
 
-    const [sessionId, session] = result;
+    const [ sessionId, session ] = result;
 
     // IF HOST DISCONNECTS, END SESSION FOR ALL
     if (session.hostSocketId === socket.id) {
@@ -291,7 +326,7 @@ export class WebSocketController {
     session.clearRoundTimeout();
 
     // SET TIMEOUT TO FORCE PROGRESSION IF NOT ALL PLAYERS ANSWER IN TIME
-    session.currentTimeout = setTimeout(() => {
+    session.currentRoundTimeout = setTimeout(() => {
       if (!session.allPlayersAnswered()) {
         // MARK ALL PLAYERS AS ANSWERED TO PREVENT FUTURE INPUT
         session.players.forEach((p) => (p.hasAnswered = true));

@@ -11,7 +11,9 @@ export class GameSession {
   public isStarted: boolean = false;
   public currentQuestionIndex: number = 0;
   public roundTimer!: number; // TIMER IN MS -- DEFAULT VALUE IS 10 SECONDS
-  public currentTimeout?: NodeJS.Timeout;
+  public gameStartTimer!: number; // TIMER IN MS -- DEFAULT VALUE IS 10 SECONDS
+  public currentRoundTimeout?: NodeJS.Timeout;
+  public currentGameStartTimeout?: NodeJS.Timeout;
 
   constructor(
     public sessionId: string,
@@ -77,9 +79,17 @@ export class GameSession {
 
   // CLEAR ANY ACTIVE ROUND TIMEOUT
   public clearRoundTimeout(): void {
-    if (this.currentTimeout) {
-      clearTimeout(this.currentTimeout);
-      this.currentTimeout = undefined;
+    if (this.currentRoundTimeout) {
+      clearTimeout(this.currentRoundTimeout);
+      this.currentRoundTimeout = undefined;
+    }
+  }
+
+  // CLEAR ANY ACTIVE GAME START TIMEOUT
+  public clearGameStartTimeout(): void {
+    if (this.currentGameStartTimeout) {
+      clearTimeout(this.currentGameStartTimeout);
+      // this.currentGameStartTimeout = undefined;
     }
   }
 }
