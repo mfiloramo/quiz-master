@@ -73,6 +73,7 @@ export default function LobbyPage() {
       router.push('/dashboard');
     });
 
+    // CLEANUP SOCKET LISTENERS
     return () => {
       socket.off('player-joined');
       socket.off('players-list');

@@ -138,20 +138,21 @@ export default function QuizPage(): JSX.Element {
 
     // SESSION ENDED
     socket.on('session-ended', () => {
-      // SHOW FINAL SCOREBOARD
       setPhase(QuizPhase.FinalScoreboard);
 
-      // END SESSION AFTER TIMEOUT
-      setTimeout(() => {
+      const handleEnd = () => {
         alert('Session has ended.');
-
         disconnect();
         resetQuiz();
         clearSession();
+        router.push(isHost ? '/dashboard/library' : '/dashboard/join');
+      };
 
-        if (isHost) router.push('/dashboard/library');
-        else router.push('/dashboard/join');
-      }, 8000);
+      if (isHost) {
+        setTimeout(handleEnd, 8000);
+      } else {
+        handleEnd();
+      }
     });
 
     // CLEANUP SOCKET LISTENERS
@@ -211,6 +212,7 @@ export default function QuizPage(): JSX.Element {
   // HANDLE LEAVING SESSION
   const handleLeave = (): void => {
     if (isHost) setIsHost(false);
+    // TODO: BUG: 021 -- THIS IS NOT REGISTERING PROPERLY
     socket?.emit('host-left', { sessionId });
 
     disconnect();
