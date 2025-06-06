@@ -45,7 +45,7 @@ export default function QuizPage(): JSX.Element {
   const { sessionId, clearSession, players, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
 
-  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.3 });
+  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
 
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {

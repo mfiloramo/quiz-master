@@ -14,7 +14,7 @@ export default function BackgroundMusic({ tracks, onStart }: Props) {
 
   // SETUP LOOPING SOUND
   const [play, { sound }] = useSound(selectedTrack.current, {
-    volume: 0.5,
+    volume: 0.3,
     loop: true,
   });
 

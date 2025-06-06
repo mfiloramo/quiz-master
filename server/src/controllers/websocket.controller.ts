@@ -147,6 +147,9 @@ export class WebSocketController {
       // NOTIFY ALL CLIENTS THAT SESSION STARTED
       this.io.to(sessionId).emit('session-started');
 
+      // CLEAR GAME START TIMEOUT
+      session.clearGameStartTimeout();
+
       // SEND FIRST QUESTION AND START TIMER
       const firstQuestion = formattedQuestions[0];
       if (firstQuestion) {
@@ -250,7 +253,6 @@ export class WebSocketController {
     // CHECK IF ALL PLAYERS HAVE ANSWERED
     if (session!.allPlayersAnswered()) {
       session!.clearRoundTimeout(); // CANCEL ANY ACTIVE TIMEOUT
-
       // NOTIFY CLIENTS THAT ROUND IS COMPLETE AND PROVIDE HOST ANSWERS
       this.io.to(sessionId).emit('all-players-answered', session?.playerAnswers);
     }
