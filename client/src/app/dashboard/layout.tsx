@@ -1,12 +1,12 @@
 'use client';
 
-import SideNavbar from '@/components/side-navbar/side-navbar';
+import SideNavbar from '@/components/SideNavbar/SideNavbar';
 import { DashboardItem } from '@/types/DashboardItem.type';
 import { QuizProvider } from '@/contexts/QuizContext';
 import { WebSocketProvider } from '@/contexts/WebSocketContext';
 import { SessionProvider } from '@/contexts/SessionContext';
 import { usePathname } from 'next/navigation';
-import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const dashboardLinks: DashboardItem[] = [
   { path: '/', label: '🏠 Home' },

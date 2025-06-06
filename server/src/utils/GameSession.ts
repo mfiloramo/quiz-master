@@ -1,7 +1,7 @@
+// GAME SESSION MODEL FOR HOST + QUESTION MANAGEMENT
 import { Player } from './Player';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
-// GAME SESSION MODEL FOR HOST + QUESTION MANAGEMENT
 export class GameSession {
   public players: Player[] = [];
   public questions: QuestionAttributes[] = [];
@@ -81,7 +81,7 @@ export class GameSession {
   public clearRoundTimeout(): void {
     if (this.currentRoundTimeout) {
       clearTimeout(this.currentRoundTimeout);
-      this.currentRoundTimeout = undefined;
+      this.currentRoundTimeout = undefined; // ENSURE TIMEOUT CLEARED FROM MEMORY
     }
   }
 
@@ -89,7 +89,7 @@ export class GameSession {
   public clearGameStartTimeout(): void {
     if (this.currentGameStartTimeout) {
       clearTimeout(this.currentGameStartTimeout);
-      // this.currentGameStartTimeout = undefined;
+      this.currentGameStartTimeout = undefined; // FIXED: PREVENT REUSE OF STALE TIMER
     }
   }
 }

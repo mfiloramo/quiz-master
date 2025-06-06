@@ -1,8 +1,6 @@
 import { GameSession } from './GameSession';
 import { Player } from './Player';
 
-
-// SESSION MANAGER HANDLING IN-MEMORY STORE
 export class SessionManager {
   private static sessions = new Map<string, GameSession>();
 
@@ -11,6 +9,14 @@ export class SessionManager {
     hostSocketId: string,
     hostUsername: string
   ): GameSession {
+    // IF SESSION ALREADY EXISTS, CLEAR TIMEOUT AND DELETE STALE DATA
+    const existing = this.sessions.get(sessionId);
+    if (existing) {
+      existing.clearGameStartTimeout(); // ENSURE TIMER IS CLEARED
+      this.sessions.delete(sessionId); // REMOVE STALE SESSION COMPLETELY
+    }
+
+    // CREATE NEW SESSION INSTANCE
     const session = new GameSession(sessionId, hostSocketId, hostUsername);
     this.sessions.set(sessionId, session);
     return session;
@@ -26,7 +32,10 @@ export class SessionManager {
 
   public static getSessionBySocketId(socketId: string): [string, GameSession] | undefined {
     for (const [sessionId, session] of this.sessions.entries()) {
-      if (session.hostSocketId === socketId || session.players.some((player: Player) => player.socketId === socketId)) {
+      if (
+        session.hostSocketId === socketId ||
+        session.players.some((player: Player) => player.socketId === socketId)
+      ) {
         return [sessionId, session];
       }
     }

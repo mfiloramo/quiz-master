@@ -6,20 +6,25 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
-import QuizModule from '@/components/quiz-module/quiz-module';
-import Leaderboard from '@/components/leaderboard/leaderboard';
-import HostQuestionDisplay from '@/components/host-question-display/host-question-display';
+import QuizModule from '@/components/QuizModule/QuizModule';
+import Leaderboard from '@/components/Leaderboard/Leaderboard';
+import HostQuestionDisplay from '@/components/HostQuestionDisplay/HostQuestionDisplay';
 import { QuizPhase } from '@/enums/QuizPhase.enum';
 import { QuizQuestion, QuizSession } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-import PlayerAnswerSummary from '@/components/player-answer-summary/player-answer-summary';
+import PlayerAnswerSummary from '@/components/PlayerAnswerSummary/PlayerAnswerSummary';
 import PlayerAnswersGraph from '@/components/player-answers-graph/player-answers-graph';
-import FinalScoreboard from '@/components/final-scoreboard/final-scoreboard';
+import FinalScoreboard from '@/components/FinalScoreboard/FinalScoreboard';
+import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic'; // IMPORT REUSABLE MUSIC COMPONENT
+import useSound from 'use-sound';
 
 // PAGE CONSTANTS
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
+
+// QUIZ BACKGROUND MUSIC TRACKS
+const quizTracks = ['/audio/countdown-a.mp3', '/audio/countdown-b.mp3'];
 
 export default function QuizPage(): JSX.Element {
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
@@ -31,6 +36,7 @@ export default function QuizPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
   const [playerAnswers, setPlayerAnswers] = useState<string[]>([]);
+  const [musicKey, setMusicKey] = useState<number>(Date.now());
 
   // CUSTOM HOOKS/CONTEXTS
   const router = useRouter();
@@ -38,6 +44,8 @@ export default function QuizPage(): JSX.Element {
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession, players, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
+
+  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.3 });
 
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {
@@ -64,6 +72,18 @@ export default function QuizPage(): JSX.Element {
     }
   }, [loading, secondsLeft]);
 
+  // PLAY GONG SOUND ONCE WHEN ENTERING LEADERBOARD PHASE
+  useEffect(() => {
+    if (phase === QuizPhase.AnswerSummary && isHost) {
+      playGong(); // PLAY GONG ONCE
+    }
+
+    // STOP GONG WHEN RETURNING TO QUESTION PHASE
+    if (phase === QuizPhase.Question) {
+      gongSound?.stop();
+    }
+  }, [phase, playGong, gongSound]);
+
   // HANDLE SOCKET EVENTS
   useEffect(() => {
     // VALIDATE SOCKET
@@ -72,15 +92,20 @@ export default function QuizPage(): JSX.Element {
     // NEW QUESTION EMITTED FROM SERVER
     socket.on('new-question', (data: QuizSession) => {
       const { index, question, total, roundTimer } = data;
+      const seconds = Math.floor(roundTimer / 1000);
+      setRoundTimerSetting(seconds);
+      setSecondsLeft(seconds);
+
       setLockedIn(false);
       setCurrentIndex(index);
       setCurrentQuestion(question);
-      setRoundTimerSetting(roundTimer / 1000);
       setTotalQuestions(total);
       setPhase(QuizPhase.Question);
       setLoading(false);
-      setSecondsLeft(roundTimer / 1000);
       setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
+
+      // FORCE MUSIC REMOUNT ON EACH QUESTION
+      setMusicKey(Date.now());
     });
 
     // ALL PLAYERS ANSWERED
@@ -144,7 +169,7 @@ export default function QuizPage(): JSX.Element {
 
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
-      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 1000);
+      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 5000);
     }
 
     // PHASE: LEADERBOARD -> NEXT QUESTION / FINAL SCORES
@@ -156,7 +181,7 @@ export default function QuizPage(): JSX.Element {
         if (isHost) {
           socket?.emit('next-question', { sessionId });
         }
-      }, 1000);
+      }, 5000);
     }
 
     // CLEAR TIMER ON CLEANUP
@@ -192,9 +217,13 @@ export default function QuizPage(): JSX.Element {
 
   // MAIN RENDER
   return (
-    // MAIN CONTAINER
     <div className='flex flex-col items-center justify-center'>
-      {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT*/}
+      {/* QUIZ BACKGROUND MUSIC (ONLY HOST PLAYS IT DURING QUESTION PHASE) */}
+      {isHost && phase === QuizPhase.Question && (
+        <BackgroundMusic key={musicKey} tracks={quizTracks} />
+      )}
+
+      {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT */}
       {/* PLAYER QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && !isHost && (
         <QuizModule

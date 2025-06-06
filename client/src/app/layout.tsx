@@ -1,5 +1,5 @@
 import './globals.css';
-import Navbar from '@/components/navbar/navbar';
+import Navbar from '@/components/Navbar/Navbar';
 import { Poppins } from 'next/font/google';
 import type { Metadata } from 'next';
 import { AuthProvider } from '@/contexts/AuthContext';

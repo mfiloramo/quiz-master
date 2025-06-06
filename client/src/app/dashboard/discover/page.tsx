@@ -3,8 +3,8 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { Quiz } from '@/types/Quiz.types';
 import { useQuiz } from '@/contexts/QuizContext';
-import MainQuizCard from '@/components/quiz-card/quiz-card';
 import { useRouter } from 'next/navigation';
+import MainQuizCard from '@/components/QuizCard/QuizCard';
 
 export default function DiscoverPage(): ReactElement {
   // STATE FOR ALL QUIZZES
