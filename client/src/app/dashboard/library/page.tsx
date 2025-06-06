@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Quiz } from '@/types/Quiz.types';
-import MainQuizCard from '@/components/quiz-card/quiz-card';
 import { motion } from 'framer-motion';
+import MainQuizCard from '@/components/QuizCard/QuizCard';
 
 export default function LibraryPage(): ReactElement {
   // STATE FOR ALL QUIZZES

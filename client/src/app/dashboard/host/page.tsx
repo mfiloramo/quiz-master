@@ -11,8 +11,8 @@ import { motion } from 'framer-motion';
 export default function HostPage() {
   // LOCAL STATE
   const [error, setError] = useState<string>('');
-  const [roundTimer, setRoundTimer] = useState<number>(5);
-  const [gameStartTimer, setGameStartTimer] = useState<number>(10);
+  const [roundTimer, setRoundTimer] = useState<number>(15);
+  const [gameStartTimer, setGameStartTimer] = useState<number>(30);
 
   // CUSTOM HOOKS
   const router = useRouter();
@@ -59,12 +59,13 @@ export default function HostPage() {
         <div className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}>
           Round Timer (seconds)
           <select
-            onChange={(e: any) => setRoundTimer(e.target.value)}
+            value={roundTimer}
+            onChange={(e) => setRoundTimer(parseInt(e.target.value))}
             className={'rounded bg-slate-50'}
           >
-            {Array.from({ length: 21 }, (_, i) => (
-              <option key={i} value={i + 5}>
-                {i + 5}
+            {Array.from({ length: 51 }, (_, i) => i + 10).map((sec) => (
+              <option key={sec} value={sec}>
+                {sec}
               </option>
             ))}
           </select>
@@ -74,12 +75,13 @@ export default function HostPage() {
         <div className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}>
           Game Start Timer (seconds)
           <select
-            onChange={(e: any) => setGameStartTimer(parseInt(e.target.value))}
+            value={gameStartTimer}
+            onChange={(e) => setGameStartTimer(parseInt(e.target.value))}
             className={'rounded bg-slate-50'}
           >
-            {Array.from({ length: 31 }, (_, i) => (
-              <option key={i} value={i + 10}>
-                {i + 10}
+            {Array.from({ length: 46 }, (_, i) => i + 15).map((sec) => (
+              <option key={sec} value={sec}>
+                {sec}
               </option>
             ))}
           </select>

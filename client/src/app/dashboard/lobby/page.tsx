@@ -8,10 +8,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
+
+// LOBBY BACKGROUND MUSIC TRACKS
+const lobbyTracks = ['/audio/lobby-groove-a.mp3', '/audio/lobby-groove-b.mp3'];
+const hasStartedMusic =
+  typeof window !== 'undefined' && sessionStorage.getItem('lobby-music-started') === 'true';
 
 export default function LobbyPage() {
   const [gameStartTimer, setGameStartTimer] = useState<number | null>(null);
   const [timerKey, setTimerKey] = useState<number>(0); // KEY TO FORCE RERENDER OF COUNTDOWN COMPONENT
+  const [musicStarted, setMusicStarted] = useState(false); // REMOVE THIS
 
   // CUSTOM HOOKS
   const router = useRouter();
@@ -25,8 +32,7 @@ export default function LobbyPage() {
     if (!socket || !sessionId) return;
 
     const handleGameStartTimer = (time: number) => {
-      console.log('[DEBUG] RECEIVED game-start-timer OR game-start-timer-reset:', time);
-      setGameStartTimer(time);
+      setGameStartTimer(time); // SET TIMER VALUE
       setTimerKey((prev) => prev + 1); // FORCE COUNTDOWN COMPONENT TO RERENDER AND RESET
     };
 
@@ -78,6 +84,12 @@ export default function LobbyPage() {
 
   // HANDLE START SESSION
   const handleStart = () => {
+    // RESET ANY EXISTING TIMER STATE ON NEW SESSION START
+    setGameStartTimer(null); // RESET GAME START TIMER STATE
+    setTimerKey(0); // RESET COUNTDOWN COMPONENT KEY
+    resetQuiz(); // RESET QUIZ STATE IF CARRYING OVER FROM PREVIOUS SESSION
+
+    // EMIT SESSION START TO SERVER
     socket?.emit('start-session', {
       sessionId,
       quizId: selectedQuiz?.id,
@@ -87,8 +99,8 @@ export default function LobbyPage() {
   // HANDLE LEAVE SESSION
   const handleLeave = () => {
     disconnect();
-    resetQuiz();
-    clearSession();
+    resetQuiz(); // RESET QUIZ STATE
+    clearSession(); // CLEAR SESSION STATE
     router.push('/dashboard');
   };
 
@@ -102,6 +114,11 @@ export default function LobbyPage() {
   return (
     <div className='flex flex-col items-center justify-center'>
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
+
+      {/* BACKGROUND MUSIC (ONLY HOST PLAYS IT ONCE) */}
+      {isHost && gameStartTimer !== null && !hasStartedMusic && (
+        <BackgroundMusic tracks={lobbyTracks} />
+      )}
 
       {/* JOIN SESSION CODE */}
       {isHost && (
@@ -149,7 +166,7 @@ export default function LobbyPage() {
 
       {/* GAME START TIMER */}
       <div className='mt-8'>
-        {gameStartTimer !== null && (
+        {gameStartTimer !== null && isHost && (
           <CountdownCircleTimer
             key={timerKey} // FORCE RESET OF TIMER ON TIMER CHANGE
             isPlaying

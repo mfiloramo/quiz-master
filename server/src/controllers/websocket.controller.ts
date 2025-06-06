@@ -59,7 +59,6 @@ export class WebSocketController {
     });
   }
 
-
 // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
     // EXTRACT DATA FROM JOIN REQUEST
@@ -113,7 +112,6 @@ export class WebSocketController {
     socket.emit('game-start-timer', session.gameStartTimer);
     this.io.to(sessionId).emit('game-start-timer-reset', session.gameStartTimer);
   }
-
 
   // START GAME SESSION
   public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void> {
