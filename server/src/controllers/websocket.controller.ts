@@ -278,21 +278,21 @@ export class WebSocketController {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
-    // VALIDATE THAT SOCKET IS HOST
-    if (socket.id !== session.hostSocketId) {
-      socket.emit('error', 'Only the host can eject players.');
-      return;
-    }
+      // VALIDATE THAT SOCKET IS HOST
+      if (socket.id !== session.hostSocketId) {
+        socket.emit('error', 'Only the host can eject players.');
+        return;
+      }
 
-    // FETCH PLAYER TO EJECT
-    const player = session.getPlayerById(id);
-    if (!player) return;
+      // FETCH PLAYER TO EJECT
+      const player = session.getPlayerById(id);
+      if (!player) return;
 
-    // SEND EJECTION MESSAGE TO PLAYER
-    this.io.to(player.socketId).emit('ejected-by-host');
+      // SEND EJECTION MESSAGE TO PLAYER
+      this.io.to(player.socketId).emit('ejected-by-host');
 
-    // REMOVE PLAYER FROM SESSION
-    session.removePlayerByPlayerId(id);
+      // REMOVE PLAYER FROM SESSION
+      session.removePlayerByPlayerId(id);
 
     // BROADCAST UPDATED PLAYER LIST
     this.io.to(sessionId).emit('player-joined', session.players);
@@ -319,7 +319,6 @@ export class WebSocketController {
   }
 
   /** PRIVATE METHODS **/
-// EMIT QUESTION TO ALL CLIENTS AND SET FAILSAFE TIMEOUT
   private emitQuestionWithTimeout(session: GameSession): void {
     const sessionId = session.sessionId;
     const currentQuestion = session.questions[session.currentQuestionIndex];
@@ -353,5 +352,4 @@ export class WebSocketController {
       }
     }, session.roundTimer);
   }
-
 }

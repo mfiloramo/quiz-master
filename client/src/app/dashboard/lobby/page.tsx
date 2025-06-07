@@ -104,7 +104,9 @@ export default function LobbyPage() {
 
   // HANDLE LEAVE SESSION
   const handleLeave = () => {
-    socket?.emit('host-left', { sessionId });
+    if (isHost) {
+      socket?.emit('host-left', { sessionId });
+    }
     disconnect();
     resetQuiz();
     clearSession();

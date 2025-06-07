@@ -79,7 +79,7 @@ export default function QuizPage(): JSX.Element {
     }
 
     // STOP GONG WHEN RETURNING TO QUESTION PHASE
-    if (phase === QuizPhase.Question) {
+    if (phase !== QuizPhase.AnswerSummary && phase !== QuizPhase.Leaderboard) {
       gongSound?.stop();
     }
   }, [phase, playGong, gongSound]);
@@ -145,11 +145,11 @@ export default function QuizPage(): JSX.Element {
         disconnect();
         resetQuiz();
         clearSession();
-        router.push(isHost ? '/dashboard/library' : '/dashboard/join');
+        router.push('/dashboard');
       };
 
       if (isHost) {
-        setTimeout(handleEnd, 8000);
+        router.push('/dashboard');
       } else {
         handleEnd();
       }

@@ -68,6 +68,7 @@ export class GameSession {
     this.players.forEach((player: Player): boolean => (player.hasAnswered = false));
   }
 
+  // RESET SCORE COUNTER
   public resetScoreCounter(): void {
     this.scoreCounter = 100;
   }
