@@ -211,9 +211,10 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE LEAVING SESSION
   const handleLeave = (): void => {
-    if (isHost) setIsHost(false);
-    // TODO: BUG: 021 -- THIS IS NOT REGISTERING PROPERLY
-    socket?.emit('host-left', { sessionId });
+    if (isHost) {
+      setIsHost(false);
+      socket?.emit('host-left', { sessionId });
+    }
 
     disconnect();
     resetQuiz();

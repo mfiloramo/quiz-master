@@ -47,13 +47,16 @@ export class AuthController {
   // LOGIN USER AFTER VALIDATION
   static async login(req: Request, res: Response): Promise<any> {
     try {
+      // DESTRUCTURE EMAIL AND PASSWORD DATA FROM REQUEST BODY
       const { email, password } = req.body;
 
+      // EXECUTE STORED PROCEDURE TO QUERY USER BY EMAIL
       const [rows]: any = await sequelize.query(
         "EXECUTE GetUserByEmail :email",
         { replacements: { email } },
       );
 
+      // CHECK USER VALIDITY
       const user = rows[0];
 
       if (!user) {
@@ -89,8 +92,10 @@ export class AuthController {
         { expiresIn: "1h" },
       );
 
+      // RETURN TOKEN TO CLIENT
       return res.status(200).json({ token });
     } catch (error: any) {
+      // LOG ERROR IF ERROR
       console.error("Error logging in user:", error.message);
       return res.status(500).send("Internal server error");
     }

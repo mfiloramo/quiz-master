@@ -26,7 +26,19 @@ export default function LibraryPage(): ReactElement {
 
     const fetchQuizzes = async () => {
       try {
-        const response = await fetch(`http://localhost:3030/api/quizzes/user/${user.id}`);
+        const response = await fetch(`http://localhost:3030/api/quizzes/user/${user.id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: localStorage.getItem('token') || '',
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Something went wrong');
+        }
+
         const json = await response.json();
         setQuizzes(json);
       } catch (err) {

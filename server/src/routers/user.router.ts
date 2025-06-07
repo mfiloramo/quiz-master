@@ -6,7 +6,7 @@ import { authenticateJWT } from "../middleware/authenticateJWT";
 const router: Router = express.Router();
 
 // PROTECT ALL ROUTES WITH JWT VERIFICATION MIDDLEWARE
-// router.use(authenticateJWT);
+router.use(authenticateJWT);
 
 router.get('/', UserController.getAllUsers);
 router.get('/:userId', UserController.getUserById);

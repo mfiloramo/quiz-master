@@ -1,30 +1,25 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
-// JWT SECRET FROM .env
-const JWT_SECRET: string = process.env.JWTSECRET!;
+const JWT_SECRET: string = process.env.JWT_SECRET!;
 
-// JWT MIDDLEWARE
-export const authenticateJWT: any = (
+export const authenticateJWT = (
   req: Request,
   res: Response,
-  next: NextFunction,
-): void => {
-  const authHeader: string | string[] | undefined = req.headers.authorization;
+  next: NextFunction
+): any => {
+  const token = req.headers.authorization?.trim();
 
-  if (authHeader) {
-    const token = authHeader.split(' ')[1]; // BEARER TOKEN
-    try {
-      // VERIFY TOKEN
-      const decoded: string | jwt.JwtPayload = jwt.verify(token, JWT_SECRET);
-      // ATTACH DECODED PAYLOAD TO REQUEST OBJECT
-      req.body.user = decoded;
+  if (!token) {
+    return res.status(401).json({ error: "Authorization token missing" });
+  }
 
-      next();
-    } catch (error: any) {
-      res.status(403).send("Invalid or expired token");
-    }
-  } else {
-    res.status(401).send("Authorization token missing");
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.body.user = decoded;
+    next();
+  } catch (error) {
+    console.error("Token verification failed:", error);
+    return res.status(403).json({ error: "Invalid or expired token" });
   }
 };

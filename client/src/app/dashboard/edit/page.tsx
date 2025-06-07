@@ -46,7 +46,17 @@ export default function EditQuiz(): ReactElement {
   const fetchQuestions = async (): Promise<void> => {
     if (!selectedQuiz?.id) return;
     try {
-      const response = await fetch(`http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`);
+      const response: any = await fetch(
+        `http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('token'),
+          },
+        }
+      );
+
       const data = await response.json();
 
       // FORMAT OPTIONS CORRECTLY
@@ -92,6 +102,7 @@ export default function EditQuiz(): ReactElement {
       const response = await fetch(`http://localhost:3030/api/quizzes/${selectedQuiz?.id}`, {
         method: 'PUT',
         headers: {
+          Authorization: localStorage.getItem('token'),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),

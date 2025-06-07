@@ -18,7 +18,6 @@ const hasStartedMusic =
 export default function LobbyPage() {
   const [gameStartTimer, setGameStartTimer] = useState<number | null>(null);
   const [timerKey, setTimerKey] = useState<number>(0); // KEY TO FORCE RERENDER OF COUNTDOWN COMPONENT
-  const [musicStarted, setMusicStarted] = useState(false); // REMOVE THIS
 
   // CUSTOM HOOKS
   const router = useRouter();

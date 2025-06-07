@@ -17,6 +17,10 @@ export default function QuestionListing({
     try {
       const response = await fetch(`http://localhost:3030/api/questions/${id}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          'Content-Type': 'application/json',
+        },
       });
       if (!response.ok) throw new Error('Failed to delete question');
       onDelete!();
