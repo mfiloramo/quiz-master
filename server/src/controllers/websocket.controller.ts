@@ -122,6 +122,10 @@ export class WebSocketController {
       return;
     }
 
+    // GUARD AGAINST DUPLICATE TRIGGERS
+    if (session.isStarted) return; // ALREADY STARTED — SKIP
+    session.isStarted = true;
+
     // VALIDATE QUIZ ID EXISTS
     if (!session.quizId) {
       socket.emit('error', 'Quiz not set for this session.');
@@ -146,6 +150,9 @@ export class WebSocketController {
 
       // NOTIFY ALL CLIENTS THAT SESSION STARTED
       this.io.to(sessionId).emit('session-started');
+
+      // CLEAR GAME START TIMEOUT
+      session.clearGameStartTimeout();
 
       // SEND FIRST QUESTION AND START TIMER
       const firstQuestion = formattedQuestions[0];
@@ -250,33 +257,42 @@ export class WebSocketController {
     // CHECK IF ALL PLAYERS HAVE ANSWERED
     if (session!.allPlayersAnswered()) {
       session!.clearRoundTimeout(); // CANCEL ANY ACTIVE TIMEOUT
-
       // NOTIFY CLIENTS THAT ROUND IS COMPLETE AND PROVIDE HOST ANSWERS
       this.io.to(sessionId).emit('all-players-answered', session?.playerAnswers);
     }
   }
 
+  // HANDLE HOST LEAVING
+  public handleHostLeft(socket: Socket, { sessionId }: { sessionId: string }) {
+    const session = SessionManager.getSession(sessionId);
+    if (!session) return;
+
+    session.clearGameStartTimeout(); // IMPORTANT: CANCEL TIMER
+    this.io.to(sessionId).emit('session-ended');
+    SessionManager.deleteSession(sessionId);
+  }
+
   // HOST-ONLY: EJECT SPECIFIC PLAYER FROM SESSION
-  public handleEjectPlayer(socket: Socket, { id, sessionId }: Player & GameSession): void {
+  public handleEjectPlayer(socket: Socket, { id, sessionId }: { id : number, sessionId: string }): void {
     // FETCH SESSION
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
-    // VALIDATE THAT SOCKET IS HOST
-    if (socket.id !== session.hostSocketId) {
-      socket.emit('error', 'Only the host can eject players.');
-      return;
-    }
+      // VALIDATE THAT SOCKET IS HOST
+      if (socket.id !== session.hostSocketId) {
+        socket.emit('error', 'Only the host can eject players.');
+        return;
+      }
 
-    // FETCH PLAYER TO EJECT
-    const player = session.getPlayerById(id);
-    if (!player) return;
+      // FETCH PLAYER TO EJECT
+      const player = session.getPlayerById(id);
+      if (!player) return;
 
-    // SEND EJECTION MESSAGE TO PLAYER
-    this.io.to(player.socketId).emit('ejected-by-host');
+      // SEND EJECTION MESSAGE TO PLAYER
+      this.io.to(player.socketId).emit('ejected-by-host');
 
-    // REMOVE PLAYER FROM SESSION
-    session.removePlayerByPlayerId(id);
+      // REMOVE PLAYER FROM SESSION
+      session.removePlayerByPlayerId(id);
 
     // BROADCAST UPDATED PLAYER LIST
     this.io.to(sessionId).emit('player-joined', session.players);
@@ -303,7 +319,6 @@ export class WebSocketController {
   }
 
   /** PRIVATE METHODS **/
-// EMIT QUESTION TO ALL CLIENTS AND SET FAILSAFE TIMEOUT
   private emitQuestionWithTimeout(session: GameSession): void {
     const sessionId = session.sessionId;
     const currentQuestion = session.questions[session.currentQuestionIndex];
@@ -337,5 +352,4 @@ export class WebSocketController {
       }
     }, session.roundTimer);
   }
-
 }

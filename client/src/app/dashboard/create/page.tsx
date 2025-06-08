@@ -25,7 +25,10 @@ export default function CreateQuiz(): ReactElement {
     try {
       const response = await fetch('http://localhost:3030/api/quizzes/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          Authorization: localStorage.getItem('token') || '',
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           userId: user!.id,
           username: user!.username,
@@ -42,7 +45,13 @@ export default function CreateQuiz(): ReactElement {
       }
 
       // IMMEDIATELY FETCH FULL QUIZ DATA
-      const quizResponse = await fetch(`http://localhost:3030/api/quizzes/${data.newQuizId}`);
+      const quizResponse = await fetch(`http://localhost:3030/api/quizzes/${data.newQuizId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: localStorage.getItem('token') || '',
+          'Content-Type': 'application/json',
+        },
+      });
       const newQuiz = await quizResponse.json();
 
       if (!quizResponse.ok) {

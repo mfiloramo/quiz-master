@@ -1,12 +1,11 @@
 import express, { Router } from 'express';
 import { SessionController } from "../controllers/session.controller";
-
-
+import { authenticateJWT } from '../middleware/authenticateJWT';
 
 const router: Router = express.Router();
 
 // PROTECT ALL ROUTES WITH JWT VERIFICATION MIDDLEWARE
-// router.use(authenticateJWT);
+router.use(authenticateJWT);
 
 router.post('/', SessionController.createSession);
 router.get('/:id', SessionController.getSession);

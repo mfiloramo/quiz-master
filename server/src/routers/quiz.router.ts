@@ -1,10 +1,11 @@
 import express, { Router } from "express";
 import { QuizController } from "../controllers/quiz.controller";
+import { authenticateJWT } from '../middleware/authenticateJWT';
 
 const router: Router = express.Router();
 
 // PROTECT ALL ROUTES WITH JWT VERIFICATION MIDDLEWARE
-// router.use(authenticateJWT);
+router.use(authenticateJWT);
 
 router.post("/create", QuizController.createQuiz);
 router.get("/", QuizController.getAllQuizzes);

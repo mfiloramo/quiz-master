@@ -42,10 +42,10 @@ export default function QuizPage(): JSX.Element {
   const router = useRouter();
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession, players, setPlayers } = useSession();
+  const { sessionId, clearSession, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
 
-  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.3 });
+  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
 
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function QuizPage(): JSX.Element {
     }
 
     // STOP GONG WHEN RETURNING TO QUESTION PHASE
-    if (phase === QuizPhase.Question) {
+    if (phase !== QuizPhase.AnswerSummary && phase !== QuizPhase.Leaderboard) {
       gongSound?.stop();
     }
   }, [phase, playGong, gongSound]);
@@ -138,18 +138,21 @@ export default function QuizPage(): JSX.Element {
 
     // SESSION ENDED
     socket.on('session-ended', () => {
-      // SHOW FINAL SCOREBOARD
       setPhase(QuizPhase.FinalScoreboard);
 
-      // END SESSION AFTER TIMEOUT
-      setTimeout(() => {
+      const handleEnd = () => {
         alert('Session has ended.');
         disconnect();
         resetQuiz();
         clearSession();
-        if (isHost) router.push('/dashboard/library');
-        else router.push('/dashboard/join');
-      }, 8000);
+        router.push('/dashboard');
+      };
+
+      if (isHost) {
+        router.push('/dashboard');
+      } else {
+        handleEnd();
+      }
     });
 
     // CLEANUP SOCKET LISTENERS
@@ -165,7 +168,7 @@ export default function QuizPage(): JSX.Element {
   // PHASE-BASED PROGRESSION ENGINE
   useEffect(() => {
     // INITIALIZE NEW TIMER
-    let timer: NodeJS.Timeout | null | number = null;
+    let timer: NodeJS.Timeout | number | null = null;
 
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
@@ -208,10 +211,15 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE LEAVING SESSION
   const handleLeave = (): void => {
+    if (isHost) {
+      setIsHost(false);
+      socket?.emit('host-left', { sessionId });
+    }
+
     disconnect();
     resetQuiz();
     clearSession();
-    if (isHost) setIsHost(false);
+
     router.push('/dashboard');
   };
 

@@ -14,6 +14,7 @@ export class GameSession {
   public gameStartTimer!: number; // TIMER IN MS -- DEFAULT VALUE IS 10 SECONDS
   public currentRoundTimeout?: NodeJS.Timeout;
   public currentGameStartTimeout?: NodeJS.Timeout;
+  public scoreCounter: number = 100
 
   constructor(
     public sessionId: string,
@@ -57,7 +58,8 @@ export class GameSession {
   public incrementScore(id: number) {
     const player = this.getPlayerById(id);
     if (player) {
-      player.score += 1;
+      player.score += Math.ceil(this.scoreCounter);
+      if (player.score > 40) this.scoreCounter -= 15;
     }
   }
 
@@ -66,10 +68,16 @@ export class GameSession {
     this.players.forEach((player: Player): boolean => (player.hasAnswered = false));
   }
 
+  // RESET SCORE COUNTER
+  public resetScoreCounter(): void {
+    this.scoreCounter = 100;
+  }
+
   // ADVANCE TO NEXT QUESTION
   public nextQuestion(): void {
     this.currentQuestionIndex += 1;
     this.resetAnswers();
+    this.resetScoreCounter();
   }
 
   // CHECK IF ALL PLAYERS ANSWERED

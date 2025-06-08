@@ -2,8 +2,8 @@
 
 import React, { ReactElement, useEffect, useState } from 'react';
 import { QuestionListingType } from '@/types/QuestionListing.type';
-import QuestionListing from '@/components/question-listing/question-listing';
-import EditQuestionModal from '@/components/edit-question-modal/edit-question-modal';
+import QuestionListing from '@/components/QuestionListing/QuestionListing';
+import EditQuestionModal from '@/components/EditQuestionModal/EditQuestionModal';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
@@ -46,7 +46,17 @@ export default function EditQuiz(): ReactElement {
   const fetchQuestions = async (): Promise<void> => {
     if (!selectedQuiz?.id) return;
     try {
-      const response = await fetch(`http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`);
+      const response: any = await fetch(
+        `http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('token'),
+          },
+        }
+      );
+
       const data = await response.json();
 
       // FORMAT OPTIONS CORRECTLY
@@ -92,6 +102,7 @@ export default function EditQuiz(): ReactElement {
       const response = await fetch(`http://localhost:3030/api/quizzes/${selectedQuiz?.id}`, {
         method: 'PUT',
         headers: {
+          Authorization: localStorage.getItem('token'),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
