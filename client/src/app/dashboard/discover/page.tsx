@@ -20,10 +20,12 @@ export default function DiscoverPage(): ReactElement {
 
     const fetchAllQuizzes = async () => {
       try {
+        const token = localStorage.getItem('token');
+
         const response: any = await fetch(`http://localhost:3030/api/quizzes/`, {
           method: 'GET',
           headers: {
-            Authorization: localStorage.getItem('token'),
+            ...(token && { Authorization: token }),
             'Content-Type': 'application/json',
           },
         });
