@@ -10,8 +10,8 @@ export class GameSession {
   public hostUsername: string;
   public isStarted: boolean = false;
   public currentQuestionIndex: number = 0;
-  public roundTimer!: number; // TIMER IN MS -- DEFAULT VALUE IS 10 SECONDS
-  public gameStartTimer!: number; // TIMER IN MS -- DEFAULT VALUE IS 10 SECONDS
+  public roundTimer!: number; // TIMER IN MS
+  public gameStartTimer!: number; // TIMER IN MS
   public currentRoundTimeout?: NodeJS.Timeout;
   public currentGameStartTimeout?: NodeJS.Timeout;
   public scoreCounter: number = 100
