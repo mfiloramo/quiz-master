@@ -149,13 +149,8 @@ export default function QuizPage(): JSX.Element {
         router.push('/dashboard');
       };
 
-      if (!isHost) {
-        handleEnd();
-      } else {
-        setTimeout(() => {
-          handleEnd();
-        }, 8000);
-      }
+      const delay = isHost ? 8000 : 0;
+      setTimeout(handleEnd, delay);
     });
 
     // CLEANUP SOCKET LISTENERS
