@@ -13,11 +13,12 @@ export const webSocketRouter = (io: Server): void => {
     socket.on('start-session', async (data: any) => await controller.startSession(socket, data));
     socket.on('leave-session', () => controller.leaveSession(socket));
     socket.on('get-current-question', (data: any) => controller.getCurrentQuestion(socket, data));
-    socket.on('next-question', (data: any) => controller.handleNextQuestion(socket, data));
+    socket.on('next-question', (data: any) => controller.handleNextQuestion(data));
     socket.on('submit-answer', (data: any) => controller.submitAnswer(socket, data));
-    socket.on('host-left', (data: any) => controller.handleHostLeft(socket, data));
+    socket.on('host-left', (data: any) => controller.handleHostLeft(data));
     socket.on('eject-player', (data: any) => controller.handleEjectPlayer(socket, data));
     socket.on('get-players', (data: any) => controller.getPlayers(socket, data));
+    socket.on('skip-question', (data: any) => controller.handleSkipQuestion(data));
     socket.on('get-game-start-timer', (data: any) => controller.getGameStartTimer(socket, data));
     socket.on('disconnect', () => {
       console.log(`Socket disconnected: ${socket.id}`);

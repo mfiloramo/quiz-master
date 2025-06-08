@@ -37,6 +37,7 @@ export default function QuizPage(): JSX.Element {
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
   const [playerAnswers, setPlayerAnswers] = useState<string[]>([]);
   const [musicKey, setMusicKey] = useState<number>(Date.now());
+  const [press, setPress] = useState<boolean>(false);
 
   // CUSTOM HOOKS/CONTEXTS
   const router = useRouter();
@@ -148,11 +149,8 @@ export default function QuizPage(): JSX.Element {
         router.push('/dashboard');
       };
 
-      if (isHost) {
-        router.push('/dashboard');
-      } else {
-        handleEnd();
-      }
+      const delay = isHost ? 8000 : 0;
+      setTimeout(handleEnd, delay);
     });
 
     // CLEANUP SOCKET LISTENERS
@@ -169,10 +167,12 @@ export default function QuizPage(): JSX.Element {
   useEffect(() => {
     // INITIALIZE NEW TIMER
     let timer: NodeJS.Timeout | number | null = null;
+    let timeout: number = 5000;
 
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
-      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), 5000);
+      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), timeout);
+      if (press) socket!.emit('skip', { sessionId });
     }
 
     // PHASE: LEADERBOARD -> NEXT QUESTION / FINAL SCORES
@@ -206,6 +206,25 @@ export default function QuizPage(): JSX.Element {
     setLoading(true);
     if (isHost) {
       socket?.emit('get-current-question', { sessionId });
+    }
+  };
+
+  // HANDLE HOST SKIPPING PHASE
+  const handleSkip = (): void => {
+    if (!isHost || !socket || !sessionId) return;
+
+    switch (phase) {
+      case QuizPhase.Question:
+        // Force transition to AnswerSummary early
+        socket.emit('skip-question', { sessionId });
+        break;
+      case QuizPhase.AnswerSummary:
+        setPhase(QuizPhase.Leaderboard);
+        break;
+      case QuizPhase.Leaderboard:
+        setLoading(true);
+        socket.emit('next-question', { sessionId });
+        break;
     }
   };
 
@@ -298,19 +317,35 @@ export default function QuizPage(): JSX.Element {
 
       {/* FINAL SCOREBOARD (HOST DISPLAY) */}
       {phase === QuizPhase.FinalScoreboard && isHost && <FinalScoreboard />}
+      <div className={'flex flex-row items-center justify-between gap-3'}>
+        {/* SKIP PHASE BUTTON */}
+        {isHost && (
+          <motion.button
+            className='mt-7 h-16 w-40 rounded-lg bg-slate-100 font-bold text-black transition hover:bg-slate-200 active:bg-slate-300'
+            onClick={handleSkip}
+            initial={{ x: -100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.005 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Skip
+          </motion.button>
+        )}
 
-      {/* LEAVE/END BUTTON */}
-      <motion.button
-        className='mt-7 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
-        onClick={handleLeave}
-        initial={{ x: -100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.005 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        {isHost ? 'End Game' : 'Leave Game'}
-      </motion.button>
+        {/* LEAVE/END BUTTON */}
+        <motion.button
+          className='mt-7 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
+          onClick={handleLeave}
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.005 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {isHost ? 'End Game' : 'Leave Game'}
+        </motion.button>
+      </div>
 
       {/* ERROR DISPLAY */}
       {error && <p className='mt-4 text-red-200'>{error}</p>}

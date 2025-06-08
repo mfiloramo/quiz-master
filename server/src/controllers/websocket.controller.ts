@@ -207,7 +207,7 @@ export class WebSocketController {
   }
 
   // HANDLE ADVANCEMENT TO NEXT QUESTION (CALLED BY FRONTEND AFTER LEADERBOARD)
-  public handleNextQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
+  public handleNextQuestion({ sessionId }: { sessionId: string }): void {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
@@ -262,8 +262,19 @@ export class WebSocketController {
     }
   }
 
+  // HANDLE HOST SKIPPING QUESTION PHASE
+  public handleSkipQuestion({ sessionId }: { sessionId: string }) {
+    const session = SessionManager.getSession(sessionId);
+    if (!session) return;
+
+    // Clear timer and emit current answers
+    session.clearRoundTimeout();
+    this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
+  }
+
+
   // HANDLE HOST LEAVING
-  public handleHostLeft(socket: Socket, { sessionId }: { sessionId: string }) {
+  public handleHostLeft({ sessionId }: { sessionId: string }) {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
