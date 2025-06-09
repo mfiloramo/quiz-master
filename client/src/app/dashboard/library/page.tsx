@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Quiz } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
+import axiosInstance from '@/utils/axios';
 
 export default function LibraryPage(): ReactElement {
   // STATE FOR ALL QUIZZES
@@ -20,34 +21,27 @@ export default function LibraryPage(): ReactElement {
 
   // FETCH QUIZZES ON LOAD
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/auth/login');
+      return;
+    }
+
     if (!user?.id) return;
 
     setSelectedQuiz(null);
 
     const fetchQuizzes = async () => {
       try {
-        const response = await fetch(`http://localhost:3030/api/quizzes/user/${user.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: localStorage.getItem('token') || '',
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Something went wrong');
-        }
-
-        const json = await response.json();
-        setQuizzes(json);
+        const response = await axiosInstance.get<Quiz[]>(`/quizzes/user/${user.id}`);
+        setQuizzes(response.data);
       } catch (err) {
         console.error('Error fetching quizzes:', err);
       }
     };
 
-    fetchQuizzes().then((r) => r);
-  }, [user]);
+    fetchQuizzes();
+  }, [user, router, setSelectedQuiz]);
 
   // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz) => {

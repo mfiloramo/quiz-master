@@ -215,7 +215,6 @@ export default function QuizPage(): JSX.Element {
 
     switch (phase) {
       case QuizPhase.Question:
-        // Force transition to AnswerSummary early
         socket.emit('skip-question', { sessionId });
         break;
       case QuizPhase.AnswerSummary:

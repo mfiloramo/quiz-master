@@ -272,7 +272,6 @@ export class WebSocketController {
     this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
   }
 
-
   // HANDLE HOST LEAVING
   public handleHostLeft({ sessionId }: { sessionId: string }) {
     const session = SessionManager.getSession(sessionId);
