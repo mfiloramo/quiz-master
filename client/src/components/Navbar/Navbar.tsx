@@ -22,11 +22,11 @@ export default function Navbar(): JSX.Element {
   // RENDER COMPONENT
   return (
     <>
-      {/** NAVBAR MAIN CONTAINER **/}
+      {/* NAVBAR MAIN CONTAINER */}
       <div className='fixed left-0 top-0 z-50 flow-root h-16 w-full bg-gradient-to-b from-sky-800 to-sky-600 shadow-2xl'>
-        {/** LEFT LOGO + BUTTONS CONTAINER **/}
+        {/* LEFT LOGO + BUTTONS CONTAINER */}
         <div className='float-left ml-4 mt-2 flex items-center'>
-          {/** APP LOGO (ALWAYS VISIBLE) **/}
+          {/* APP LOGO (ALWAYS VISIBLE) */}
           <Link href={'/'}>
             <Image
               className='shadow-lg'
@@ -37,7 +37,7 @@ export default function Navbar(): JSX.Element {
             />
           </Link>
 
-          {/** LEFT BUTTONS (ONLY SHOW ON LARGE SCREENS) **/}
+          {/* LEFT BUTTONS (ONLY SHOW ON LARGE SCREENS) */}
           <div className='hidden items-center lg:flex'>
             {navLinksLeft
               .filter((button) => button.label !== 'Dashboard' || isLoggedIn)
@@ -55,10 +55,10 @@ export default function Navbar(): JSX.Element {
           </div>
         </div>
 
-        {/** RIGHT BUTTONS CONTAINER **/}
+        {/* RIGHT BUTTONS CONTAINER */}
         <div className='float-right mr-7 mt-4 flex items-center'>
           <div className={'hidden lg:flex'}>
-            {/** JOIN GAME BUTTON -- DISABLED FOR SECURITY **/}
+            {/* JOIN GAME BUTTON -- DISABLED FOR SECURITY */}
             {/*{!isLoggedIn && (
               <Link
                 className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-white'

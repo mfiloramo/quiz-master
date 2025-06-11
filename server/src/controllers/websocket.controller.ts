@@ -44,7 +44,7 @@ export class WebSocketController {
       session.clearGameStartTimeout();
 
       session.currentGameStartTimeout = setTimeout(() => {
-        this.startSession(socket, { sessionId }).then(r => r);
+        this.startSession(socket, { sessionId }).then((response: any) => response);
       }, session.gameStartTimer);
     }
 
@@ -106,7 +106,7 @@ export class WebSocketController {
     session.clearGameStartTimeout();
 
     session.currentGameStartTimeout = setTimeout(() => {
-      this.startSession(socket, { sessionId }).then(r => r);
+      this.startSession(socket, { sessionId }).then((response: any) => response);
     }, session.gameStartTimer);
 
     socket.emit('game-start-timer', session.gameStartTimer);

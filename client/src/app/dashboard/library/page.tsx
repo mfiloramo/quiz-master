@@ -40,8 +40,8 @@ export default function LibraryPage(): ReactElement {
       }
     };
 
-    fetchQuizzes();
-  }, [user, router, setSelectedQuiz]);
+    fetchQuizzes().then((response: any) => response);
+  }, [user?.id]);
 
   // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz) => {
@@ -71,7 +71,9 @@ export default function LibraryPage(): ReactElement {
     router.push('/dashboard/edit');
   };
 
+  // RENDER PAGE
   return (
+    // MAIN CONTAINER
     <div className='flex flex-col items-start'>
       {/* QUIZ LIST */}
       <div className='flex flex-col items-start'>

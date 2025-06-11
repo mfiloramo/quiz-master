@@ -1,10 +1,12 @@
 'use client';
 
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useState, useMemo } from 'react';
 import { Quiz, QuizContextType } from '@/types/Quiz.types';
 
+// CREATE CONTEXT
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
+// QUIZ PROVIDER COMPONENT
 export function QuizProvider({ children }: { children: ReactNode }) {
   // PROVIDER STATE
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
@@ -21,23 +23,25 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     setCurrentIndex(0); // RESET QUESTION INDEX
   };
 
-  return (
-    <QuizContext.Provider
-      value={{
-        selectedQuiz,
-        setSelectedQuiz: setQuiz,
-        currentIndex,
-        setCurrentIndex,
-        resetQuiz,
-        lockedIn,
-        setLockedIn,
-      }}
-    >
-      {children}
-    </QuizContext.Provider>
+  // MEMOIZE CONTEXT VALUE TO PREVENT UNNECESSARY RERENDERS
+  const value = useMemo(
+    () => ({
+      selectedQuiz,
+      setSelectedQuiz: setQuiz,
+      currentIndex,
+      setCurrentIndex,
+      resetQuiz,
+      lockedIn,
+      setLockedIn,
+    }),
+    [selectedQuiz, currentIndex, lockedIn]
   );
+
+  // RETURN CONTEXT PROVIDER
+  return <QuizContext.Provider value={value}>{children}</QuizContext.Provider>;
 }
 
+// CUSTOM HOOK
 export function useQuiz(): QuizContextType {
   const context = useContext(QuizContext);
   if (!context) throw new Error('useQuiz must be used within a QuizProvider');

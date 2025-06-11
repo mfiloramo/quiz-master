@@ -14,7 +14,7 @@ const itemVariants: Variants = {
   closed: { opacity: 0, y: 20, transition: { duration: 0.2 } },
 };
 
-export default function HamburgerDropdown({ navLinks }: NavLinkType[]): ReactElement {
+export default function HamburgerDropdown({ navLinks }: any): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClose = (): void => {
@@ -66,7 +66,7 @@ export default function HamburgerDropdown({ navLinks }: NavLinkType[]): ReactEle
           },
         }}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
-        className='z-30 mx-4 flex w-screen list-none flex-col gap-5 rounded-bl-xl rounded-br-xl bg-blue-100 p-3.5'
+        className='z-30 -mr-7 flex min-w-[100vw] list-none flex-col gap-5 rounded-bl-xl rounded-br-xl bg-sky-100 p-3.5'
       >
         {navLinks.map(
           (link: NavLinkType, index: number): ReactElement => (
