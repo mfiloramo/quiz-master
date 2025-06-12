@@ -46,6 +46,7 @@ export default function QuizPage(): JSX.Element {
   const { sessionId, clearSession, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
 
+  // MOUNT GONG SOUND
   const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
 
   // ON MOUNT, REQUEST CURRENT QUESTION
@@ -85,7 +86,7 @@ export default function QuizPage(): JSX.Element {
     }
   }, [phase, playGong, gongSound]);
 
-  // HANDLE SOCKET EVENTS
+  // HANDLE SOCKET EVENTSu
   useEffect(() => {
     // VALIDATE SOCKET
     if (!socket) return;

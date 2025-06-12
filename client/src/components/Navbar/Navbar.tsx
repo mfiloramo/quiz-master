@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, ReactElement } from 'react';
+import { JSX, ReactElement, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,10 +14,13 @@ export default function Navbar(): JSX.Element {
 
   const navLinksLeft: NavLinkType[] = [
     { path: '/', label: 'Home' },
-    { path: '/dashboard', label: 'Dashboard' },
+    isLoggedIn && { path: '/dashboard', label: 'Dashboard' },
     { path: '/students', label: 'Students' },
     { path: '/teachers', label: 'Teachers' },
-  ];
+    isLoggedIn
+      ? { path: '/', label: 'Logout', onClick: logout }
+      : { path: '/auth/login', label: 'Login' },
+  ].filter(Boolean) as NavLinkType[];
 
   // RENDER COMPONENT
   return (

@@ -1,9 +1,10 @@
 'use client';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 import Hamburger from 'hamburger-react';
 import Link from 'next/link';
 import { NavLinkType } from '@/types/NavLink.type';
+import { useAuth } from '@/contexts/AuthContext';
 
 const itemVariants: Variants = {
   open: {
@@ -15,13 +16,19 @@ const itemVariants: Variants = {
 };
 
 export default function HamburgerDropdown({ navLinks }: any): ReactElement {
+  // LOCAL STATE
   const [isOpen, setIsOpen] = useState(false);
 
+  // CUSTOM HOOKS
+  const { logout } = useAuth();
+
+  // HANDLER FUNCTIONS
   const handleClose = (): void => {
     setIsOpen(false);
     return;
   };
 
+  // RENDER COMPONENT
   return (
     <motion.nav
       initial={false}
@@ -31,7 +38,7 @@ export default function HamburgerDropdown({ navLinks }: any): ReactElement {
       <motion.button
         whileTap={{ scale: 0.97 }}
         onClick={() => setIsOpen(!isOpen)}
-        className='absolute -top-11 right-0 z-50 text-blue-100'
+        className='absolute -top-14 right-0 z-50 text-blue-100'
       >
         <Hamburger toggled={isOpen} toggle={setIsOpen} />
         <motion.div
@@ -66,16 +73,22 @@ export default function HamburgerDropdown({ navLinks }: any): ReactElement {
           },
         }}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
-        className='z-30 -mr-7 flex min-w-[100vw] list-none flex-col gap-5 rounded-bl-xl rounded-br-xl bg-sky-100 p-3.5'
+        className='z-30 mt-3 flex min-w-[90vw] list-none flex-col gap-5 rounded-bl-xl rounded-br-xl bg-sky-100 p-3.5'
       >
         {navLinks.map(
-          (link: NavLinkType, index: number): ReactElement => (
+          (link: NavLinkType): ReactElement => (
             <motion.li
               key={link.label}
               className='block cursor-pointer text-xl text-sky-950'
               variants={itemVariants}
             >
-              <Link href={link.path} onClick={handleClose}>
+              <Link
+                href={link.path}
+                onClick={() => {
+                  handleClose();
+                  link.onClick?.();
+                }}
+              >
                 {link.label}
               </Link>
             </motion.li>
