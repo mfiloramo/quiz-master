@@ -63,8 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // LOGOUT HANDLER
   const logout = (): void => {
     localStorage.removeItem('token');
-    setUser(null);
     setIsLoggedIn(false);
+    setUser(null);
     router.push('/');
   };
 

@@ -22,4 +22,4 @@ export const authenticateJWT = (
     console.error("Token verification failed:", error);
     return res.status(403).json({ error: "Invalid or expired token" });
   }
-};
+}
