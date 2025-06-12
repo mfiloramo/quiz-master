@@ -1,6 +1,7 @@
 // TYPE FOR A SINGLE QUIZ
 import { Dispatch, SetStateAction } from 'react';
 
+// TYPE FOR A NEW QUIZ
 export type Quiz = {
   id: number;
   user_id: number;
