@@ -87,6 +87,7 @@ export class AuthController {
           email: user.email,
           created_at: user.created_at,
           isActive: user.isActive,
+          account_type: user.account_type
         },
         process.env.JWT_SECRET!,
         { expiresIn: "1h" },

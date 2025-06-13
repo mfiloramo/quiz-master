@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
-import { AuthContextType, DecodedUser } from '@/types/AuthContext.type';
+import { AuthContextType, DecodedUser } from '@/types/AuthContext.types';
 
 // CREATE CONTEXT
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -43,15 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (token: string): boolean => {
     try {
       localStorage.setItem('token', token);
-      const decoded = jwtDecode<DecodedUser>(token);
+      const decodedUser = jwtDecode<DecodedUser>(token);
 
-      if (!decoded.isActive) {
+      if (!decodedUser.isActive) {
         alert('Account is inactive');
         localStorage.removeItem('token');
         return false;
       }
 
-      setUser(decoded);
+      setUser(decodedUser);
       setIsLoggedIn(true);
       return true;
     } catch (err) {
