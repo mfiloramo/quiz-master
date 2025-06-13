@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import { Request, Response, NextFunction } from "express";
+import jwt from 'jsonwebtoken';
+import { NextFunction, Request, Response } from 'express';
 
 const JWT_SECRET: string = process.env.JWT_SECRET!;
 
@@ -15,8 +15,7 @@ export const authenticateJWT = (
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.body.user = decoded;
+    req.body.user = jwt.verify(token, JWT_SECRET);
     next();
   } catch (error) {
     console.error("Token verification failed:", error);

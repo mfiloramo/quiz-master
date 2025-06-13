@@ -7,19 +7,23 @@ import { WebSocketProvider } from '@/contexts/WebSocketContext';
 import { SessionProvider } from '@/contexts/SessionContext';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-
-const dashboardLinks: DashboardItem[] = [
-  { path: '/', label: '🏠 Home' },
-  { path: '/dashboard/create', label: '✨ Create' },
-  { path: '/dashboard/join', label: '🎮 Join Game' },
-  { path: '/dashboard/discover', label: '🧭 Discover' },
-  { path: '/dashboard/library', label: '📚 My Quizzes' },
-  { path: '/dashboard/settings', label: '⚙️ Settings' },
-];
+import { useEffect } from 'react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { isLoggedIn } = useAuth();
+  // CUSTOM HOOKS
+  const { isLoggedIn, user } = useAuth();
   const pathname = usePathname();
+
+  // COMPONENT VARIABLES
+  const dashboardLinks: DashboardItem[] = [
+    { path: '/', label: '🏠 Home' },
+    { path: '/dashboard/create', label: '✨ Create' },
+    { path: '/dashboard/join', label: '🎮 Join Game' },
+    { path: '/dashboard/discover', label: '🧭 Discover' },
+    { path: '/dashboard/library', label: '📚 My Quizzes' },
+    { path: '/dashboard/settings', label: '⚙️ Settings' },
+    user?.account_type === 'admin' && { path: '/dashboard/admin', label: '🔑 Admin' },
+  ].filter(Boolean) as DashboardItem[];
 
   const isLobbyPage = pathname.startsWith('/dashboard/lobby');
 

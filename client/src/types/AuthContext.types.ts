@@ -1,13 +1,3 @@
-// DECODED USER TYPE (MATCHES JWT PAYLOAD STRUCTURE)
-export type DecodedUser = {
-  id: number | string;
-  username: string;
-  email: string;
-  isActive: boolean;
-  iat: number;
-  exp: number;
-};
-
 // AUTH CONTEXT TYPE
 export type AuthContextType = {
   isLoggedIn: boolean;
@@ -16,4 +6,15 @@ export type AuthContextType = {
   logout: () => void;
   isHost: boolean;
   setIsHost: (hostStatus: boolean) => void;
+};
+
+// DECODED USER TYPE (MATCHES JWT PAYLOAD STRUCTURE)
+export type DecodedUser = {
+  id: number | string;
+  username: string;
+  email: string;
+  isActive: boolean;
+  account_type: string;
+  iat: number;
+  exp: number;
 };
