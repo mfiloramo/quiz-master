@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { QuizModuleProps } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import { useQuiz } from '@/contexts/QuizContext';
+import { PacmanLoader } from 'react-spinners';
 
 const colorMap = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
@@ -54,9 +55,18 @@ export default function QuizModule({
         ))}
       </div>
       {lockedIn && (
-        <p className='mt-4 font-semibold text-green-700'>
-          Answer submitted. Waiting for other players to answer...
-        </p>
+        <>
+          <p className='mt-4 font-semibold text-green-700'>
+            Answer submitted. Waiting for other players to answer...
+          </p>
+          {/*<PacmanLoader*/}
+          {/*  color={'96FFFFFF'}*/}
+          {/*  loading={lockedIn}*/}
+          {/*  size={150}*/}
+          {/*  aria-label='Loading Spinner'*/}
+          {/*  data-testid='loader'*/}
+          {/*/>*/}
+        </>
       )}
     </div>
   );

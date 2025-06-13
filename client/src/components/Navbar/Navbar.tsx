@@ -12,15 +12,26 @@ export default function Navbar(): JSX.Element {
   // USE AUTH CONTEXT FOR LOGIN STATE AND LOGOUT ACTION
   const { isLoggedIn, logout, user } = useAuth();
 
+  // NAVBAR LINKS (STANDARD VIEWPORTS)
   const navLinksLeft: NavLinkType[] = [
     { path: '/', label: 'Home' },
     isLoggedIn && { path: '/dashboard', label: 'Dashboard' },
     { path: '/students', label: 'Students' },
     { path: '/teachers', label: 'Teachers' },
-    isLoggedIn
-      ? { path: '/', label: 'Logout', onClick: logout }
-      : { path: '/auth/login', label: 'Login' },
+    !isLoggedIn && { path: '/auth/login', label: 'Login' },
   ].filter(Boolean) as NavLinkType[];
+
+  // HAMBURGER MENU LINKS (MOBILE VIEWPORTS)
+  const navLinksForHamburger: NavLinkType[] = isLoggedIn
+    ? [
+        ...navLinksLeft,
+        {
+          path: '/', // You can set this to "#" or keep '/' since it uses onClick
+          label: 'Logout',
+          onClick: logout,
+        },
+      ]
+    : navLinksLeft;
 
   // RENDER COMPONENT
   return (
@@ -41,7 +52,7 @@ export default function Navbar(): JSX.Element {
           </Link>
 
           {/* LEFT BUTTONS (ONLY SHOW ON LARGE SCREENS) */}
-          <div className='hidden items-center lg:flex'>
+          <div className='hidden items-center md:flex'>
             {navLinksLeft
               .filter((button) => button.label !== 'Dashboard' || isLoggedIn)
               .map(
@@ -74,10 +85,16 @@ export default function Navbar(): JSX.Element {
 
             {/* SIGN UP OR PROFILE INDICATOR */}
             {isLoggedIn ? (
-              // PROFILE INDICATOR
-              <div className={'text-md mr-2 mt-1.5 flex flex-row font-bold text-sky-200'}>
-                <FaUserCircle className='-mt-0.5 mr-3' size={28} />
-                {`Welcome, ${user?.username}`}
+              // PROFILE INDICATOR + LOGOUT BUTTON
+              <div className='text-md flex items-center font-bold text-sky-200'>
+                <FaUserCircle className='mr-2' size={28} />
+                <span className='mr-4'>{`Welcome, ${user?.username}`}</span>
+                <button
+                  onClick={logout}
+                  className='text-sky-100 transition hover:text-white active:text-sky-100'
+                >
+                  Log Out
+                </button>
               </div>
             ) : (
               // SIGN UP BUTTON
@@ -91,12 +108,12 @@ export default function Navbar(): JSX.Element {
             )}
           </div>
 
+          {/* LOGIN / LOGOUT BUTTON */}
           <div className={'hidden md:flex'}>
-            {/* LOGIN / LOGOUT BUTTON */}
             {isLoggedIn ? (
               <button
                 onClick={logout}
-                className='ml-4 mt-1 text-sky-100 transition hover:text-white active:text-sky-100'
+                className='ml-4 mt-1 text-sky-100 transition hover:text-white active:text-sky-100 md:hidden'
               >
                 Log Out
               </button>
@@ -113,8 +130,8 @@ export default function Navbar(): JSX.Element {
           </div>
 
           {/* HAMBURGER MENU (ONLY ON SMALL SCREENS) */}
-          <div className='-mt-4 lg:hidden'>
-            <HamburgerDropdown navLinks={navLinksLeft} />
+          <div className='-mt-4 md:hidden'>
+            <HamburgerDropdown navLinks={navLinksForHamburger} />
           </div>
         </div>
       </div>

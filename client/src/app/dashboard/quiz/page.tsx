@@ -261,8 +261,19 @@ export default function QuizPage(): JSX.Element {
         />
       )}
 
+      {/* HOST QUESTION VIEW */}
+      {phase === QuizPhase.Question && currentQuestion && isHost && (
+        <HostQuestionDisplay
+          question={currentQuestion.question}
+          options={currentQuestion.options}
+          questionNumber={currentIndex + 1}
+          totalQuestions={totalQuestions}
+          colorMap={colorMap}
+        />
+      )}
+
       {/* PLAYER TIMER DISPLAY */}
-      {phase === QuizPhase.Question && !isHost && secondsLeft !== null && (
+      {phase === QuizPhase.Question && isHost && secondsLeft !== null && (
         <div className={'mt-8'}>
           <CountdownCircleTimer
             isPlaying
@@ -273,17 +284,6 @@ export default function QuizPage(): JSX.Element {
             {({ remainingTime }) => remainingTime}
           </CountdownCircleTimer>
         </div>
-      )}
-
-      {/* HOST QUESTION VIEW */}
-      {phase === QuizPhase.Question && currentQuestion && isHost && (
-        <HostQuestionDisplay
-          question={currentQuestion.question}
-          options={currentQuestion.options}
-          questionNumber={currentIndex + 1}
-          totalQuestions={totalQuestions}
-          colorMap={colorMap}
-        />
       )}
 
       {/* HOST ANSWER SUMMARY VIEW */}
