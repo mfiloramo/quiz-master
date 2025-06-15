@@ -6,13 +6,15 @@ import DashboardCard from '@/components/DashboardCard/DashboardCard';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { DashboardCardType } from '@/types/DashboardCard.type';
+import { NavLinkType } from '@/types/NavLink.type';
 
 export default function DashboardHome(): JSX.Element {
   const router = useRouter();
   const { resetQuiz } = useQuiz();
-  const { setIsHost } = useAuth();
+  const { user, setIsHost } = useAuth();
 
-  const DashboardCards = [
+  const DashboardCards: DashboardCardType[] = [
     {
       label: '🎮 Join Game',
       href: '/dashboard/join',
@@ -38,7 +40,12 @@ export default function DashboardHome(): JSX.Element {
       href: '/dashboard/settings',
       description: 'Manage your profile and preferences.',
     },
-  ];
+    user?.account_type === 'admin' && {
+      label: '🔑 Admin',
+      href: '/dashboard/admin',
+      description: 'Manage admin controls across application.',
+    },
+  ].filter(Boolean) as DashboardCardType[];
 
   // CHECK IF USER IS LOGGED IN
   useEffect(() => {
@@ -68,7 +75,7 @@ export default function DashboardHome(): JSX.Element {
         managing your library, or adjusting settings.
       </p>
       <ul className='mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3'>
-        {DashboardCards.map((card, index) => (
+        {DashboardCards.map((card: DashboardCardType, index: number) => (
           <DashboardCard
             key={index}
             label={card.label}

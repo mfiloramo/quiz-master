@@ -18,7 +18,6 @@ export default function Navbar(): JSX.Element {
     isLoggedIn && { path: '/dashboard', label: 'Dashboard' },
     { path: '/students', label: 'Students' },
     { path: '/teachers', label: 'Teachers' },
-    !isLoggedIn && { path: '/auth/login', label: 'Login' },
   ].filter(Boolean) as NavLinkType[];
 
   // HAMBURGER MENU LINKS (MOBILE VIEWPORTS)
@@ -26,12 +25,18 @@ export default function Navbar(): JSX.Element {
     ? [
         ...navLinksLeft,
         {
-          path: '/', // You can set this to "#" or keep '/' since it uses onClick
+          path: '/',
           label: 'Logout',
           onClick: logout,
         },
       ]
-    : navLinksLeft;
+    : [
+        ...navLinksLeft,
+        {
+          path: '/login',
+          label: 'Login',
+        },
+      ];
 
   // RENDER COMPONENT
   return (
@@ -72,8 +77,8 @@ export default function Navbar(): JSX.Element {
         {/* RIGHT BUTTONS CONTAINER */}
         <div className='float-right mr-7 mt-4 flex items-center'>
           <div className={'hidden lg:flex'}>
-            {/* JOIN GAME BUTTON -- DISABLED FOR SECURITY */}
-            {/*{!isLoggedIn && (
+            {/* JOIN GAME BUTTON */}
+            {!isLoggedIn && (
               <Link
                 className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-white'
                 href={'/dashboard/join'}
@@ -81,7 +86,7 @@ export default function Navbar(): JSX.Element {
               >
                 {'Join Game'}
               </Link>
-            )}*/}
+            )}
 
             {/* SIGN UP OR PROFILE INDICATOR */}
             {isLoggedIn ? (
