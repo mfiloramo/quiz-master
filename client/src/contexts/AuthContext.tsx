@@ -19,9 +19,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
-  useEffect((): void => {
+  useEffect(() => {
+    // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
     const token = localStorage.getItem('token');
+
+    // FIRST, CHECK IF TOKEN EXISTS
     if (!token) {
+      console.log('No token found');
       logout();
       return;
     }
@@ -29,16 +33,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const decoded: DecodedUser = jwtDecode(token);
 
-      if (!decoded.isActive) {
-        alert('Account is inactive');
+      // CHECK IF TOKEN IS EXPIRED — `exp` IS IN SECONDS, CONVERT TO MILLISECONDS
+      const isExpired = Date.now() > decoded.exp * 1000;
+
+      if (isExpired) {
+        console.log('Token has expired');
+        logout();
         return;
       }
 
+      // CHECK IF ACCOUNT IS ACTIVE
+      if (!decoded.isActive) {
+        alert('Account is inactive');
+        logout(); // ENSURE CONSISTENT LOGOUT BEHAVIOR ON INACTIVE ACCOUNT
+        return;
+      }
+
+      // SET USER CONTEXT IF ALL CHECKS PASS
       setUser(decoded);
       setIsLoggedIn(true);
     } catch (err) {
+      // HANDLE MALFORMED OR TAMPERED TOKEN
       console.error('Invalid or malformed token:', err);
       localStorage.removeItem('token');
+      logout(); // CLEAN UP CLIENT STATE ON ERROR
     }
   }, []);
 

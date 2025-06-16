@@ -18,14 +18,14 @@ if (!dbHost || !dbName || !dbUser || !dbPassword) {
 // CONFIGURE SEQUELIZE CONNECTION
 const options: Options = {
   host: dbHost,
-  dialect: 'mssql', // Specify Microsoft SQL Server
+  dialect: 'mssql',
   dialectOptions: {
     options: {
-      encrypt: false, // Set true if you're using Azure or need encryption
+      encrypt: false, // SET TRUE IF USING AZURE
       trustedConnection: process.env.DB_TRUSTED === "true" || undefined,
     },
   },
-  logging: console.log, // Log SQL queries (optional)
+  logging: console.log,
 };
 
 export const sequelize: Sequelize = new Sequelize(dbName, dbUser, dbPassword, options);
