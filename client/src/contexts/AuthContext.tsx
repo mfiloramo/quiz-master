@@ -21,7 +21,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
   useEffect((): void => {
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+      logout();
+      return;
+    }
 
     try {
       const decoded: DecodedUser = jwtDecode(token);
