@@ -1,0 +1,13 @@
+{
+  "sections": [
+    {
+      "id": "sample",
+      "subtitle": "Sample Section",
+      "paragraphs": [
+        "This is a sample section.",
+        "This is also a sample section."
+      ],
+      "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Test.svg/1200px-Test.svg.png"
+    }
+  ]
+}
