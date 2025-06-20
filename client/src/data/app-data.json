@@ -8,7 +8,7 @@
         "Designed to engage students of all ages, QuizMaster blends education with fast-paced fun. With bright visuals, real-time feedback, and custom quizzes, it’s the ultimate classroom companion — or just a great way to learn on your own."
       ],
       "photo": {
-        "src": "/images/home-learning-fun.png",
+        "src": "/images/placeholder-image.png",
         "alt": "Students using QuizMaster with excitement"
       }
     },
@@ -20,7 +20,7 @@
         "With seamless performance and a smooth interface, QuizMaster makes it easy to host or join a quiz session anytime, anywhere. Whether you're on a tablet, laptop, or phone, you're always in the game."
       ],
       "photo": {
-        "src": "/images/home-competition.png",
+        "src": "/images/placeholder-image.png",
         "alt": "Quiz competition leaderboard on a screen"
       }
     },
@@ -32,7 +32,7 @@
         "From kindergarten to high school, our platform adapts to different age groups and subjects, giving teachers full control over content and pace. Easy to set up. Even easier to love."
       ],
       "photo": {
-        "src": "/images/home-classroom.png",
+        "src": "/images/placeholder-image.png",
         "alt": "Teacher using QuizMaster in a classroom"
       }
     }

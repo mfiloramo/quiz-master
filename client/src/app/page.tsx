@@ -1,5 +1,7 @@
 import { JSX } from 'react';
 import PhotoMarquee from '@/components/PhotoMarquee/PhotoMarquee';
+import homePageContent from '@/data/app-data.json';
+import StaticSection from '@/components/StaticSection/StaticSection';
 
 export default function Home(): JSX.Element {
   const items = [
@@ -11,21 +13,24 @@ export default function Home(): JSX.Element {
   ];
 
   return (
-    <div className='h-screen bg-stub-background-home text-center text-black'>
-      <div className='px-2 pt-12'>
-        <div className='mx-auto mb-4 max-w-5xl px-4 text-7xl font-bold'>
+    <div className='mx-auto bg-stub-background-home bg-cover py-10 text-black'>
+      <div className='px-4 text-center'>
+        {/* HERO TITLE */}
+        <h1 className='mx-auto mb-6 max-w-5xl text-5xl font-bold leading-tight md:text-6xl lg:text-7xl'>
           Make Every Lesson a Game Worth Playing
-        </div>
-        <div className='mx-auto mb-10 mt-2 max-w-3xl text-2xl'>
+        </h1>
+
+        {/* HERO SUBTEXT */}
+        <p className='mx-auto mb-12 max-w-3xl text-xl md:text-2xl'>
           QuizMaster makes it easy to create fast-paced, interactive quizzes that students will
           actually look forward to.
-        </div>
+        </p>
 
         {/* SCROLLING MARQUEE */}
-        <div className='relative h-12 w-full overflow-hidden bg-blue-800 pt-3'>
-          <div className='flex animate-marquee whitespace-nowrap align-middle'>
+        <div className='relative h-12 w-full overflow-hidden bg-blue-800'>
+          <div className='flex animate-marquee items-center whitespace-nowrap py-3'>
             {[...items, ...items].map((item, index) => (
-              <span key={index} className='mx-8 shrink-0 text-lg text-white'>
+              <span key={index} className='mx-8 shrink-0 text-base text-white md:text-lg'>
                 {item}
               </span>
             ))}
@@ -33,8 +38,15 @@ export default function Home(): JSX.Element {
         </div>
 
         {/* SCROLLING PHOTO GALLERY */}
-        <div className={'mx-5 my-8'}>
+        <div className='mx-auto my-12 max-w-6xl px-4'>
           <PhotoMarquee />
+        </div>
+
+        {/* STATIC TEXT SECTIONS */}
+        <div className='mx-auto my-16 max-w-5xl space-y-16 px-4'>
+          {homePageContent.sections.map((section: any, index: number) => (
+            <StaticSection key={index} section={section} listNum={index} />
+          ))}
         </div>
       </div>
     </div>
