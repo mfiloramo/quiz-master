@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import Image from 'next/image';
 
-export default function PhotoMarquee(): ReactNode {
+export default function ImageMarquee(): ReactNode {
   return (
     <>
       <div

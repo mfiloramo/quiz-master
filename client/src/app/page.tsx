@@ -1,5 +1,5 @@
 import { JSX } from 'react';
-import PhotoMarquee from '@/components/PhotoMarquee/PhotoMarquee';
+import ImageMarquee from '@/components/ImageMarquee/ImageMarquee';
 import StaticSection from '@/components/StaticSection/StaticSection';
 import homePageContent from '@/data/app-data.json';
 
@@ -38,7 +38,7 @@ export default function Home(): JSX.Element {
         </div>
 
         {/* SCROLLING PHOTO MARQUEE */}
-        <PhotoMarquee />
+        <ImageMarquee />
 
         {/* STATIC TEXT SECTIONS */}
         <div className='mx-auto my-16 max-w-5xl space-y-16 px-4'>
