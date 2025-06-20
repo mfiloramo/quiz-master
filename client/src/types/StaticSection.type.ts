@@ -1,4 +1,4 @@
-export type StaticSection = {
+export type StaticSectionType = {
   section: {
     id: string;
     subtitle: string;

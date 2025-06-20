@@ -4,7 +4,6 @@ import { motion, Variants } from 'framer-motion';
 import Hamburger from 'hamburger-react';
 import Link from 'next/link';
 import { NavLinkType } from '@/types/NavLink.type';
-import { useAuth } from '@/contexts/AuthContext';
 
 const itemVariants: Variants = {
   open: {
@@ -15,12 +14,9 @@ const itemVariants: Variants = {
   closed: { opacity: 0, y: 20, transition: { duration: 0.2 } },
 };
 
-export default function HamburgerDropdown({ navLinks }: any): ReactElement {
+export default function BurgerDropdown({ navLinks }: any): ReactElement {
   // LOCAL STATE
   const [isOpen, setIsOpen] = useState(false);
-
-  // CUSTOM HOOKS
-  const { logout } = useAuth();
 
   // HANDLER FUNCTIONS
   const handleClose = (): void => {

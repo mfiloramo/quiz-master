@@ -31,7 +31,7 @@ export default function EditQuiz(): ReactElement {
         id: selectedQuiz.id,
         title: selectedQuiz.title,
         description: selectedQuiz.description,
-        visibility: selectedQuiz.visibility,
+        visibility: selectedQuiz.visibility ?? 'public',
       };
       setForm(newForm);
     }
@@ -99,7 +99,7 @@ export default function EditQuiz(): ReactElement {
         visibility: form.visibility,
       };
 
-      const response = await fetch(`http://localhost:3030/api/quizzes/${selectedQuiz?.id}`, {
+      const response: any = await fetch(`http://localhost:3030/api/quizzes/${selectedQuiz?.id}`, {
         method: 'PUT',
         headers: {
           Authorization: localStorage.getItem('token'),

@@ -21,6 +21,7 @@ export default function CreateQuiz(): ReactElement {
   // HANDLE FORM SUBMISSION
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(form);
 
     try {
       const response = await fetch('http://localhost:3030/api/quizzes/create', {
@@ -76,7 +77,7 @@ export default function CreateQuiz(): ReactElement {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const isChecked = e.target.checked;
     setChecked(isChecked);
-    setForm({ ...form, visibility: isChecked ? 'public' : 'private' });
+    setForm({ ...form, visibility: isChecked ? 'private' : 'public' });
   };
 
   // RENDER PAGE

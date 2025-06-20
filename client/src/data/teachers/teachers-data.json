@@ -1,0 +1,40 @@
+{
+  "sections": [
+    {
+      "id": "engage-every-student",
+      "subtitle": "Make Every Lesson Stick",
+      "paragraphs": [
+        "With QuizMaster, your classroom comes alive. Every quiz transforms into an opportunity to spark curiosity, boost participation, and help students genuinely connect with the material. Whether you're reviewing content or introducing new concepts, QuizMaster makes it exciting and memorable.",
+        "You can use it for warm-ups, comprehension checks, end-of-lesson reviews, or even homework assignments. Students stay motivated, and you gain real-time insights into their understanding — all while making learning feel like a game."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "Teacher leading an interactive class with QuizMaster"
+      }
+    },
+    {
+      "id": "smart-tools",
+      "subtitle": "Teach Smarter with Powerful Tools",
+      "paragraphs": [
+        "QuizMaster is designed to support your teaching, not add more work. Easily create custom quizzes, choose from a library of standards-aligned content, or remix existing ones to fit your unique classroom needs. Setup takes just minutes, and the impact is immediate.",
+        "You’ll love the built-in performance tracking, real-time analytics, and flexible question types — from multiple choice to polls and puzzles. It works great in-person or remotely, so no matter where your students are learning, QuizMaster fits right in."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "QuizMaster dashboard showing teacher analytics"
+      }
+    },
+    {
+      "id": "safe-and-scalable",
+      "subtitle": "Built for Classrooms, Trusted by Schools",
+      "paragraphs": [
+        "Safety is a top priority, especially for younger students. QuizMaster is fully COPPA-compliant and built with school-friendly safeguards to keep student data private and secure. You can trust us to provide a learning experience that’s both effective and responsible.",
+        "Whether you’re teaching a single class or coordinating across multiple grades, QuizMaster is ready to grow with you. It's easy to onboard, simple to manage, and flexible enough to serve a variety of classroom styles, from small-group instruction to whole-class engagement."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "QuizMaster secure login interface"
+      }
+    }
+  ]
+}
