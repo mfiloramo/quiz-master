@@ -6,7 +6,7 @@ export default function PhotoMarquee(): ReactNode {
     <>
       <div
         className={
-          'mx-auto my-12 h-fit w-full overflow-hidden rounded-lg bg-gradient-to-b from-emerald-600 to-emerald-500 px-4 shadow-xl md:max-w-[85vw]'
+          'mx-auto my-12 h-fit w-full overflow-hidden rounded-lg bg-gradient-to-b from-emerald-600 to-emerald-500 px-4 shadow-xl lg:max-w-[85vw]'
         }
       >
         <div className='flex max-w-6xl animate-marquee items-center whitespace-nowrap py-3'>
