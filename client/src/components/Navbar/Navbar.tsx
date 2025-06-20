@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { FaUserCircle } from 'react-icons/fa';
 import { NavLinkType } from '@/types/NavLink.type';
-import HamburgerDropdown from '@/components/HamburgerDropdown/HamburgerDropdown';
+import BurgerDropdown from '@/components/BurgerDropdown/BurgerDropdown';
 
 export default function Navbar(): JSX.Element {
   // USE AUTH CONTEXT FOR LOGIN STATE AND LOGOUT ACTION
@@ -33,7 +33,7 @@ export default function Navbar(): JSX.Element {
     : [
         ...navLinksLeft,
         {
-          path: '/login',
+          path: '/auth/login',
           label: 'Login',
         },
       ];
@@ -57,7 +57,7 @@ export default function Navbar(): JSX.Element {
           </Link>
 
           {/* LEFT BUTTONS (ONLY SHOW ON LARGE SCREENS) */}
-          <div className='hidden items-center md:flex'>
+          <div className='hidden items-center sm:flex'>
             {navLinksLeft
               .filter((button) => button.label !== 'Dashboard' || isLoggedIn)
               .map(
@@ -77,16 +77,16 @@ export default function Navbar(): JSX.Element {
         {/* RIGHT BUTTONS CONTAINER */}
         <div className='float-right mr-7 mt-4 flex items-center'>
           <div className={'hidden lg:flex'}>
-            {/* JOIN GAME BUTTON */}
-            {!isLoggedIn && (
-              <Link
-                className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-white'
-                href={'/dashboard/join'}
-                key={'join'}
-              >
-                {'Join Game'}
-              </Link>
-            )}
+            {/* JOIN GAME BUTTON -- DISABLED */}
+            {/*{!isLoggedIn && (*/}
+            {/*  <Link*/}
+            {/*    className='ml-4 rounded-lg bg-amber-500 px-3 py-1 font-bold text-white shadow-lg transition hover:bg-amber-400 active:bg-amber-500 active:text-white'*/}
+            {/*    href={'/dashboard/join'}*/}
+            {/*    key={'join'}*/}
+            {/*  >*/}
+            {/*    {'Join Game'}*/}
+            {/*  </Link>*/}
+            {/*)}*/}
 
             {/* SIGN UP OR PROFILE INDICATOR */}
             {isLoggedIn ? (
@@ -136,7 +136,7 @@ export default function Navbar(): JSX.Element {
 
           {/* HAMBURGER MENU (ONLY ON SMALL SCREENS) */}
           <div className='-mt-4 md:hidden'>
-            <HamburgerDropdown navLinks={navLinksForHamburger} />
+            <BurgerDropdown navLinks={navLinksForHamburger} />
           </div>
         </div>
       </div>

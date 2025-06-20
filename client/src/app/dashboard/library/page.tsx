@@ -74,9 +74,9 @@ export default function LibraryPage(): ReactElement {
   // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div className='flex flex-col items-start'>
+    <div className='flex flex-col items-center md:items-start'>
       {/* QUIZ LIST */}
-      <div className='flex flex-col items-start'>
+      <div className='flex flex-col'>
         {quizzes.map((quiz) => (
           <MainQuizCard
             key={quiz.id}

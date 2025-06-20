@@ -1,0 +1,40 @@
+{
+  "sections": [
+    {
+      "id": "interactive-learning",
+      "subtitle": "Learning Meets Fun",
+      "paragraphs": [
+        "QuizMaster turns learning into a game that everyone wants to play. Whether you're studying math, science, history, or just testing your trivia skills, QuizMaster keeps things fresh, competitive, and exciting.",
+        "Designed to engage students of all ages, QuizMaster blends education with fast-paced fun. With bright visuals, real-time feedback, and custom quizzes, it’s the ultimate classroom companion — or just a great way to learn on your own."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "Students using QuizMaster with excitement"
+      }
+    },
+    {
+      "id": "real-time-competition",
+      "subtitle": "Real-Time, Real Fun",
+      "paragraphs": [
+        "Join live games with classmates, compete for high scores, and see your name climb the leaderboard. Every question is a new chance to shine and every round brings a fresh burst of energy to your learning experience.",
+        "With seamless performance and a smooth interface, QuizMaster makes it easy to host or join a quiz session anytime, anywhere. Whether you're on a tablet, laptop, or phone, you're always in the game."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "Quiz competition leaderboard on a screen"
+      }
+    },
+    {
+      "id": "made-for-education",
+      "subtitle": "Built for Classrooms",
+      "paragraphs": [
+        "QuizMaster is trusted by educators to drive engagement, reinforce lessons, and assess student understanding in real time. It's more than just a quiz app — it's a smart teaching tool.",
+        "From kindergarten to high school, our platform adapts to different age groups and subjects, giving teachers full control over content and pace. Easy to set up. Even easier to love."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "Teacher using QuizMaster in a classroom"
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "sections": [
+    {
+      "id": "game-based-learning",
+      "subtitle": "Play While You Learn",
+      "paragraphs": [
+        "Learning doesn’t have to be boring — and with QuizMaster, it never is. Whether you’re reviewing for a test or just brushing up on your skills, every quiz feels like a game you actually want to play. Questions come alive with exciting visuals, cool music, and fast-paced action.",
+        "Choose from tons of subjects — math, science, history, even fun trivia — and jump into interactive challenges that keep your brain sharp and your energy high. You’re not just answering questions. You’re building knowledge, confidence, and having a great time doing it."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "Student enjoying a quiz on a tablet"
+      }
+    },
+    {
+      "id": "rank-up",
+      "subtitle": "Climb the Leaderboard",
+      "paragraphs": [
+        "Every quiz is your chance to rise up the ranks. Score points for right answers, answer quickly to earn time bonuses, and collect streak rewards when you’re on a roll. Your name can light up the leaderboard — all you have to do is bring your A-game.",
+        "Challenge your friends in real-time or go solo and beat your personal records. Whether you're trying to top the class leaderboard or just aiming for your best score, QuizMaster keeps you motivated with instant feedback and rewards that make progress feel like victory."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "Student leaderboard and rewards screen"
+      }
+    },
+    {
+      "id": "anytime-anywhere",
+      "subtitle": "Quiz On the Go",
+      "paragraphs": [
+        "With QuizMaster, you’re never tied to a desk. Whether you're on the bus, at home, or waiting for your next class, you can open the app and jump into a quiz whenever you want. It’s fun, flexible learning that fits your life.",
+        "You can practice for upcoming exams, review tough topics, or just explore something new — all from your phone, tablet, or laptop. With offline practice modes and mobile-friendly design, learning with QuizMaster goes wherever you do."
+      ],
+      "photo": {
+        "src": "/images/placeholder-image.png",
+        "alt": "Student using QuizMaster on mobile phone"
+      }
+    }
+  ]
+}

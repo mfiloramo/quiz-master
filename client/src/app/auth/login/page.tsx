@@ -64,7 +64,7 @@ export default function LoginPage(): ReactElement {
         alt='app-logo'
         width={762}
         height={634}
-        className='-mt-32 w-48 max-w-full sm:-mt-16 sm:w-48 md:w-64 lg:w-72'
+        className='w-48 max-w-full sm:-mt-20 sm:w-48 md:w-64 lg:w-72'
       />
 
       {/* LOGIN CARD */}

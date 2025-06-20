@@ -21,6 +21,7 @@ export default function MainQuizCard({
     try {
       const response = await fetch(`http://localhost:3030/api/quizzes/${quiz.id}`, {
         method: 'DELETE',
+        // @ts-ignore
         headers: {
           Authorization: localStorage.getItem('token'),
           'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ export default function MainQuizCard({
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.001 }}
       onClick={() => onSelect(quiz)}
-      className={`mb-4 w-[55vw] max-w-[40rem] cursor-pointer rounded-lg p-4 shadow-md transition sm:w-[55vw] md:w-[60vw] ${
+      className={`mb-4 w-[85vw] max-w-[650px] cursor-pointer rounded-lg p-4 shadow-md transition md:w-[65vw] ${
         selected ? 'bg-sky-300/75' : 'bg-white/75 hover:bg-cyan-100/75'
       }`}
     >
