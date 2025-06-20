@@ -1,7 +1,7 @@
 import { JSX } from 'react';
 import PhotoMarquee from '@/components/PhotoMarquee/PhotoMarquee';
-import homePageContent from '@/data/app-data.json';
 import StaticSection from '@/components/StaticSection/StaticSection';
+import homePageContent from '@/data/app-data.json';
 
 export default function Home(): JSX.Element {
   const items = [
@@ -37,10 +37,8 @@ export default function Home(): JSX.Element {
           </div>
         </div>
 
-        {/* SCROLLING PHOTO GALLERY */}
-        <div className='mx-auto my-12 max-w-6xl px-4'>
-          <PhotoMarquee />
-        </div>
+        {/* SCROLLING PHOTO MARQUEE */}
+        <PhotoMarquee />
 
         {/* STATIC TEXT SECTIONS */}
         <div className='mx-auto my-16 max-w-5xl space-y-16 px-4'>

@@ -307,7 +307,7 @@ export default function QuizPage(): JSX.Element {
           {userAnswer ? (
             <PlayerAnswerSummary userAnswer={userAnswer} correctAnswer={currentQuestion.correct} />
           ) : (
-            <p>Time is up!</p>
+            <p>Time's up!</p>
           )}
         </div>
       )}
