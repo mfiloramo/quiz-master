@@ -22,8 +22,8 @@ export default function MainQuizCard({
       const response = await fetch(`http://localhost:3030/api/quizzes/${quiz.id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: localStorage.getItem('token'),
           'Content-Type': 'application/json',
+          Authorization: localStorage.getItem('token') ?? '',
         },
       });
 
