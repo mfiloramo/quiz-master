@@ -22,12 +22,9 @@ const options: Options = {
   dialectOptions: {
     options: {
       encrypt: true, // SET TRUE IF USING AZURE
-      trustedConnection: process.env.DB_TRUSTED === 'true' || undefined,
     },
   },
   logging: console.log,
 };
-
-console.log({ dbHost, dbName, dbUser, dbPassword });
 
 export const sequelize: Sequelize = new Sequelize(dbName, dbUser, dbPassword, options);
