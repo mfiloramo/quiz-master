@@ -28,4 +28,6 @@ const options: Options = {
   logging: console.log,
 };
 
+console.log({ dbHost, dbName, dbUser, dbPassword });
+
 export const sequelize: Sequelize = new Sequelize(dbName, dbUser, dbPassword, options);
