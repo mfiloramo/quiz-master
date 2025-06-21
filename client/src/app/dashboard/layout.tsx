@@ -7,7 +7,6 @@ import { WebSocketProvider } from '@/contexts/WebSocketContext';
 import { SessionProvider } from '@/contexts/SessionContext';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect } from 'react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   // CUSTOM HOOKS

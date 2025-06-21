@@ -1,6 +1,6 @@
 'use client';
 
-import React, { JSX, ReactElement } from 'react';
+import React, { JSX } from 'react';
 import { motion } from 'framer-motion';
 import { useSession } from '@/contexts/SessionContext';
 import { Player } from '@/interfaces/PlayerListProps.interface';

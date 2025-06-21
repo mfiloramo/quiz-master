@@ -27,7 +27,7 @@ export default function RegisterStart(): ReactElement {
           }
           onClick={() => chooseType('student')}
         >
-          I'm a Student
+          I&apos;m a Student
         </button>
         <button
           className={
@@ -35,7 +35,7 @@ export default function RegisterStart(): ReactElement {
           }
           onClick={() => chooseType('teacher')}
         >
-          I'm a Teacher
+          I&apos;m a Teacher
         </button>
       </div>
     </div>

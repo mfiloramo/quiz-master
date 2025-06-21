@@ -21,7 +21,6 @@ export default function MainQuizCard({
     try {
       const response = await fetch(`http://localhost:3030/api/quizzes/${quiz.id}`, {
         method: 'DELETE',
-        // @ts-ignore
         headers: {
           Authorization: localStorage.getItem('token'),
           'Content-Type': 'application/json',

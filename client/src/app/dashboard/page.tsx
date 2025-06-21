@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardCardType } from '@/types/DashboardCard.type';
-import { NavLinkType } from '@/types/NavLink.type';
 
 export default function DashboardHome(): JSX.Element {
   const router = useRouter();
@@ -49,22 +48,16 @@ export default function DashboardHome(): JSX.Element {
 
   // CHECK IF USER IS LOGGED IN
   useEffect(() => {
+    // FETCH TOKEN FROM LOCALSTORAGE
     setIsHost(false);
     const token = localStorage.getItem('token');
 
-    if (!token) {
-      router.push('/auth/login');
-    } else {
-      try {
-        const decoded = jwtDecode(token);
-      } catch (err) {
-        console.error('Invalid token:', err);
-        router.push('/auth/login');
-      }
-    }
+    // CHECK FOR VALID TOKEN
+    if (!token) router.push('/auth/login');
 
-    resetQuiz(); // CLEAR STALE QUIZ WHEN RETURNING TO DASHBOARD
-  }, [router]);
+    // CLEAR STALE QUIZ WHEN RETURNING TO DASHBOARD
+    resetQuiz();
+  }, [router, resetQuiz, setIsHost]);
 
   // RENDER PAGE
   return (
