@@ -29,7 +29,7 @@ const io = new Server(server, {
 
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
-  origin: [ 'http://localhost:3000, https://quiz-master-client.vercel.app/' ],
+  origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app/' ],
   optionsSuccessStatus: 200,
   credentials: true,
   methods: [ 'GET', 'POST', 'PUT', 'DELETE' ],
