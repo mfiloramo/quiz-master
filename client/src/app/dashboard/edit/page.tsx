@@ -52,7 +52,7 @@ export default function EditQuiz(): ReactElement {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: localStorage.getItem('token'),
+            Authorization: localStorage.getItem('token') ?? '',
           },
         }
       );
@@ -102,8 +102,8 @@ export default function EditQuiz(): ReactElement {
       const response: any = await fetch(`http://localhost:3030/api/quizzes/${selectedQuiz?.id}`, {
         method: 'PUT',
         headers: {
-          Authorization: localStorage.getItem('token'),
           'Content-Type': 'application/json',
+          Authorization: localStorage.getItem('token') ?? '',
         },
         body: JSON.stringify(payload),
       });
