@@ -37,8 +37,8 @@ export default function EditQuestionModal({
       const response = await fetch(`http://localhost:3030/api/questions/${question.id}`, {
         method: 'PUT',
         headers: {
-          Authorization: localStorage.getItem('token'),
           'Content-Type': 'application/json',
+          Authorization: localStorage.getItem('token') ?? '',
         },
         body: JSON.stringify(payload),
       });
