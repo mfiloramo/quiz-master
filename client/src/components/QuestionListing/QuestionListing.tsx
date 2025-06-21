@@ -18,7 +18,7 @@ export default function QuestionListing({
       const response = await fetch(`http://localhost:3030/api/questions/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: localStorage.getItem('token'),
+          Authorization: localStorage.getItem('token') || '',
           'Content-Type': 'application/json',
         },
       });

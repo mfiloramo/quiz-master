@@ -23,7 +23,7 @@ export default function MainQuizCard({
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') ?? '',
+          Authorization: localStorage.getItem('token') || '',
         },
       });
 

@@ -38,7 +38,7 @@ export default function EditQuestionModal({
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') ?? '',
+          Authorization: localStorage.getItem('token') || '',
         },
         body: JSON.stringify(payload),
       });
@@ -77,7 +77,7 @@ export default function EditQuestionModal({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') ?? '',
+          Authorization: localStorage.getItem('token') || '',
         },
         body: JSON.stringify(payload),
       });
