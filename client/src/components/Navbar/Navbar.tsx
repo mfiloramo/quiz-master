@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, ReactElement, useEffect } from 'react';
+import { JSX, ReactElement } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';

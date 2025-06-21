@@ -8,16 +8,16 @@ import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import QuizModule from '@/components/QuizModule/QuizModule';
 import Leaderboard from '@/components/Leaderboard/Leaderboard';
+import PlayerAnswerSummary from '@/components/PlayerAnswerSummary/PlayerAnswerSummary';
+import PlayerAnswersGraph from '@/components/player-answers-graph/player-answers-graph';
+import FinalScoreboard from '@/components/FinalScoreboard/FinalScoreboard';
+import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 import HostQuestionDisplay from '@/components/HostQuestionDisplay/HostQuestionDisplay';
 import { QuizPhase } from '@/enums/QuizPhase.enum';
 import { QuizQuestion, QuizSession } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-import PlayerAnswerSummary from '@/components/PlayerAnswerSummary/PlayerAnswerSummary';
-import PlayerAnswersGraph from '@/components/player-answers-graph/player-answers-graph';
-import FinalScoreboard from '@/components/FinalScoreboard/FinalScoreboard';
-import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic'; // IMPORT REUSABLE MUSIC COMPONENT
 import useSound from 'use-sound';
 
 // PAGE CONSTANTS
@@ -33,11 +33,11 @@ export default function QuizPage(): JSX.Element {
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(null);
   const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
   const [playerAnswers, setPlayerAnswers] = useState<string[]>([]);
   const [musicKey, setMusicKey] = useState<number>(Date.now());
-  const [press, setPress] = useState<boolean>(false);
+  const [press] = useState<boolean>(false);
 
   // CUSTOM HOOKS/CONTEXTS
   const router = useRouter();
@@ -84,7 +84,7 @@ export default function QuizPage(): JSX.Element {
     if (phase !== QuizPhase.AnswerSummary && phase !== QuizPhase.Leaderboard) {
       gongSound?.stop();
     }
-  }, [phase, playGong, gongSound]);
+  }, [phase, playGong, gongSound, isHost]);
 
   // HANDLE SOCKET EVENTSu
   useEffect(() => {
@@ -162,13 +162,24 @@ export default function QuizPage(): JSX.Element {
       socket.off('ejected-by-host');
       socket.off('all-players-answered');
     };
-  }, [socket, setPlayers, disconnect, resetQuiz, clearSession, router, setCurrentIndex, sessionId]);
+  }, [
+    socket,
+    setPlayers,
+    disconnect,
+    resetQuiz,
+    clearSession,
+    router,
+    setCurrentIndex,
+    sessionId,
+    isHost,
+    setLockedIn,
+  ]);
 
   // PHASE-BASED PROGRESSION ENGINE
   useEffect(() => {
     // INITIALIZE NEW TIMER
     let timer: NodeJS.Timeout | number | null = null;
-    let timeout: number = 5000;
+    const timeout: number = 5000;
 
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
@@ -192,7 +203,7 @@ export default function QuizPage(): JSX.Element {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [phase, socket, sessionId]);
+  }, [phase, socket, sessionId, isHost, press]);
 
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
@@ -307,7 +318,7 @@ export default function QuizPage(): JSX.Element {
           {userAnswer ? (
             <PlayerAnswerSummary userAnswer={userAnswer} correctAnswer={currentQuestion.correct} />
           ) : (
-            <p>Time's up!</p>
+            <p>Time&apos;s up!</p>
           )}
         </div>
       )}

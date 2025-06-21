@@ -1,5 +1,5 @@
 'use client';
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 import Hamburger from 'hamburger-react';
 import Link from 'next/link';

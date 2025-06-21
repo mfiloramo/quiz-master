@@ -36,8 +36,8 @@ export default function DiscoverPage(): ReactElement {
       }
     };
 
-    fetchAllQuizzes().then((r) => r);
-  }, []);
+    fetchAllQuizzes().then((response: any) => response);
+  }, [setSelectedQuiz]);
 
   // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz) => {

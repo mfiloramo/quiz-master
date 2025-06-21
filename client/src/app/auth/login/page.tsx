@@ -14,7 +14,7 @@ export default function LoginPage(): ReactElement {
   const router = useRouter();
 
   // AUTH CONTEXT HOOK
-  const { login, user } = useAuth();
+  const { login } = useAuth();
 
   // EFFECT HOOKS
   useEffect(() => {

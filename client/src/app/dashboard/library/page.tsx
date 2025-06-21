@@ -41,7 +41,7 @@ export default function LibraryPage(): ReactElement {
     };
 
     fetchQuizzes().then((response: any) => response);
-  }, [user?.id]);
+  }, [user?.id, router]);
 
   // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz) => {

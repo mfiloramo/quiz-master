@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { QuizModuleProps } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import { useQuiz } from '@/contexts/QuizContext';
-import { PacmanLoader } from 'react-spinners';
+// import { PacmanLoader } from 'react-spinners';
 
 const colorMap = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
