@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import cors, { CorsOptions } from 'cors';
 import * as http from "node:http";
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { sequelize } from "./config/sequelize";
 
 // ROUTE IMPORTS
@@ -29,7 +29,7 @@ const io = new Server(server, {
 
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
-  origin: [ 'http://localhost:3000' ],
+  origin: [ 'http://localhost:3000, https://quiz-master-client.vercel.app/' ],
   optionsSuccessStatus: 200,
   credentials: true,
   methods: [ 'GET', 'POST', 'PUT', 'DELETE' ],
