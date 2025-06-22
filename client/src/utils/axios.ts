@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: process.env.PUBLIC_API_URL,
+  baseURL: 'https://quiz-master-server.onrender.com/api',
   withCredentials: true, // OPTIONAL, ONLY IF NEEDED
 });
 
