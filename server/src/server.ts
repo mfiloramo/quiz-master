@@ -1,8 +1,10 @@
+// CORE MODULE IMPORTS
 import express, { Express } from 'express';
 import cors, { CorsOptions } from 'cors';
 import * as http from "node:http";
 import { Server } from 'socket.io';
 import { sequelize } from "./config/sequelize";
+import * as dotenv from 'dotenv';
 
 // ROUTE IMPORTS
 import { authRouter } from "./routers/auth.router";
@@ -13,6 +15,8 @@ import { sessionRouter } from "./routers/session.router";
 import { playerRouter } from "./routers/player.router";
 import { webSocketRouter } from "./routers/websocket.router";
 
+// LOAD ENVIRONMENT VARIABLES
+dotenv.config();
 
 // GLOBAL VARIABLES
 const app: Express = express();
@@ -22,7 +26,7 @@ const server: any = http.createServer(app);
 // INITIALIZE SERVER
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.API_BASE_URL,
     methods: [ 'GET', 'POST' ],
   },
 });
