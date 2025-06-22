@@ -5,6 +5,8 @@ const axiosInstance = axios.create({
   withCredentials: true, // OPTIONAL, ONLY IF NEEDED
 });
 
+console.log(process.env.PUBLIC_API_URL);
+
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
