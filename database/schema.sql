@@ -13,7 +13,8 @@ CREATE TABLE Users (
     email NVARCHAR(255) NOT NULL UNIQUE,
     password NVARCHAR(255) NOT NULL,
     isActive BIT NOT NULL DEFAULT 0,
-    created_at DATETIME DEFAULT GETDATE()
+    created_at DATETIME DEFAULT GETDATE(),
+    account_type NVARCHAR(50) NOT NULL
 );
 GO
 
@@ -21,10 +22,12 @@ GO
 CREATE TABLE Quizzes (
     id INT PRIMARY KEY IDENTITY(1,1),
     user_id INT NOT NULL,
+    username NVARCHAR(100) NOT NULL,
     title NVARCHAR(100) NOT NULL,
     description NVARCHAR(MAX) NULL,
     created_at DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+    visibility NVARCHAR(25) DEFAULT 'public',
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
 );
 GO
 
@@ -33,7 +36,7 @@ CREATE TABLE Questions (
     id INT PRIMARY KEY IDENTITY(1,1),
     quiz_id INT NOT NULL,
     question NVARCHAR(MAX) NOT NULL,
-    options NVARCHAR(MAX) NOT NULL, -- JSON-like format for programmatic use
+    options NVARCHAR(MAX) NOT NULL,
     correct NVARCHAR NOT NULL,
     FOREIGN KEY (quiz_id) REFERENCES Quizzes(id) ON DELETE CASCADE
 );
