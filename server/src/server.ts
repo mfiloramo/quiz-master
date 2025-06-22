@@ -1,10 +1,12 @@
-// CORE MODULE IMPORTS
 import express, { Express } from 'express';
 import cors, { CorsOptions } from 'cors';
 import * as http from "node:http";
 import { Server } from 'socket.io';
 import { sequelize } from "./config/sequelize";
 import * as dotenv from 'dotenv';
+
+// LOAD ENVIRONMENT VARIABLES
+dotenv.config()
 
 // ROUTE IMPORTS
 import { authRouter } from "./routers/auth.router";
@@ -15,8 +17,6 @@ import { sessionRouter } from "./routers/session.router";
 import { playerRouter } from "./routers/player.router";
 import { webSocketRouter } from "./routers/websocket.router";
 
-// LOAD ENVIRONMENT VARIABLES
-dotenv.config();
 
 // GLOBAL VARIABLES
 const app: Express = express();
@@ -26,14 +26,14 @@ const server: any = http.createServer(app);
 // INITIALIZE SERVER
 const io = new Server(server, {
   cors: {
-    origin: process.env.API_BASE_URL,
+    origin: process.env.CLIENT_URL,
     methods: [ 'GET', 'POST' ],
   },
 });
 
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
-  origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app/' ],
+  origin: process.env.CLIENT_URL,
   optionsSuccessStatus: 200,
   credentials: true,
   methods: [ 'GET', 'POST', 'PUT', 'DELETE' ],

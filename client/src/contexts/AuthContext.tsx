@@ -20,7 +20,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
   useEffect(() => {
-    // ON LOAD, CHECK IF TOKEN EXISTS AND DECODE IT
     const token = localStorage.getItem('token');
 
     // FIRST, CHECK IF TOKEN EXISTS
