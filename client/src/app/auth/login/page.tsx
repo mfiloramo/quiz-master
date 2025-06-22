@@ -3,6 +3,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
+import axiosInstance from '@/utils/axios';
 
 export default function LoginPage(): ReactElement {
   // STATE HOOKS
@@ -35,22 +36,18 @@ export default function LoginPage(): ReactElement {
     }
 
     try {
-      const response = await fetch('http://localhost:3030/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const { data } = await axiosInstance.post('/auth/login', {
+        email,
+        password,
       });
 
-      if (!response.ok) throw new Error('Invalid email or password');
-
-      const data = await response.json();
       const success = login(data.token);
 
       if (success) {
         router.push('/dashboard');
       }
     } catch (error: any) {
-      setError(error.message || 'Login failed');
+      setError(error.response?.data?.message || 'Login failed');
     }
   };
 
