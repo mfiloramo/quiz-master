@@ -34,13 +34,18 @@ const io = new Server(server, {
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
   origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app' ],
-  optionsSuccessStatus: 200,
   credentials: true,
-  methods: [ 'GET', 'POST', 'PUT', 'DELETE' ],
-  allowedHeaders: [ 'Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept' ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  optionsSuccessStatus: 200,
 };
+
+// EXPRESS MIDDLEWARE
 app.use(express.json());
 app.use(cors(corsOptions));
+
+// HANDLE PREFLIGHT REQUESTS
+app.options('*', cors(corsOptions));
 
 // SERVER ROUTES
 app
@@ -53,9 +58,6 @@ app
 
 // ATTACH WEBSOCKET ROUTES
 webSocketRouter(io);
-
-// HANDLE PREFLIGHT REQUESTS
-app.options('*', cors(corsOptions));
 
 // WILDCARD ENDPOINT
 app.use('*', (req, res): void => {
