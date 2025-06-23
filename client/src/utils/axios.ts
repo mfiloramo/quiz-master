@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+// DEV
+// const baseURL = 'http://localhost:3030/api';
+
+// PROD
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: 'http://localhost:3030/api',
   withCredentials: true, // REQUIRED if server uses `credentials: true` in CORS
 });
 
