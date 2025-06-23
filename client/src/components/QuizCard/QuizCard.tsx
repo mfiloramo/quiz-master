@@ -5,6 +5,7 @@ import { Trash2 } from 'lucide-react';
 import { QuizCardProps } from '@/types/Quiz.types';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+import axiosInstance from '@/utils/axios';
 
 export default function MainQuizCard({
   quiz,
@@ -19,20 +20,10 @@ export default function MainQuizCard({
     e.stopPropagation(); // PREVENT onSelect WHEN CLICKING DELETE
 
     try {
-      const response = await fetch(`http://localhost:3030/api/quizzes/${quiz.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') || '',
-        },
-      });
-
-      if (!response.ok) throw new Error('Failed to delete quiz');
-
-      // TRIGGER PARENT STATE UPDATE
-      onDelete(quiz.id);
+      await axiosInstance.delete(`/quizzes/${quiz.id}`);
+      onDelete(quiz.id); // TRIGGER PARENT STATE UPDATE
     } catch (err) {
-      console.error(err);
+      console.error('Failed to delete quiz:', err);
     }
   };
 

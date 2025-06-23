@@ -7,6 +7,7 @@ import EditQuestionModal from '@/components/EditQuestionModal/EditQuestionModal'
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
+import axiosInstance from '@/utils/axios';
 
 export default function EditQuiz(): ReactElement {
   // CONTEXT HOOKS
@@ -44,31 +45,25 @@ export default function EditQuiz(): ReactElement {
 
   // FETCH ALL QUESTIONS FOR QUIZ
   const fetchQuestions = async (): Promise<void> => {
+    // RETURN EARLY IF NO QUIZ SELECTED
     if (!selectedQuiz?.id) return;
+
     try {
-      const response: any = await fetch(
-        `http://localhost:3030/api/questions/quiz/${selectedQuiz.id}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: localStorage.getItem('token') || '',
-          },
-        }
-      );
+      // SEND GET REQUEST TO FETCH QUESTIONS FOR SELECTED QUIZ
+      const { data } = await axiosInstance.get(`/questions/quiz/${selectedQuiz.id}`);
 
-      const data = await response.json();
-
-      // FORMAT OPTIONS CORRECTLY
+      // FORMAT OPTIONS IF THEY ARE STORED AS STRINGS
       const formattedData = data.map((question: any) => ({
         ...question,
         options:
           typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
       }));
 
+      // UPDATE STATE WITH FORMATTED QUESTIONS
       setQuestions(formattedData);
     } catch (error) {
-      console.error('Error fetching questions:', error);
+      // LOG ERROR IF FETCH FAILS
+      console.error('ERROR FETCHING QUESTIONS:', error);
     }
   };
 
@@ -92,6 +87,7 @@ export default function EditQuiz(): ReactElement {
 
   const handleSave = async () => {
     try {
+      // PREPARE PAYLOAD WITH UPDATED QUIZ DATA
       const payload = {
         id: form.id,
         title: form.title,
@@ -99,24 +95,17 @@ export default function EditQuiz(): ReactElement {
         visibility: form.visibility,
       };
 
-      const response: any = await fetch(`http://localhost:3030/api/quizzes/${selectedQuiz?.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') || '',
-        },
-        body: JSON.stringify(payload),
-      });
+      // SEND PUT REQUEST TO UPDATE THE QUIZ
+      await axiosInstance.put(`/quizzes/${selectedQuiz?.id}`, payload);
 
-      if (!response.ok) {
-        throw new Error('Failed to update quiz');
-      }
+      // LOG SUCCESS MESSAGE
+      console.log(`QUIZ ${selectedQuiz?.id} UPDATED SUCCESSFULLY`);
 
-      console.log(`Quiz ${selectedQuiz?.id} updated successfully`);
-
+      // REDIRECT TO LIBRARY PAGE
       router.push('/dashboard/library');
     } catch (error: any) {
-      console.error('Error updating question:', error);
+      // LOG ERROR IF REQUEST FAILS
+      console.error('ERROR UPDATING QUIZ:', error);
     }
   };
 

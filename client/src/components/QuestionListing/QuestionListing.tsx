@@ -3,6 +3,7 @@
 import React from 'react';
 import { QuestionListingType } from '@/types/QuestionListing.type';
 import { Trash2, Pencil } from 'lucide-react';
+import axiosInstance from '@/utils/axios';
 
 export default function QuestionListing({
   id,
@@ -15,14 +16,7 @@ export default function QuestionListing({
 }: QuestionListingType) {
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3030/api/questions/${id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: localStorage.getItem('token') || '',
-          'Content-Type': 'application/json',
-        },
-      });
-      if (!response.ok) throw new Error('Failed to delete question');
+      await axiosInstance.delete(`/questions/${id}`);
       onDelete!();
     } catch (err) {
       console.error(err);

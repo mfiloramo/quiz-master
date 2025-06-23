@@ -2,6 +2,7 @@
 
 import React, { ReactElement, useState } from 'react';
 import { EditModalProps } from '@/types/QuestionListing.type';
+import axiosInstance from '@/utils/axios';
 
 export default function EditQuestionModal({
   quizId,
@@ -34,18 +35,8 @@ export default function EditQuestionModal({
         correct: editedOptions[correctAnswerIndex],
       };
 
-      const response = await fetch(`http://localhost:3030/api/questions/${question.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') || '',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update question');
-      }
+      // SEND REQUEST TO UPDATE QUESTION
+      await axiosInstance.put(`/questions/${question.id}`, payload);
 
       console.log(`Question ${question.id} updated successfully`);
 
@@ -73,27 +64,14 @@ export default function EditQuestionModal({
         correct: editedOptions[correctAnswerIndex],
       };
 
-      const response = await fetch(`http://localhost:3030/api/questions/${quizId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') || '',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add question');
-      }
-
-      const newQuestion = await response.json();
+      const { data } = await axiosInstance.post(`questions/${quizId}`, payload);
 
       // PASS UP TO PARENT
       onSave({
-        id: newQuestion.id,
-        question: newQuestion.question,
-        options: JSON.parse(newQuestion.options),
-        correct: newQuestion.correct,
+        id: data.id,
+        question: data.question,
+        options: JSON.parse(data.options),
+        correct: data.correct,
       });
 
       onClose();

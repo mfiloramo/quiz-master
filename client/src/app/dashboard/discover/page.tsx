@@ -5,6 +5,7 @@ import { Quiz } from '@/types/Quiz.types';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useRouter } from 'next/navigation';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
+import axiosInstance from '@/utils/axios';
 
 export default function DiscoverPage(): ReactElement {
   // STATE FOR ALL QUIZZES
@@ -22,21 +23,15 @@ export default function DiscoverPage(): ReactElement {
       try {
         const token = localStorage.getItem('token');
 
-        const response: any = await fetch(`http://localhost:3030/api/quizzes/`, {
-          method: 'GET',
-          headers: {
-            ...((token && { Authorization: token }) || ''),
-            'Content-Type': 'application/json',
-          },
-        });
-        const json = await response.json();
-        setQuizzes(json);
+        const { data } = await axiosInstance.get('/quizzes');
+
+        setQuizzes(data);
       } catch (err) {
         console.error('Error fetching quizzes:', err);
       }
     };
 
-    fetchAllQuizzes().then((response: any) => response);
+    fetchAllQuizzes();
   }, [setSelectedQuiz]);
 
   // HANDLE SELECTING A QUIZ

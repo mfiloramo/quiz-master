@@ -26,16 +26,14 @@ const server: any = http.createServer(app);
 // INITIALIZE SERVER
 const io = new Server(server, {
   cors: {
-    origin: 'https://quiz-master-client.vercel.app',
+    origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app/' ],
     methods: [ 'GET', 'POST' ],
   },
 });
 
-console.log(process.env.CLIENT_URL);
-
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
-  origin: 'https://quiz-master-client.vercel.app',
+  origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app/' ],
   optionsSuccessStatus: 200,
   credentials: true,
   methods: [ 'GET', 'POST', 'PUT', 'DELETE' ],
