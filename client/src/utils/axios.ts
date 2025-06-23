@@ -4,7 +4,7 @@ import axios from 'axios';
 // const baseURL = 'http://localhost:3030/api';
 
 // PROD
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = 'https://quiz-master-server.onrender.com';
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
