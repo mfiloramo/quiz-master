@@ -37,7 +37,7 @@ CREATE TABLE Questions (
     quiz_id INT NOT NULL,
     question NVARCHAR(MAX) NOT NULL,
     options NVARCHAR(MAX) NOT NULL,
-    correct NVARCHAR NOT NULL,
+    correct NVARCHAR(MAX) NOT NULL,
     FOREIGN KEY (quiz_id) REFERENCES Quizzes(id) ON DELETE CASCADE
 );
 GO
