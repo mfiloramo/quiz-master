@@ -4,7 +4,6 @@ import { sequelize } from "../config/sequelize";
 export class QuizController {
   // CREATE NEW QUIZ
   static async createQuiz(req: Request, res: Response): Promise<void> {
-      console.log('test');
     try {
       const { userId, username, title, description, visibility } = req.body;
       const newQuizId: any = await sequelize.query(
@@ -65,7 +64,6 @@ export class QuizController {
 
   // UPDATE QUIZ BY ID
   static async updateQuiz(req: Request, res: Response): Promise<void> {
-    console.log()
     try {
       const { id, title, description, visibility } = req.body;
       await sequelize.query(

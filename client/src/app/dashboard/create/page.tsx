@@ -22,7 +22,6 @@ export default function CreateQuiz(): ReactElement {
   // HANDLE FORM SUBMISSION
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(form);
 
     try {
       // CREATE THE QUIZ
