@@ -12,7 +12,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
 
   // PROVIDER EFFECT HOOKS
   useEffect(() => {
-    const newSocket = io('http://localhost:3030', {
+    const newSocket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030/api', {
       autoConnect: true,
       reconnection: true,
     });
