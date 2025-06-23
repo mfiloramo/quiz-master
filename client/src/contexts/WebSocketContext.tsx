@@ -10,16 +10,8 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
   // PROVIDER STATE
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  // DEV
-  // const socketURL = 'http://localhost:3030/api';
-
-  // PROD
-  const socketURL = process.env.NEXT_PUBLIC_API_URL;
-
-  // SET SOCKET URL BASED ON ENVIRONMENT
-  // const socketUrl = process.env.NEXT_PUBLIC_API_URL
-  //   ? process.env.NEXT_PUBLIC_API_URL
-  //   : 'http://localhost:3030';
+  // BASE SOCKET URL
+  const socketURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030';
 
   // PROVIDER EFFECT HOOKS
   useEffect(() => {
