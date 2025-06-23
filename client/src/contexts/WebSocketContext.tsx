@@ -14,7 +14,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
   // const socketURL = 'http://localhost:3030/api';
 
   // PROD
-  const socketURL = 'https://quiz-master-server.onrender.com';
+  const socketURL = 'https://quiz-master-server.onrender.com/api';
 
   // SET SOCKET URL BASED ON ENVIRONMENT
   // const socketUrl = process.env.NEXT_PUBLIC_API_URL
