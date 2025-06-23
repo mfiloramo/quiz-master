@@ -61,6 +61,8 @@ export class WebSocketController {
 
 // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
+    console.log('socket', socket);
+    console.log('data', data);
     // EXTRACT DATA FROM JOIN REQUEST
     let { id, sessionId, username } = data;
     const session = SessionManager.getSession(sessionId);
