@@ -36,10 +36,7 @@ export default function LoginPage(): ReactElement {
     }
 
     try {
-      const { data } = await axiosInstance.post('/auth/login', {
-        email,
-        password,
-      });
+      const { data } = await axiosInstance.post('/auth/login', { email, password });
 
       const success = login(data.token);
 

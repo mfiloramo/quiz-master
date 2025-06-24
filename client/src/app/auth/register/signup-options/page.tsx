@@ -16,12 +16,7 @@ export default function RegisterSignupOptionsPage(): ReactElement {
 
     try {
       // SEND POST REQUEST TO BACKEND
-      await axiosInstance.post('/auth/register', {
-        accountType,
-        username,
-        email,
-        password,
-      });
+      await axiosInstance.post('/auth/register', { accountType, username, email, password });
 
       // MANUALLY RESET STATE BEFORE REDIRECT
       reset();
