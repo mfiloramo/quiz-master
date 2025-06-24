@@ -3,6 +3,7 @@
 import React, { ReactElement } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRegister } from '@/contexts/RegisterContext';
+import axiosInstance from '@/utils/axios';
 
 export default function RegisterSignupOptionsPage(): ReactElement {
   // CONTEXT AND ROUTER
@@ -15,13 +16,7 @@ export default function RegisterSignupOptionsPage(): ReactElement {
 
     try {
       // SEND POST REQUEST TO BACKEND
-      const response = await fetch('http://localhost:3030/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accountType, username, email, password }),
-      });
-
-      if (!response.ok) throw new Error('Error with user input. Please try again.');
+      await axiosInstance.post('/auth/register', { accountType, username, email, password });
 
       // MANUALLY RESET STATE BEFORE REDIRECT
       reset();
@@ -29,7 +24,7 @@ export default function RegisterSignupOptionsPage(): ReactElement {
       // IMMEDIATELY NAVIGATE TO HOMEPAGE
       router.push('/');
     } catch (error: any) {
-      console.error('Registration Error:', error);
+      console.error('Registration Error:', error.response?.data?.message || error.message);
     }
   };
 

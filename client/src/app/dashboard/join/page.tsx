@@ -49,7 +49,7 @@ export default function JoinPage() {
     socket.emit('join-session', {
       id,
       username: usernameInput || user?.username,
-      sessionId: sessionIdInput.trim(),
+      sessionId: sessionIdInput.trim().toUpperCase(),
     });
 
     // ON SUCCESSFUL JOIN, SAVE SESSION ID AND REDIRECT

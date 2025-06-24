@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Server for QuizMaster web application",
   "scripts": {
-    "start": "node server.js",
+    "start": "node dist/server.js",
     "dev": "concurrently \"tsc -watch\" \"nodemon dist/server.js\" ",
     "build": "tsc",
     "watch": "tsc -w && nodemon dist/server.js",

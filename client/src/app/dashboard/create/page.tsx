@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
+import axiosInstance from '@/utils/axios';
 
 export default function CreateQuiz(): ReactElement {
   // FORM STATE
@@ -21,51 +22,28 @@ export default function CreateQuiz(): ReactElement {
   // HANDLE FORM SUBMISSION
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(form);
 
     try {
-      const response = await fetch('http://localhost:3030/api/quizzes/create', {
-        method: 'POST',
-        headers: {
-          Authorization: localStorage.getItem('token') || '',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user!.id,
-          username: user!.username,
-          title: form.title,
-          description: form.description,
-          visibility: checked ? 'private' : 'public',
-        }),
+      // CREATE THE QUIZ
+      const { data } = await axiosInstance.post('/quizzes/create', {
+        userId: user!.id,
+        username: user!.username,
+        title: form.title,
+        description: form.description,
+        visibility: checked ? 'private' : 'public',
       });
 
-      const data = await response.json();
+      const newQuizId = data.newQuizId;
 
-      if (!response.ok) {
-        throw new Error('Failed to create quiz');
-      }
+      // FETCH FULL QUIZ DATA
+      const quizResponse = await axiosInstance.get(`/quizzes/${newQuizId}`);
+      const newQuiz = quizResponse.data;
 
-      // IMMEDIATELY FETCH FULL QUIZ DATA
-      const quizResponse = await fetch(`http://localhost:3030/api/quizzes/${data.newQuizId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: localStorage.getItem('token') || '',
-          'Content-Type': 'application/json',
-        },
-      });
-      const newQuiz = await quizResponse.json();
-
-      if (!quizResponse.ok) {
-        throw new Error('Failed to fetch new quiz');
-      }
-
-      // SAVE FULL QUIZ INTO CONTEXT
+      // SAVE AND REDIRECT
       setSelectedQuiz(newQuiz);
-
-      // REDIRECT TO EDIT PAGE
       router.push('/dashboard/edit');
     } catch (error: any) {
-      console.error('Quiz creation failed:', error);
+      console.error('Quiz creation failed:', error.response?.data?.message || error.message);
     }
   };
 

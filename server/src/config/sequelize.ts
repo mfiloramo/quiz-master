@@ -1,4 +1,4 @@
-import { Options, Sequelize } from "sequelize";
+import { Options, Sequelize } from 'sequelize';
 import * as dotenv from 'dotenv';
 
 // LOAD ENVIRONMENT VARIABLES
@@ -12,7 +12,7 @@ const dbPassword: string = process.env.DB_PASSWORD!;
 
 // ENSURE REQUIRED ENVIRONMENT VARIABLES ARE DEFINED
 if (!dbHost || !dbName || !dbUser || !dbPassword) {
-  throw new Error("Missing required database environment variables. Check your .env file.");
+  throw new Error('Missing required database environment variables. Check your .env file.');
 }
 
 // CONFIGURE SEQUELIZE CONNECTION
@@ -21,8 +21,7 @@ const options: Options = {
   dialect: 'mssql',
   dialectOptions: {
     options: {
-      encrypt: false, // SET TRUE IF USING AZURE
-      trustedConnection: process.env.DB_TRUSTED === "true" || undefined,
+      encrypt: true, // SET TRUE IF USING AZURE
     },
   },
   logging: console.log,

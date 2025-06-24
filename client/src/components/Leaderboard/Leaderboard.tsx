@@ -17,7 +17,9 @@ export default function Leaderboard(): ReactElement {
 
       {/* MAIN DISPLAY */}
       <div
-        className={'flex h-[40vh] w-[70vw] max-w-2xl flex-col rounded bg-slate-400 p-3 shadow-xl'}
+        className={
+          'flex min-h-[40vh] w-[70vw] max-w-2xl flex-col rounded bg-slate-400 p-3 shadow-xl'
+        }
       >
         {/* PLAYER RANKING */}
         {players.map((player: Player, index: number) => (

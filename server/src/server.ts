@@ -1,8 +1,12 @@
 import express, { Express } from 'express';
 import cors, { CorsOptions } from 'cors';
 import * as http from "node:http";
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { sequelize } from "./config/sequelize";
+import * as dotenv from 'dotenv';
+
+// LOAD ENVIRONMENT VARIABLES
+dotenv.config()
 
 // ROUTE IMPORTS
 import { authRouter } from "./routers/auth.router";
@@ -22,21 +26,26 @@ const server: any = http.createServer(app);
 // INITIALIZE SERVER
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app' ],
     methods: [ 'GET', 'POST' ],
   },
 });
 
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
-  origin: [ 'http://localhost:3000' ],
-  optionsSuccessStatus: 200,
+  origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app' ],
   credentials: true,
-  methods: [ 'GET', 'POST', 'PUT', 'DELETE' ],
-  allowedHeaders: [ 'Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept' ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  optionsSuccessStatus: 200,
 };
+
+// EXPRESS MIDDLEWARE
 app.use(express.json());
 app.use(cors(corsOptions));
+
+// HANDLE PREFLIGHT REQUESTS
+app.options('*', cors(corsOptions));
 
 // SERVER ROUTES
 app
@@ -49,9 +58,6 @@ app
 
 // ATTACH WEBSOCKET ROUTES
 webSocketRouter(io);
-
-// HANDLE PREFLIGHT REQUESTS
-app.options('*', cors(corsOptions));
 
 // WILDCARD ENDPOINT
 app.use('*', (req, res): void => {
