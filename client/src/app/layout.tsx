@@ -1,7 +1,9 @@
 import './globals.css';
+import type { Metadata } from 'next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 import Navbar from '@/components/Navbar/Navbar';
 import { Poppins } from 'next/font/google';
-import type { Metadata } from 'next';
 import { AuthProvider } from '@/contexts/AuthContext';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['200', '400'] });
@@ -18,6 +20,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <Navbar />
           <main className='pt-16'>{children}</main>
+          <SpeedInsights />
+          <Analytics />
         </AuthProvider>
       </body>
     </html>
