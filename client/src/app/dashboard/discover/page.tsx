@@ -6,6 +6,7 @@ import { useQuiz } from '@/contexts/QuizContext';
 import { useRouter } from 'next/navigation';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import axiosInstance from '@/utils/axios';
+import { Q } from 'framer-motion/dist/types.d-CtuPurYT';
 
 export default function DiscoverPage(): ReactElement {
   // STATE FOR ALL QUIZZES
@@ -21,10 +22,7 @@ export default function DiscoverPage(): ReactElement {
 
     const fetchAllQuizzes = async () => {
       try {
-        const token = localStorage.getItem('token');
-
-        const { data } = await axiosInstance.get('/quizzes');
-
+        const { data } = await axiosInstance.get<Quiz[]>('/quizzes');
         setQuizzes(data);
       } catch (err) {
         console.error('Error fetching quizzes:', err);
@@ -59,7 +57,6 @@ export default function DiscoverPage(): ReactElement {
               quiz={quiz}
               selected={selectedQuiz?.id === quiz.id}
               onSelect={handleSelectQuiz}
-              onDelete={() => {}}
             />
           ) : null
         )}

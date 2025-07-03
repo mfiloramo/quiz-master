@@ -21,7 +21,7 @@ export default function MainQuizCard({
 
     try {
       await axiosInstance.delete(`/quizzes/${quiz.id}`);
-      onDelete(quiz.id); // TRIGGER PARENT STATE UPDATE
+      onDelete!(quiz.id); // TRIGGER PARENT STATE UPDATE
     } catch (err) {
       console.error('Failed to delete quiz:', err);
     }

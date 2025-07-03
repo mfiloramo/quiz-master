@@ -3,6 +3,7 @@ import axios from 'axios';
 // BASE URL
 const baseURL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030'}/api`;
 
+// INSTANTIATE AXIOS
 const axiosInstance = axios.create({
   baseURL: baseURL,
   withCredentials: true, // REQUIRED if server uses `credentials: true` in CORS
