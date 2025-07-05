@@ -6,7 +6,6 @@ import { useQuiz } from '@/contexts/QuizContext';
 import { useRouter } from 'next/navigation';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import axiosInstance from '@/utils/axios';
-import { Q } from 'framer-motion/dist/types.d-CtuPurYT';
 
 export default function DiscoverPage(): ReactElement {
   // STATE FOR ALL QUIZZES
