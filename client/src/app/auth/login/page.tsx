@@ -3,18 +3,14 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
-import { Icon } from 'react-icons-kit';
-import { eye } from 'react-icons-kit/feather/eye';
-import { eyeOff } from 'react-icons-kit/feather/eyeOff';
-
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import axiosInstance from '@/utils/axios';
 
 export default function LoginPage(): ReactElement {
   // STATE HOOKS
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [type, setType] = useState('password');
-  const [icon, setIcon] = useState<any>(eyeOff);
+  const [type, setType] = useState<'password' | 'text'>('password');
   const [error, setError] = useState<string | null>(null);
 
   // ROUTER INSTANCE FOR REDIRECTION
@@ -61,13 +57,7 @@ export default function LoginPage(): ReactElement {
 
   // HANDLE PASSWORD VISIBILITY TOGGLE
   const handlePasswordToggle = () => {
-    if (type === 'password') {
-      setIcon(eye);
-      setType('text');
-    } else {
-      setIcon(eyeOff);
-      setType('password');
-    }
+    setType((prev) => (prev === 'password' ? 'text' : 'password'));
   };
 
   // RENDER PAGE
@@ -112,14 +102,11 @@ export default function LoginPage(): ReactElement {
               className='w-full rounded-lg border border-gray-300 p-3 pr-10 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500'
             />
             {/* ICON FOR TOGGLING PASSWORD VISIBILITY */}
-            <span className='absolute right-3 top-3 cursor-pointer' onClick={handlePasswordToggle}>
-              <div
-                className={
-                  'h-fit w-fit cursor-pointer rounded-xl bg-red-600 px-2 hover:bg-red-700 active:bg-red-800'
-                }
-              >
-                S
-              </div>
+            <span
+              className='absolute right-3 top-3 cursor-pointer text-sky-800 hover:text-sky-950'
+              onClick={handlePasswordToggle}
+            >
+              {type === 'password' ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </span>
           </div>
 
