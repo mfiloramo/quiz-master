@@ -26,7 +26,7 @@ export type QuizCardProps = {
   quiz: Quiz;
   selected: boolean;
   onSelect: (quiz: Quiz) => void;
-  onDelete: (quizId: number) => void;
+  onDelete?: (quizId: number) => void;
 };
 
 // TYPE FOR THE QUIZ MODULE (DURING GAMEPLAY)

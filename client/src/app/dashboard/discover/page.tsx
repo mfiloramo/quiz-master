@@ -21,10 +21,7 @@ export default function DiscoverPage(): ReactElement {
 
     const fetchAllQuizzes = async () => {
       try {
-        const token = localStorage.getItem('token');
-
-        const { data } = await axiosInstance.get('/quizzes');
-
+        const { data } = await axiosInstance.get<Quiz[]>('/quizzes');
         setQuizzes(data);
       } catch (err) {
         console.error('Error fetching quizzes:', err);
@@ -59,7 +56,6 @@ export default function DiscoverPage(): ReactElement {
               quiz={quiz}
               selected={selectedQuiz?.id === quiz.id}
               onSelect={handleSelectQuiz}
-              onDelete={() => {}}
             />
           ) : null
         )}

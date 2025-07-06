@@ -14,10 +14,6 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   const [lockedIn, setLockedIn] = useState<boolean>(false);
 
   // PROVIDER HANDLER FUNCTIONS
-  const setQuiz = (quiz: Quiz | null): void => {
-    setSelectedQuiz(quiz);
-  };
-
   const resetQuiz = (): void => {
     setSelectedQuiz(null); // RESET SELECTED QUIZ
     setCurrentIndex(0); // RESET QUESTION INDEX
@@ -27,7 +23,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       selectedQuiz,
-      setSelectedQuiz: setQuiz,
+      setSelectedQuiz,
       currentIndex,
       setCurrentIndex,
       resetQuiz,

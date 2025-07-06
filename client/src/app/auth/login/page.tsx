@@ -3,12 +3,14 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import axiosInstance from '@/utils/axios';
 
 export default function LoginPage(): ReactElement {
   // STATE HOOKS
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [type, setType] = useState<'password' | 'text'>('password');
   const [error, setError] = useState<string | null>(null);
 
   // ROUTER INSTANCE FOR REDIRECTION
@@ -17,7 +19,7 @@ export default function LoginPage(): ReactElement {
   // AUTH CONTEXT HOOK
   const { login } = useAuth();
 
-  // EFFECT HOOKS
+  // EFFECT HOOK TO CLEAR INPUT FIELDS ON UNMOUNT
   useEffect(() => {
     return () => {
       setEmail('');
@@ -30,22 +32,32 @@ export default function LoginPage(): ReactElement {
     e.preventDefault();
     setError(null);
 
+    // VALIDATE INPUT
     if (!email.trim() || !password.trim()) {
       setError('Email and password are required');
       return;
     }
 
     try {
+      // API CALL TO LOGIN ENDPOINT
       const { data } = await axiosInstance.post('/auth/login', { email, password });
 
+      // CALL AUTH CONTEXT LOGIN FUNCTION
       const success = login(data.token);
 
+      // REDIRECT ON SUCCESS
       if (success) {
         router.push('/dashboard');
       }
     } catch (error: any) {
+      // DISPLAY ERROR MESSAGE
       setError(error.response?.data?.message || 'Login failed');
     }
+  };
+
+  // HANDLE PASSWORD VISIBILITY TOGGLE
+  const handlePasswordToggle = () => {
+    setType((prev) => (prev === 'password' ? 'text' : 'password'));
   };
 
   // RENDER PAGE
@@ -80,14 +92,23 @@ export default function LoginPage(): ReactElement {
             className='rounded-lg border border-gray-300 p-3 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500'
           />
 
-          {/* PASSWORD INPUT */}
-          <input
-            type='password'
-            placeholder='Password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className='rounded-lg border border-gray-300 p-3 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500'
-          />
+          {/* PASSWORD INPUT + ICON */}
+          <div className='relative'>
+            <input
+              type={type}
+              placeholder='Password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className='w-full rounded-lg border border-gray-300 p-3 pr-10 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500'
+            />
+            {/* ICON FOR TOGGLING PASSWORD VISIBILITY */}
+            <span
+              className='absolute right-3 top-3 cursor-pointer text-sky-800 hover:text-sky-950'
+              onClick={handlePasswordToggle}
+            >
+              {type === 'password' ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+            </span>
+          </div>
 
           {/* SUBMIT BUTTON */}
           <button
