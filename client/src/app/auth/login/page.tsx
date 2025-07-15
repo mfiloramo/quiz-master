@@ -8,8 +8,8 @@ import axiosInstance from '@/utils/axios';
 
 export default function LoginPage(): ReactElement {
   // STATE HOOKS
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [type, setType] = useState<'password' | 'text'>('password');
   const [error, setError] = useState<string | null>(null);
 

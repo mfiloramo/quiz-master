@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import QuizModule from '@/components/QuizModule/QuizModule';
 import Leaderboard from '@/components/Leaderboard/Leaderboard';
 import PlayerAnswerSummary from '@/components/PlayerAnswerSummary/PlayerAnswerSummary';
-import PlayerAnswersGraph from '@/components/player-answers-graph/player-answers-graph';
+import PlayerAnswersGraph from '@/components/PlayerAnswersGraph/PlayerAnswersGraph';
 import FinalScoreboard from '@/components/FinalScoreboard/FinalScoreboard';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 import HostQuestionDisplay from '@/components/HostQuestionDisplay/HostQuestionDisplay';
