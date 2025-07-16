@@ -19,7 +19,7 @@ type Props = {
 // COLOR MAPPING FOR EACH BAR
 const barColors = ['#ef4444', '#3b82f6', '#facc15', '#22c55e'];
 
-export default function PlayerAnswersGraph({
+export default function PlayerAnswerGraph({
   playerAnswers,
   options,
 }: Props): ReactElement | undefined {

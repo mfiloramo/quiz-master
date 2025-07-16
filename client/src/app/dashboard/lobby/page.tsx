@@ -144,32 +144,18 @@ export default function LobbyPage() {
 
       {/* PLAYERS LIST */}
       <ul>
-        {players.map((player, index) => {
-          // ASSIGN PLAYERS WITH RANDOM COLORS
-          const colors = [
-            { bg: '#FF0000', text: 'white' },
-            { bg: '#FF7F00', text: 'black' },
-            { bg: '#FFFF00', text: 'black' },
-            { bg: '#00FF00', text: 'black' },
-            { bg: '#0000FF', text: 'white' },
-            { bg: '#4B0082', text: 'white' },
-            { bg: '#8F00FF', text: 'white' },
-          ];
-          const color = colors[Math.floor(Math.random() * colors.length)];
-
-          return (
-            <motion.li
-              key={index}
-              onClick={() => isHost && ejectPlayer(player.id)} // ONLY HOST CAN KICK
-              className={`mb-2 ${isHost ? 'cursor-pointer' : 'cursor-none'} w-full rounded-xl border-2 border-black p-2 font-bold shadow`}
-              style={{ backgroundColor: color.bg, color: color.text }}
-              animate={{ rotate: [-5, 5, -5] }}
-              transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              {player.username}
-            </motion.li>
-          );
-        })}
+        {players.map((player, index) => (
+          // PLAYER LISTING
+          <motion.li
+            key={index}
+            onClick={() => isHost && ejectPlayer(player.id)} // ONLY HOST CAN KICK
+            className={`mb-2 ${isHost ? 'cursor-pointer' : 'cursor-none'} text-center font-bold`}
+            animate={{ rotate: [-5, 5, -5] }}
+            transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            {player.username}
+          </motion.li>
+        ))}
       </ul>
 
       {/* GAME START TIMER */}
