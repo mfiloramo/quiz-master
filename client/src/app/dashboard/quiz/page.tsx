@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import QuizModule from '@/components/QuizModule/QuizModule';
 import Leaderboard from '@/components/Leaderboard/Leaderboard';
 import PlayerAnswerSummary from '@/components/PlayerAnswerSummary/PlayerAnswerSummary';
-import PlayerAnswersGraph from '@/components/PlayerAnswersGraph/PlayerAnswersGraph';
+import PlayerAnswerGraph from '@/components/PlayerAnswerGraph/PlayerAnswerGraph';
 import FinalScoreboard from '@/components/FinalScoreboard/FinalScoreboard';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 import HostQuestionDisplay from '@/components/HostQuestionDisplay/HostQuestionDisplay';
@@ -300,7 +300,7 @@ export default function QuizPage(): JSX.Element {
       {/* HOST ANSWER SUMMARY VIEW */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
         <>
-          <PlayerAnswersGraph playerAnswers={playerAnswers} options={currentQuestion.options} />
+          <PlayerAnswerGraph playerAnswers={playerAnswers} options={currentQuestion.options} />
           <HostQuestionDisplay
             question={currentQuestion.question}
             options={currentQuestion.options}

@@ -1,7 +1,6 @@
 'use client';
 
 import { JSX, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
 import DashboardCard from '@/components/DashboardCard/DashboardCard';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
