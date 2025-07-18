@@ -350,7 +350,7 @@ export class WebSocketController {
 
     // SET TIMEOUT TO FORCE PROGRESSION IF NOT ALL PLAYERS ANSWER IN TIME
     session.currentRoundTimeout = setTimeout(() => {
-      if (!session.allPlayersAnswered()) {
+      if (!session.allPlayersAnswered() || !session.players.length) {
         // MARK ALL PLAYERS AS ANSWERED TO PREVENT FUTURE INPUT
         session.players.forEach((p) => (p.hasAnswered = true));
 

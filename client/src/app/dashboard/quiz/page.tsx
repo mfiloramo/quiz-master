@@ -86,7 +86,7 @@ export default function QuizPage(): JSX.Element {
     }
   }, [phase, playGong, gongSound, isHost]);
 
-  // HANDLE SOCKET EVENTSu
+  // HANDLE SOCKET EVENTS
   useEffect(() => {
     // VALIDATE SOCKET
     if (!socket) return;
