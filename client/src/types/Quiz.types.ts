@@ -9,7 +9,7 @@ export type Quiz = {
   created_date: string;
   description: string;
   questions: QuizQuestion[];
-  visibility: string;
+  visibility: 'public' | 'private';
   title: string;
 };
 

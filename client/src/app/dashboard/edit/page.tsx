@@ -22,7 +22,7 @@ export default function EditQuiz(): ReactElement {
     id: 0,
     title: '',
     description: '',
-    visibility: 'public',
+    visibility: modalMode === 'add' ? 'public' : null,
   });
 
   // SET INITIAL QUIZ FORM DATA
@@ -32,7 +32,7 @@ export default function EditQuiz(): ReactElement {
         id: selectedQuiz.id,
         title: selectedQuiz.title,
         description: selectedQuiz.description,
-        visibility: selectedQuiz.visibility ?? 'public',
+        visibility: selectedQuiz.visibility,
       };
       setForm(newForm);
     }
@@ -77,6 +77,7 @@ export default function EditQuiz(): ReactElement {
     setEditingQuestion(null);
   };
 
+  // HANDLE VISIBILITY CHECKBOX CHANGE
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const isChecked = e.target.checked;
     setForm((prev) => ({
@@ -85,6 +86,7 @@ export default function EditQuiz(): ReactElement {
     }));
   };
 
+  // HANDLE QUIZ SAVING
   const handleSave = async () => {
     try {
       // PREPARE PAYLOAD WITH UPDATED QUIZ DATA
@@ -99,13 +101,13 @@ export default function EditQuiz(): ReactElement {
       await axiosInstance.put(`/quizzes/${selectedQuiz?.id}`, payload);
 
       // LOG SUCCESS MESSAGE
-      console.log(`QUIZ ${selectedQuiz?.id} UPDATED SUCCESSFULLY`);
+      console.log(`Quiz ${selectedQuiz?.id} updated successfully`);
 
       // REDIRECT TO LIBRARY PAGE
       router.push('/dashboard/library');
     } catch (error: any) {
       // LOG ERROR IF REQUEST FAILS
-      console.error('ERROR UPDATING QUIZ:', error);
+      console.error('Error updating quiz:', error);
     }
   };
 
