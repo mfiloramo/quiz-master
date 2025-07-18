@@ -12,12 +12,15 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
+  // RESET FORM INPUT
   const reset = () => {
     setAccountType(null);
     setUsername('');
     setEmail('');
     setPassword('');
+    setConfirmPassword('');
   };
 
   return (
@@ -27,10 +30,12 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
         username,
         email,
         password,
+        confirmPassword,
         setAccountType,
         setUsername,
         setEmail,
         setPassword,
+        setConfirmPassword,
         reset,
       }}
     >
