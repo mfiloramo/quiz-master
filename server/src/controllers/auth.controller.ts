@@ -11,6 +11,8 @@ export class AuthController {
     try {
       const { username, email, password, accountType } = req.body;
 
+      console.log({ username, email, password, accountType })
+
       const saltRounds: number = 10;
       const hashedPassword: string = await bcrypt.hash(password, saltRounds);
 
@@ -28,8 +30,8 @@ export class AuthController {
       );
 
       const newUserId = result[0]?.id;
+      console.log(newUserId)
 
-      // TODO: DISABLE AND ADD ADMIN APPROVAL
       // SEND CONFIRMATION EMAIL
       await EmailService.sendConfirmationEmail({
         userId: newUserId,
@@ -144,10 +146,9 @@ export class AuthController {
               userId
             },
           },
-        ).then((response) => {
-          console.log(`${process.env.CLIENT_URL}/auth/login`);
+        ).then((response: any): any => {
           res.redirect(`${process.env.CLIENT_URL}/auth/login`);
-          return
+          return;
         });
       }
     } catch (error: any) {
