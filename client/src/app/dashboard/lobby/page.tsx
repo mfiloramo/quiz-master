@@ -149,7 +149,7 @@ export default function LobbyPage() {
           <motion.li
             key={index}
             onClick={() => isHost && ejectPlayer(player.id)} // ONLY HOST CAN KICK
-            className={`mb-2 ${isHost ? 'cursor-pointer' : 'cursor-none'} text-center font-bold`}
+            className={`mb-2 ${isHost ? 'cursor-pointer' : 'cursor-none'} flex flex-wrap text-center text-3xl font-bold`}
             animate={{ rotate: [-5, 5, -5] }}
             transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
           >
