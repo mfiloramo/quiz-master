@@ -11,6 +11,7 @@ export const webSocketRouter = (io: Server): void => {
     socket.on('create-session', (data: any) => controller.createSession(socket, data));
     socket.on('join-session', (data: any) => controller.joinSession(socket, data));
     socket.on('start-session', async (data: any) => await controller.startSession(socket, data));
+    socket.on('check-session', async (data: any) => await controller.checkSession(socket, data));
     socket.on('leave-session', () => controller.leaveSession(socket));
     socket.on('get-current-question', (data: any) => controller.getCurrentQuestion(socket, data));
     socket.on('next-question', (data: any) => controller.handleNextQuestion(data));
