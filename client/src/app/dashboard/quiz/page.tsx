@@ -262,6 +262,13 @@ export default function QuizPage(): JSX.Element {
         <BackgroundMusic key={musicKey} tracks={quizTracks} />
       )}
 
+      {/* SESSION ID DISPLAY */}
+      {isHost && sessionId && (
+        <div className={'text-sky-95000 left-0 top-0 z-50 w-screen text-center text-3xl'}>
+          Join with session ID: <span className={'font-bold'}>{sessionId}</span>
+        </div>
+      )}
+
       {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT */}
       {/* PLAYER QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && !isHost && (

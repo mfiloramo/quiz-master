@@ -27,7 +27,6 @@ export class GameSession {
   // ADD PLAYER TO SESSION
   public addPlayer(player: Player): void {
     this.players.push(player);
-    console.log(this.players);
   }
 
   // REMOVE PLAYER BY SOCKET ID

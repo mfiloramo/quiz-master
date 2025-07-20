@@ -39,7 +39,7 @@ export default function LobbyPage() {
     if (!socket) return;
 
     // DEFINE HANDLER FOR SERVER RESPONSE TO SESSION CHECK
-    const handleCheck = (isSessionActive: boolean) => {
+    const handleCheck = (isSessionActive: boolean): void => {
       // IF SESSION IS ACTIVE, IMMEDIATELY REDIRECT TO QUIZ PAGE
       if (isSessionActive) {
         router.push('/dashboard/quiz');
