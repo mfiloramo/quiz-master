@@ -5,6 +5,7 @@ import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
+import session from '../models/Session';
 
 
 // MAIN SOCKET CONTROLLER CLASS
@@ -74,12 +75,12 @@ export class WebSocketController {
       return;
     }
 
-    // TODO: ENABLE IN PROD -- CHECK IF PLAYER HAS ALREADY JOINED
-    // const nameExists = session.players.some((player: Player) => player.username === username);
-    // if (nameExists) {
-    //   socket.emit('error', 'Player with this username already joined the game.');
-    //   return;
-    // }
+    // CHECK IF USERNAME ALREADY EXISTS IN SESSION
+    const nameExists = session.players.some((player: Player) => player.username === username);
+    if (nameExists) {
+      socket.emit('error', 'Player with this username already joined the game.');
+      return;
+    }
 
     // CREATE NEW PLAYER INSTANCE
     const player = new Player(id, socket.id, username);
@@ -91,7 +92,7 @@ export class WebSocketController {
     // BROADCAST UPDATED PLAYER LIST TO ALL CLIENTS
     this.io.to(sessionId).emit('player-joined', session.players);
 
-    // TODO: IF GAME HAS ALREADY STARTED, SEND CURRENT QUESTION TO NEW PLAYER
+    // IF GAME HAS ALREADY STARTED, SEND CURRENT QUESTION TO NEW PLAYER
     if (session.isStarted) {
       const currentQuestion = session.questions[session.currentQuestionIndex];
       socket.emit('new-question', {
@@ -99,7 +100,7 @@ export class WebSocketController {
         index: session.currentQuestionIndex,
         total: session.questions.length,
       });
-      return; // GAME ALREADY STARTED — DO NOT RESET TIMER
+      return;
     }
 
     // RESET GAME START TIMER COUNTDOWN WHENEVER A NEW PLAYER JOINS
@@ -164,6 +165,21 @@ export class WebSocketController {
       socket.emit('error', 'Failed to start quiz.');
     }
   }
+
+  // CHECK FOR EXISTING SESSION
+  public async checkSession(socket: Socket, data: { sessionId: string }): Promise<void> {
+    const { sessionId } = data;
+
+    // LOOK UP SESSION IN SESSION MANAGER
+    const session = SessionManager.getSession(sessionId);
+
+    // DETERMINE WHETHER THE SESSION HAS BEEN MARKED AS STARTED
+    const isStarted = !!session?.isStarted;
+
+    // SEND BOOLEAN RESPONSE BACK TO REQUESTING CLIENT
+    socket.emit('check-session-response', isStarted);
+  }
+
 
   // PLAYER LEAVES SESSION
   public leaveSession(socket: Socket): void {
@@ -267,7 +283,7 @@ export class WebSocketController {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
-    // Clear timer and emit current answers
+    // CLEAR TIMER AND EMIT CURRENT ANSWERS
     session.clearRoundTimeout();
     this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
   }

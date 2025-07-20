@@ -43,7 +43,7 @@ export default function QuizPage(): JSX.Element {
   const router = useRouter();
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession, setPlayers } = useSession();
+  const { sessionId, clearSession, setPlayers, players } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
 
   // MOUNT GONG SOUND
@@ -125,6 +125,7 @@ export default function QuizPage(): JSX.Element {
     });
 
     // PLAYER JOINED SESSION
+    // *** ADD LOGIC TO EMIT QUESTION DATA
     socket.on('player-joined', (updatedPlayers: Player[]) => {
       setPlayers(updatedPlayers);
     });

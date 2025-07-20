@@ -24,7 +24,39 @@ export default function LobbyPage() {
   const { socket, disconnect } = useWebSocket();
   const { players, setPlayers, clearSession, sessionId } = useSession();
   const { isHost } = useAuth();
-  const { selectedQuiz, resetQuiz } = useQuiz();
+  const { selectedQuiz, resetQuiz, setLockedIn } = useQuiz();
+
+  // EMIT check-session WHEN NON-HOST JOINS
+  useEffect(() => {
+    if (!isHost && socket && sessionId) {
+      socket.emit('check-session', { sessionId });
+    }
+  }, [isHost, socket, sessionId]);
+
+  // LISTEN FOR check-session-response AND NAVIGATE IF TRUE
+  useEffect(() => {
+    // DO NOT CONTINUE IF SOCKET IS UNAVAILABLE
+    if (!socket) return;
+
+    // DEFINE HANDLER FOR SERVER RESPONSE TO SESSION CHECK
+    const handleCheck = (isSessionActive: boolean) => {
+      // IF SESSION IS ACTIVE, IMMEDIATELY REDIRECT TO QUIZ PAGE
+      if (isSessionActive) {
+        setTimeout(() => {
+          setLockedIn(true);
+        }, 200);
+        router.push('/dashboard/quiz');
+      }
+    };
+
+    // REGISTER SOCKET LISTENER FOR SESSION STATUS RESPONSE
+    socket.on('check-session-response', handleCheck);
+
+    // CLEAN UP SOCKET LISTENER ON UNMOUNT
+    return () => {
+      socket.off('check-session-response', handleCheck);
+    };
+  }, [socket]);
 
   // INITIALIZE SOCKET EVENT LISTENERS FOR TIMER
   useEffect(() => {
@@ -84,6 +116,8 @@ export default function LobbyPage() {
       socket.off('session-started');
       socket.off('ejected-by-host');
       socket.off('session-ended');
+      socket.off('new-question');
+      socket.off('check-session');
     };
   }, [socket, sessionId, router, disconnect, resetQuiz]);
 
