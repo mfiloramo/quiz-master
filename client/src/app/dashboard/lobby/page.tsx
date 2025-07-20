@@ -42,9 +42,6 @@ export default function LobbyPage() {
     const handleCheck = (isSessionActive: boolean) => {
       // IF SESSION IS ACTIVE, IMMEDIATELY REDIRECT TO QUIZ PAGE
       if (isSessionActive) {
-        setTimeout(() => {
-          setLockedIn(true);
-        }, 200);
         router.push('/dashboard/quiz');
       }
     };
