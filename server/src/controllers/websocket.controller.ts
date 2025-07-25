@@ -86,22 +86,12 @@ export class WebSocketController {
     const player = new Player(id, socket.id, username);
 
     // ADD PLAYER TO SESSION AND JOIN SOCKET ROOM
+    if (session.allPlayersAnswered()) player.hasAnswered = true;
     session.addPlayer(player);
     socket.join(sessionId);
 
     // BROADCAST UPDATED PLAYER LIST TO ALL CLIENTS
     this.io.to(sessionId).emit('player-joined', session.players);
-
-    // IF GAME HAS ALREADY STARTED, SEND CURRENT QUESTION TO NEW PLAYER
-    if (session.isStarted) {
-      const currentQuestion = session.questions[session.currentQuestionIndex];
-      socket.emit('new-question', {
-        question: currentQuestion,
-        index: session.currentQuestionIndex,
-        total: session.questions.length,
-      });
-      return;
-    }
 
     // RESET GAME START TIMER COUNTDOWN WHENEVER A NEW PLAYER JOINS
     session.clearGameStartTimeout();
@@ -179,7 +169,6 @@ export class WebSocketController {
     // SEND BOOLEAN RESPONSE BACK TO REQUESTING CLIENT
     socket.emit('check-session-response', isStarted);
   }
-
 
   // PLAYER LEAVES SESSION
   public leaveSession(socket: Socket): void {
@@ -345,6 +334,7 @@ export class WebSocketController {
   }
 
   /** PRIVATE METHODS **/
+  // EMIT QUESTION WITH TIMEOUT
   private emitQuestionWithTimeout(session: GameSession): void {
     const sessionId = session.sessionId;
     const currentQuestion = session.questions[session.currentQuestionIndex];

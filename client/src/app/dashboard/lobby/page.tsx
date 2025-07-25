@@ -155,9 +155,9 @@ export default function LobbyPage() {
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
 
       {/* BACKGROUND MUSIC (ONLY HOST PLAYS IT ONCE) */}
-      {isHost && gameStartTimer !== null && !hasStartedMusic && (
-        <BackgroundMusic tracks={lobbyTracks} />
-      )}
+      {/*{isHost && gameStartTimer !== null && !hasStartedMusic && (*/}
+      {/*  <BackgroundMusic tracks={lobbyTracks} />*/}
+      {/*)}*/}
 
       {/* JOIN SESSION CODE */}
       {isHost && (
