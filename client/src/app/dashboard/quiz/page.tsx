@@ -47,7 +47,7 @@ export default function QuizPage(): JSX.Element {
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
 
   // MOUNT GONG SOUND
-  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
+  // const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
 
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {
@@ -74,19 +74,7 @@ export default function QuizPage(): JSX.Element {
     }
   }, [loading, secondsLeft]);
 
-  // PLAY GONG SOUND ONCE WHEN ENTERING LEADERBOARD PHASE
-  useEffect(() => {
-    if (phase === QuizPhase.AnswerSummary && isHost) {
-      playGong(); // PLAY GONG ONCE
-    }
-
-    // STOP GONG WHEN RETURNING TO QUESTION PHASE
-    if (phase !== QuizPhase.AnswerSummary && phase !== QuizPhase.Leaderboard) {
-      gongSound?.stop();
-    }
-  }, [phase, playGong, gongSound, isHost]);
-
-  // HANDLE SOCKET EVENTS
+  // HANDLE GAME-RELATED SOCKET EVENTS
   useEffect(() => {
     // VALIDATE SOCKET
     if (!socket) return;
@@ -206,6 +194,18 @@ export default function QuizPage(): JSX.Element {
     };
   }, [phase, socket, sessionId, isHost, press]);
 
+  // PLAY GONG SOUND ONCE WHEN ENTERING LEADERBOARD PHASE
+  // useEffect(() => {
+  //   if (phase === QuizPhase.AnswerSummary && isHost) {
+  //     playGong(); // PLAY GONG ONCE
+  //   }
+  //
+  //   STOP GONG WHEN RETURNING TO QUESTION PHASE
+  // if (phase !== QuizPhase.AnswerSummary && phase !== QuizPhase.Leaderboard) {
+  //   gongSound?.stop();
+  //   }
+  // }, [phase, playGong, gongSound, isHost]);
+
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
     if (!user) return;
@@ -258,9 +258,9 @@ export default function QuizPage(): JSX.Element {
   return (
     <div className='flex flex-col items-center justify-center'>
       {/* QUIZ BACKGROUND MUSIC (ONLY HOST PLAYS IT DURING QUESTION PHASE) */}
-      {isHost && phase === QuizPhase.Question && (
-        <BackgroundMusic key={musicKey} tracks={quizTracks} />
-      )}
+      {/*{isHost && phase === QuizPhase.Question && (*/}
+      {/*  <BackgroundMusic key={musicKey} tracks={quizTracks} />*/}
+      {/*)}*/}
 
       {/* SESSION ID DISPLAY */}
       {isHost && sessionId && (
