@@ -28,7 +28,7 @@ export default function StaticSection({ section, listNum }: any): ReactElement {
         )}
 
         {/* BODY PARAGRAPH TEXT */}
-        <div className='flex flex-col gap-2'>
+        <div className='flex flex-col gap-2 text-left'>
           {paragraphs.map((paragraph: string, index: number): any => (
             <p key={index} className='text-justify text-lg'>
               {paragraph}

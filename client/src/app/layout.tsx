@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/next';
 import Navbar from '@/components/Navbar/Navbar';
 import { Poppins } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['200', '400'] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en' className={poppins.className}>
       <body className='bg-white antialiased'>
         <AuthProvider>
+          <ScrollToTop />
           <Navbar />
           <main className='pt-16'>{children}</main>
           <SpeedInsights />
