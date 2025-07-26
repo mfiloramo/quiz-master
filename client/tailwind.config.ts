@@ -17,6 +17,9 @@ export default {
         'stub-background-dashboard': "url('/backgrounds/stub-background-dashboard.png')",
         'stub-background-lobby': "url('/backgrounds/stub-background-lobby.png')",
       },
+      dropShadow: {
+        strong: '4px 4px 0.2px black',
+      },
       keyframes: {
         marquee: {
           '0%': { transform: 'translateX(0%)' },
