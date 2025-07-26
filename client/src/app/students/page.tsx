@@ -12,7 +12,7 @@ export default function StudentsPage(): ReactElement {
       {/* PAGE TITLE HEADER */}
       <p
         className={
-          'mx-auto px-5 py-14 text-center text-5xl font-bold sm:px-12 sm:text-6xl md:text-7xl lg:px-24'
+          'mx-auto px-5 py-14 text-center text-6xl font-bold sm:px-12 md:text-7xl lg:px-24'
         }
       >
         <span className={'drop-shadow-strong text-yellow-300'}>Play Hard.</span>{' '}
