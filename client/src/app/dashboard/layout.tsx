@@ -7,6 +7,7 @@ import { WebSocketProvider } from '@/contexts/WebSocketContext';
 import { SessionProvider } from '@/contexts/SessionContext';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { AudioProvider } from '@/contexts/AudioContext';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   // CUSTOM HOOKS
@@ -36,12 +37,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <WebSocketProvider>
       <SessionProvider>
         <QuizProvider>
-          <div
-            className={`bg-cover bg-center bg-no-repeat ${isLobbyPage ? 'bg-stub-background-lobby' : 'bg-stub-background-dashboard'} flex min-h-[calc(100vh-4rem)] text-black caret-transparent`}
-          >
-            {!hideSidebar && <SideNavbar dashboardLinks={dashboardLinks} />}
-            <div className='flex-1 p-6'>{children}</div>
-          </div>
+          <AudioProvider>
+            <div
+              className={`bg-cover bg-center bg-no-repeat ${isLobbyPage ? 'bg-stub-background-lobby' : 'bg-stub-background-dashboard'} flex min-h-[calc(100vh-4rem)] text-black caret-transparent`}
+            >
+              {!hideSidebar && <SideNavbar dashboardLinks={dashboardLinks} />}
+              <div className='flex-1 p-6'>{children}</div>
+            </div>
+          </AudioProvider>
         </QuizProvider>
       </SessionProvider>
     </WebSocketProvider>

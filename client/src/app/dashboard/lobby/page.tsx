@@ -6,11 +6,13 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
+import AudioToggle from '@/components/AudioToggle/AudioToggle';
 
-// LOBBY BACKGROUND MUSIC TRACKS
+// LOAD LOBBY BACKGROUND MUSIC TRACKS
 const lobbyTracks = ['/audio/lobby-groove-a.mp3', '/audio/lobby-groove-b.mp3'];
 const hasStartedMusic =
   typeof window !== 'undefined' && sessionStorage.getItem('lobby-music-started') === 'true';
@@ -24,7 +26,8 @@ export default function LobbyPage() {
   const { socket, disconnect } = useWebSocket();
   const { players, setPlayers, clearSession, sessionId } = useSession();
   const { isHost } = useAuth();
-  const { selectedQuiz, resetQuiz, setLockedIn } = useQuiz();
+  const { selectedQuiz, resetQuiz } = useQuiz();
+  const { music } = useAudio();
 
   // EMIT check-session WHEN NON-HOST JOINS
   useEffect(() => {
@@ -35,21 +38,16 @@ export default function LobbyPage() {
 
   // LISTEN FOR check-session-response AND NAVIGATE IF TRUE
   useEffect(() => {
-    // DO NOT CONTINUE IF SOCKET IS UNAVAILABLE
     if (!socket) return;
 
-    // DEFINE HANDLER FOR SERVER RESPONSE TO SESSION CHECK
     const handleCheck = (isSessionActive: boolean): void => {
-      // IF SESSION IS ACTIVE, IMMEDIATELY REDIRECT TO QUIZ PAGE
       if (isSessionActive) {
         router.push('/dashboard/quiz');
       }
     };
 
-    // REGISTER SOCKET LISTENER FOR SESSION STATUS RESPONSE
     socket.on('check-session-response', handleCheck);
 
-    // CLEAN UP SOCKET LISTENER ON UNMOUNT
     return () => {
       socket.off('check-session-response', handleCheck);
     };
@@ -64,14 +62,11 @@ export default function LobbyPage() {
       setTimerKey((prev) => prev + 1); // FORCE COUNTDOWN COMPONENT TO RERENDER AND RESET
     };
 
-    // START TIMER SOCKET LISTENERS
     socket.on('game-start-timer', handleGameStartTimer);
     socket.on('game-start-timer-reset', handleGameStartTimer);
 
-    // REQUEST CURRENT TIMER FROM SERVER ON MOUNT
     socket.emit('get-game-start-timer', { sessionId });
 
-    // CLEANUP SOCKET LISTENERS
     return () => {
       socket.off('game-start-timer', handleGameStartTimer);
       socket.off('game-start-timer-reset', handleGameStartTimer);
@@ -80,33 +75,28 @@ export default function LobbyPage() {
 
   // INITIALIZE SOCKET EVENT LISTENERS FOR PLAYER AND SESSION EVENTS
   useEffect(() => {
-    // VALIDATE SOCKET
     if (!socket) return;
 
-    // START SESSION
     socket.once('session-started', () => {
       router.push('/dashboard/quiz');
     });
 
-    // REFRESH PLAYERS LIST
     socket.emit('get-players', { sessionId });
 
-    // LOBBY SOCKET LISTENERS
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
     socket.on('ejected-by-host', () => {
       alert('You were removed from the session by the host.');
-      resetQuiz(); // RESET QUIZ STATE ON EJECTION
+      resetQuiz();
       disconnect();
       router.push('/dashboard');
     });
     socket.on('session-ended', () => {
       alert('Host disconnected. Session ended.');
-      resetQuiz(); // RESET QUIZ STATE ON SESSION END
+      resetQuiz();
       router.push('/dashboard');
     });
 
-    // CLEANUP SOCKET LISTENERS
     return () => {
       socket.off('player-joined');
       socket.off('players-list');
@@ -120,12 +110,10 @@ export default function LobbyPage() {
 
   // HANDLE START SESSION
   const handleStart = () => {
-    // RESET ANY EXISTING TIMER STATE ON NEW SESSION START
     setGameStartTimer(null); // RESET GAME START TIMER STATE
     setTimerKey(0); // RESET COUNTDOWN COMPONENT KEY
     resetQuiz(); // RESET QUIZ STATE IF CARRYING OVER FROM PREVIOUS SESSION
 
-    // EMIT SESSION START TO SERVER
     socket?.emit('start-session', {
       sessionId,
       quizId: selectedQuiz?.id,
@@ -152,12 +140,13 @@ export default function LobbyPage() {
   // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
+      {/* INNER CONTAINER */}
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
 
       {/* BACKGROUND MUSIC (ONLY HOST PLAYS IT ONCE) */}
-      {/*{isHost && gameStartTimer !== null && !hasStartedMusic && (*/}
-      {/*  <BackgroundMusic tracks={lobbyTracks} />*/}
-      {/*)}*/}
+      {isHost && music && gameStartTimer !== null && !hasStartedMusic && (
+        <BackgroundMusic tracks={lobbyTracks} />
+      )}
 
       {/* JOIN SESSION CODE */}
       {isHost && (
@@ -176,7 +165,6 @@ export default function LobbyPage() {
       {/* PLAYERS LIST */}
       <ul>
         {players.map((player, index) => (
-          // PLAYER LISTING
           <motion.li
             key={index}
             onClick={() => isHost && ejectPlayer(player.id)} // ONLY HOST CAN KICK
@@ -193,7 +181,7 @@ export default function LobbyPage() {
       <div className='mt-8'>
         {gameStartTimer !== null && isHost && (
           <CountdownCircleTimer
-            key={timerKey} // FORCE RESET OF TIMER ON TIMER CHANGE
+            key={timerKey}
             isPlaying
             duration={Math.floor(gameStartTimer / 1000)}
             colors={['#3b8600', '#F7B801', '#A30000', '#A30000']}
@@ -227,6 +215,9 @@ export default function LobbyPage() {
       >
         {isHost ? 'Cancel Game' : 'Leave Game'}
       </motion.button>
+
+      {/* MUSIC/SOUND TOGGLE (SELF-CONTAINED) */}
+      <AudioToggle />
     </div>
   );
 }
