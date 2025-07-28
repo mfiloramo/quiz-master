@@ -14,15 +14,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [players, setPlayersState] = useState<Player[]>([]);
 
   // HANDLER FUNCTIONS
-  const setSessionId = (id: string | null) => {
+  const setSessionId = (id: string | null): void => {
     setSessionIdState(id);
   };
 
-  const setPlayers = (updatedPlayers: Player[]) => {
+  const setPlayers = (updatedPlayers: Player[]): void => {
     setPlayersState(updatedPlayers);
   };
 
-  const clearSession = () => {
+  const clearSession = (): void => {
     setSessionIdState(null);
     setPlayersState([]);
   };
