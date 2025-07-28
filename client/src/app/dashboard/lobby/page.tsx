@@ -10,12 +10,13 @@ import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 
-// LOBBY BACKGROUND MUSIC TRACKS
+// LOAD LOBBY BACKGROUND MUSIC TRACKS
 const lobbyTracks = ['/audio/lobby-groove-a.mp3', '/audio/lobby-groove-b.mp3'];
 const hasStartedMusic =
   typeof window !== 'undefined' && sessionStorage.getItem('lobby-music-started') === 'true';
 
 export default function LobbyPage() {
+  const [musicToggle, setMusicToggle] = useState<boolean>(true);
   const [gameStartTimer, setGameStartTimer] = useState<number | null>(null);
   const [timerKey, setTimerKey] = useState<number>(0); // KEY TO FORCE RERENDER OF COUNTDOWN COMPONENT
 
@@ -152,13 +153,12 @@ export default function LobbyPage() {
   // RENDER PAGE
   return (
     <div className='flex flex-col items-center justify-center'>
+      {/* INNER CONTAINER */}
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
-
       {/* BACKGROUND MUSIC (ONLY HOST PLAYS IT ONCE) */}
-      {/*{isHost && gameStartTimer !== null && !hasStartedMusic && (*/}
-      {/*  <BackgroundMusic tracks={lobbyTracks} />*/}
-      {/*)}*/}
-
+      {isHost && musicToggle && gameStartTimer !== null && !hasStartedMusic && (
+        <BackgroundMusic tracks={lobbyTracks} />
+      )}
       {/* JOIN SESSION CODE */}
       {isHost && (
         <motion.h1
@@ -172,7 +172,6 @@ export default function LobbyPage() {
           Join with code: {sessionId}
         </motion.h1>
       )}
-
       {/* PLAYERS LIST */}
       <ul>
         {players.map((player, index) => (
@@ -188,7 +187,6 @@ export default function LobbyPage() {
           </motion.li>
         ))}
       </ul>
-
       {/* GAME START TIMER */}
       <div className='mt-8'>
         {gameStartTimer !== null && isHost && (
@@ -203,7 +201,6 @@ export default function LobbyPage() {
           </CountdownCircleTimer>
         )}
       </div>
-
       {/* START QUIZ BUTTON (HOST ONLY) */}
       {isHost && (
         <motion.button
@@ -216,7 +213,6 @@ export default function LobbyPage() {
           Start Quiz
         </motion.button>
       )}
-
       {/* LEAVE GAME BUTTON */}
       <motion.button
         whileHover={{ scale: 1.05 }}
@@ -227,6 +223,40 @@ export default function LobbyPage() {
       >
         {isHost ? 'Cancel Game' : 'Leave Game'}
       </motion.button>
+      {/*<div className={'flex flex-row'}>*/}
+      {/*  <input type={'checkbox'} className={'h-5 w-5 font-bold'} />*/}
+      {/*  Music*/}
+      {/*</div>*/}
+
+      {/* TODO: PROTOTYPE MUSIC TOGGLE */}
+      <div className='inline-flex items-center gap-2 pt-3 text-2xl font-bold'>
+        <label className='relative flex cursor-pointer items-center'>
+          <input
+            type='checkbox'
+            className='peer h-5 w-5 cursor-pointer appearance-none rounded border border-slate-300 shadow transition-all checked:border-slate-800 checked:bg-slate-800 hover:shadow-md'
+            id='check'
+            onChange={() => setMusicToggle(!musicToggle)}
+            checked={musicToggle}
+          />
+          <span className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-white opacity-0 peer-checked:opacity-100'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='h-3.5 w-3.5'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+              stroke='currentColor'
+              stroke-width='1'
+            >
+              <path
+                fill-rule='evenodd'
+                d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                clip-rule='evenodd'
+              ></path>
+            </svg>
+          </span>
+        </label>
+        🎵 Music
+      </div>
     </div>
   );
 }
