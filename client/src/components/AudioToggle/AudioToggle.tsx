@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
-import { useSound } from '@/contexts/SoundContext';
-import { SoundToggleType } from '@/types/SoundToggle.type';
+import { useAudio } from '@/contexts/AudioContext';
+import { AudioToggleType } from '@/types/AudioToggleType';
 
-export default function SoundToggle(): ReactElement {
+export default function AudioToggle(): ReactElement {
   // CONTEXT STATE
-  const { music, handleToggleMusic, sound, handleToggleSound }: SoundToggleType = useSound();
+  const { music, handleToggleMusic, sound, handleToggleSound }: AudioToggleType = useAudio();
 
   return (
     <div className='inline-flex items-center gap-6 pt-3 text-2xl font-bold'>

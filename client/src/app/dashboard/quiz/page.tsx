@@ -1,11 +1,22 @@
 'use client';
 
+// CORE MODULE/HOOK IMPORTS
 import { JSX, useEffect, useState } from 'react';
+
+// MODULE IMPORTS
+import { motion } from 'framer-motion';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import useSound from 'use-sound';
+
+// CUSTOM HOOK IMPORTS
 import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
-import { useSession } from '@/contexts/SessionContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSession } from '@/contexts/SessionContext';
+
+// COMPONENT IMPORTS
 import QuizModule from '@/components/QuizModule/QuizModule';
 import Leaderboard from '@/components/Leaderboard/Leaderboard';
 import PlayerAnswerSummary from '@/components/PlayerAnswerSummary/PlayerAnswerSummary';
@@ -13,12 +24,12 @@ import PlayerAnswerGraph from '@/components/PlayerAnswerGraph/PlayerAnswerGraph'
 import FinalScoreboard from '@/components/FinalScoreboard/FinalScoreboard';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 import HostQuestionDisplay from '@/components/HostQuestionDisplay/HostQuestionDisplay';
+import AudioToggle from '@/components/AudioToggle/AudioToggle';
+
+// TYPE / INTERFACE / ENUM IMPORTS
 import { QuizPhase } from '@/enums/QuizPhase.enum';
 import { QuizQuestion, QuizSession } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
-import { motion } from 'framer-motion';
-import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-import useSound from 'use-sound';
 
 // PAGE CONSTANTS
 const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
@@ -45,9 +56,10 @@ export default function QuizPage(): JSX.Element {
   const { socket, disconnect } = useWebSocket();
   const { sessionId, clearSession, setPlayers, players } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
+  const { music, sound } = useAudio();
 
   // MOUNT GONG SOUND
-  // const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
+  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
 
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {
@@ -113,7 +125,6 @@ export default function QuizPage(): JSX.Element {
     });
 
     // PLAYER JOINED SESSION
-    // *** ADD LOGIC TO EMIT QUESTION DATA
     socket.on('player-joined', (updatedPlayers: Player[]) => {
       setPlayers(updatedPlayers);
     });
@@ -195,16 +206,16 @@ export default function QuizPage(): JSX.Element {
   }, [phase, socket, sessionId, isHost, press]);
 
   // PLAY GONG SOUND ONCE WHEN ENTERING LEADERBOARD PHASE
-  // useEffect(() => {
-  //   if (phase === QuizPhase.AnswerSummary && isHost) {
-  //     playGong(); // PLAY GONG ONCE
-  //   }
-  //
-  //   STOP GONG WHEN RETURNING TO QUESTION PHASE
-  // if (phase !== QuizPhase.AnswerSummary && phase !== QuizPhase.Leaderboard) {
-  //   gongSound?.stop();
-  //   }
-  // }, [phase, playGong, gongSound, isHost]);
+  useEffect(() => {
+    if (phase === QuizPhase.AnswerSummary && isHost && sound) {
+      playGong(); // PLAY GONG ONCE
+    }
+
+    // STOP GONG WHEN RETURNING TO QUESTION PHASE
+    if (phase !== QuizPhase.AnswerSummary && phase !== QuizPhase.Leaderboard) {
+      gongSound?.stop();
+    }
+  }, [phase, playGong, gongSound, isHost]);
 
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
@@ -257,10 +268,13 @@ export default function QuizPage(): JSX.Element {
   // MAIN RENDER
   return (
     <div className='flex flex-col items-center justify-center'>
-      {/* QUIZ BACKGROUND MUSIC (ONLY HOST PLAYS IT DURING QUESTION PHASE) */}
-      {/*{isHost && phase === QuizPhase.Question && (*/}
-      {/*  <BackgroundMusic key={musicKey} tracks={quizTracks} />*/}
-      {/*)}*/}
+      {/* QUIZ BACKGROUND MUSIC */}
+      {isHost && music && phase === QuizPhase.Question && (
+        <BackgroundMusic key={musicKey} tracks={quizTracks} />
+      )}
+
+      {/* AUDIO TOGGLE */}
+      <div className={'pb-4'}>{isHost && <AudioToggle />}</div>
 
       {/* SESSION ID DISPLAY */}
       {isHost && sessionId && (

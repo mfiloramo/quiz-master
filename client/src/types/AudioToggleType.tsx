@@ -1,4 +1,4 @@
-export type SoundToggleType = {
+export type AudioToggleType = {
   sound: boolean;
   handleToggleSound: () => boolean;
   music: boolean;

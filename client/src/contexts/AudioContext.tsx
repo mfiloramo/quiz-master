@@ -10,10 +10,10 @@ import React, {
 } from 'react';
 
 // CONTEXT INSTANCE
-const SoundContext = createContext<any | null>(null);
+const AudioContext = createContext<any | null>(null);
 
 // PROVIDER COMPONENT
-export function SoundProvider({ children }: { children: ReactNode }) {
+export function AudioProvider({ children }: { children: ReactNode }) {
   // LOCAL STATES
   // TODO: THIS WILL LATER SHOW USER'S STATE ACCORDING TO PERSONAL SETTINGS
   const [music, setMusic] = useState<boolean>(true);
@@ -22,7 +22,7 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   // LOAD FROM LOCALSTORAGE ON INIT
   useEffect(() => {
     const storedMusic = localStorage.getItem('music');
-    const storedSound = localStorage.getItem('sound');
+    const storedSound = localStorage.getItem('audio');
     if (storedMusic !== null) setMusic(storedMusic === 'true');
     if (storedSound !== null) setSound(storedSound === 'true');
   }, []);
@@ -46,17 +46,17 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <SoundContext.Provider value={{ music, handleToggleMusic, sound, handleToggleSound }}>
+    <AudioContext.Provider value={{ music, handleToggleMusic, sound, handleToggleSound }}>
       {children}
-    </SoundContext.Provider>
+    </AudioContext.Provider>
   );
 }
 
 // CUSTOM HOOK
-export function useSound() {
-  const context = useContext(SoundContext);
+export function useAudio() {
+  const context = useContext(AudioContext);
   if (!context) {
-    throw new Error('useSound must be used within a SoundProvider');
+    throw new Error('useAudio must be used within an AudioProvider');
   }
   return context;
 }

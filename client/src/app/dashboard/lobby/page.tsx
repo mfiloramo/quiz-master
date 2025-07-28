@@ -6,11 +6,11 @@ import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
+import { useAudio } from '@/contexts/AudioContext';
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
-import SoundToggle from '@/components/SoundToggle/SoundToggle';
-import { useSound } from '@/contexts/SoundContext';
+import AudioToggle from '@/components/AudioToggle/AudioToggle';
 
 // LOAD LOBBY BACKGROUND MUSIC TRACKS
 const lobbyTracks = ['/audio/lobby-groove-a.mp3', '/audio/lobby-groove-b.mp3'];
@@ -26,8 +26,8 @@ export default function LobbyPage() {
   const { socket, disconnect } = useWebSocket();
   const { players, setPlayers, clearSession, sessionId } = useSession();
   const { isHost } = useAuth();
-  const { selectedQuiz, resetQuiz, setLockedIn } = useQuiz();
-  const { music } = useSound(); // GET MUSIC FLAG FROM CONTEXT
+  const { selectedQuiz, resetQuiz } = useQuiz();
+  const { music } = useAudio();
 
   // EMIT check-session WHEN NON-HOST JOINS
   useEffect(() => {
@@ -217,7 +217,7 @@ export default function LobbyPage() {
       </motion.button>
 
       {/* MUSIC/SOUND TOGGLE (SELF-CONTAINED) */}
-      <SoundToggle />
+      <AudioToggle />
     </div>
   );
 }
