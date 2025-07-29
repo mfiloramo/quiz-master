@@ -3,7 +3,6 @@ import cors, { CorsOptions } from 'cors';
 import * as http from 'node:http';
 import { Server } from 'socket.io';
 import { sequelize } from './config/sequelize';
-import redisClient from './config/redis';
 import * as dotenv from 'dotenv';
 
 // LOAD ENVIRONMENT VARIABLES
@@ -17,6 +16,7 @@ import { questionRouter } from "./routers/question.router";
 import { sessionRouter } from "./routers/session.router";
 import { playerRouter } from "./routers/player.router";
 import { webSocketRouter } from "./routers/websocket.router";
+import { redisClient, connectRedis } from './config/redis';
 
 
 // GLOBAL VARIABLES
@@ -65,6 +65,7 @@ app.use('*', (req, res): void => {
   res.status(404).send('Resource not found');
 });
 
+
 // DATABASE CONNECTION AND SERVER STARTUP
 const startServer = async (): Promise<void> => {
   try {
@@ -72,19 +73,13 @@ const startServer = async (): Promise<void> => {
     await sequelize.authenticate();
     console.log('Database connected...');
 
-    // CONNECT TO REDIS CACHE
-
+    // CONNECT TO REDIS
+    await connectRedis();
 
     // RUN SERVER
     server.listen(PORT, () => {
       console.log(`Server running on port: ${PORT}...`);
     });
-
-    app.get('/', async (req, res): Promise<void> => {
-      const value = await redisClient.get('test');
-      res.send(`Value from Redis: ${ value }`);
-
-    })
   } catch (error) {
     console.error('Database connection failed:', error);
     process.exit(1);

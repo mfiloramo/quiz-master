@@ -5,7 +5,7 @@ import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
-import session from '../models/Session';
+import { redisClient } from '../config/redis';
 
 
 // MAIN SOCKET CONTROLLER CLASS
@@ -124,7 +124,12 @@ export class WebSocketController {
     }
 
     try {
-      // QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
+      // CACHE HIT: RETRIEVE QUIZ DATA FROM CACHE
+      console.log('debug');
+      const testValue = await redisClient.get('test');
+      console.log(testValue);
+
+      // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
       const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
         replacements: { quizId: session.quizId },
       });
