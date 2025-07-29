@@ -59,10 +59,7 @@ export class QuestionController {
   }
 
   // GET ALL QUESTIONS BY QUIZ ID
-  static async getQuestionsByQuizId(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
+  static async getQuestionsByQuizId(req: Request, res: Response): Promise<void> {
     try {
       const { quizId } = req.params;
       const questions: any[] = await sequelize.query(

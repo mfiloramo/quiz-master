@@ -1,8 +1,9 @@
 import express, { Express } from 'express';
 import cors, { CorsOptions } from 'cors';
-import * as http from "node:http";
+import * as http from 'node:http';
 import { Server } from 'socket.io';
-import { sequelize } from "./config/sequelize";
+import { sequelize } from './config/sequelize';
+import redisClient from './config/redis';
 import * as dotenv from 'dotenv';
 
 // LOAD ENVIRONMENT VARIABLES
@@ -65,19 +66,30 @@ app.use('*', (req, res): void => {
 });
 
 // DATABASE CONNECTION AND SERVER STARTUP
-// START SERVER
 const startServer = async (): Promise<void> => {
   try {
+    // CONNECT TO SQL DATABASE
     await sequelize.authenticate();
     console.log('Database connected...');
 
+    // CONNECT TO REDIS CACHE
+
+
+    // RUN SERVER
     server.listen(PORT, () => {
       console.log(`Server running on port: ${PORT}...`);
     });
+
+    app.get('/', async (req, res): Promise<void> => {
+      const value = await redisClient.get('test');
+      res.send(`Value from Redis: ${ value }`);
+
+    })
   } catch (error) {
     console.error('Database connection failed:', error);
     process.exit(1);
   }
 };
 
-startServer();
+// START SERVER
+startServer().then((response: any) => response);
