@@ -54,7 +54,7 @@ export default function QuizPage(): JSX.Element {
   const router = useRouter();
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();
-  const { sessionId, clearSession, setPlayers, players } = useSession();
+  const { sessionId, clearSession, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
   const { music, sound } = useAudio();
 

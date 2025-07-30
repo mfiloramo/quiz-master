@@ -14,9 +14,9 @@ export default function TeachersPage(): ReactElement {
           'mx-auto px-5 py-14 text-center text-6xl font-bold sm:px-12 md:text-7xl lg:px-24'
         }
       >
-        <span className={'drop-shadow-strong text-orange-300'}>Fuel Their Curiosity.</span>
+        <span className={'text-orange-200 drop-shadow-strong'}>Fuel Their Curiosity.</span>
         <br />
-        <span className={'drop-shadow-strong text-cyan-300'}>Track Their Growth.</span>
+        <span className={'text-cyan-300 drop-shadow-strong'}>Track Their Growth.</span>
       </p>
 
       {/* PAGE SECTIONS*/}

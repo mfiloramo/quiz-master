@@ -8,8 +8,6 @@ const router: Router = express.Router();
 router.use(authenticateJWT);
 
 router.post("/:quizId", QuestionController.addQuestion);
-router.get("/", QuestionController.getAllQuestions);
-router.get("/:questionId", QuestionController.getQuestionById);
 router.get("/quiz/:quizId/", QuestionController.getQuestionsByQuizId);
 router.put("/:questionId", QuestionController.updateQuestion);
 router.delete("/:questionId", QuestionController.deleteQuestion);

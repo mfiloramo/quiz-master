@@ -1,8 +1,9 @@
 import express, { Express } from 'express';
 import cors, { CorsOptions } from 'cors';
-import * as http from "node:http";
+import * as http from 'node:http';
 import { Server } from 'socket.io';
-import { sequelize } from "./config/sequelize";
+import { sequelize } from './config/sequelize';
+import { connectRedis } from './config/redis';
 import * as dotenv from 'dotenv';
 
 // LOAD ENVIRONMENT VARIABLES
@@ -13,10 +14,7 @@ import { authRouter } from "./routers/auth.router";
 import { userRouter } from "./routers/user.router";
 import { quizRouter } from "./routers/quiz.router";
 import { questionRouter } from "./routers/question.router";
-import { sessionRouter } from "./routers/session.router";
-import { playerRouter } from "./routers/player.router";
 import { webSocketRouter } from "./routers/websocket.router";
-
 
 // GLOBAL VARIABLES
 const app: Express = express();
@@ -53,8 +51,6 @@ app
   .use('/api/users', userRouter)
   .use('/api/quizzes', quizRouter)
   .use('/api/questions', questionRouter)
-  .use('/api/sessions', sessionRouter)
-  .use('/api/players', playerRouter);
 
 // ATTACH WEBSOCKET ROUTES
 webSocketRouter(io);
@@ -65,12 +61,16 @@ app.use('*', (req, res): void => {
 });
 
 // DATABASE CONNECTION AND SERVER STARTUP
-// START SERVER
 const startServer = async (): Promise<void> => {
   try {
+    // CONNECT TO SQL DATABASE
     await sequelize.authenticate();
     console.log('Database connected...');
 
+    // CONNECT TO REDIS
+    await connectRedis();
+
+    // RUN SERVER
     server.listen(PORT, () => {
       console.log(`Server running on port: ${PORT}...`);
     });
@@ -80,4 +80,5 @@ const startServer = async (): Promise<void> => {
   }
 };
 
-startServer();
+// START SERVER
+startServer().then((response: any) => response);
