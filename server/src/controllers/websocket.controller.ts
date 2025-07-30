@@ -124,7 +124,6 @@ export class WebSocketController {
     }
 
     try {
-      // TODO: MOVE THIS TO SESSION/CONTROLLER LOGIC
       // GENERATE REDIS CACHE KEY
       const cacheKey = `quiz:${session.quizId}:questions`;
 
