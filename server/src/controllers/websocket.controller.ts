@@ -134,11 +134,11 @@ export class WebSocketController {
 
       if (cached) {
         // CACHE HIT — PARSE QUIZZES FROM REDIS
-        console.log('Cache hit for quiz by quiz ID')
+        console.log('Cache Hit: Quiz Questions...');
         questions = JSON.parse(cached);
       } else {
         // CACHE MISS — QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
-        console.log('Cache miss for quiz by quiz ID')
+        console.log('Cache Miss: Quiz Questions...');
 
         // QUERY DATABASE FOR QUIZ QUESTIONS
         const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
