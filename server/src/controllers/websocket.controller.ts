@@ -124,24 +124,37 @@ export class WebSocketController {
     }
 
     try {
-      // CACHE HIT: RETRIEVE QUIZ DATA FROM CACHE
-      console.log('debug');
-      const testValue = await redisClient.get('test');
-      console.log(testValue);
+      // GENERATE REDIS CACHE KEY
+      const cacheKey = `quiz:${session.quizId}:questions`;
 
-      // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
-      const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
-        replacements: { quizId: session.quizId },
-      });
+      // CACHE HIT: ATTEMPT TO RETRIEVE QUIZ QUESTIONS FROM REDIS
+      const cached = await redisClient.get(cacheKey);
 
-      // FORMAT RAW DATABASE QUESTION DATA
-      const formattedQuestions: QuestionAttributes[] = result[0].map((question: any) => ({
-        ...question,
-        options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
-      }));
+      let questions: QuestionAttributes[];
+
+      if (cached) {
+        // CACHE HIT — PARSE QUIZZES FROM REDIS
+        questions = JSON.parse(cached);
+      } else {
+        // CACHE MISS — QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
+        const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
+          replacements: { quizId: session.quizId },
+        });
+
+        // FORMAT RAW DATABASE QUESTION DATA
+        questions = result[0].map((question: any) => ({
+          ...question,
+          options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
+        }));
+
+        // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
+        await redisClient.set(cacheKey, JSON.stringify(questions), {
+          EX: 600 // TTL — EXPIRE CACHED DATA AFTER 600 SECONDS
+        });
+      }
 
       // ASSIGN QUESTIONS AND MARK SESSION AS STARTED
-      session.questions = formattedQuestions;
+      session.questions = questions;
       session.isStarted = true;
 
       // NOTIFY ALL CLIENTS THAT SESSION STARTED
@@ -151,16 +164,16 @@ export class WebSocketController {
       session.clearGameStartTimeout();
 
       // SEND FIRST QUESTION AND START TIMER
-      const firstQuestion = formattedQuestions[0];
+      const firstQuestion = questions[0];
       if (firstQuestion) {
         this.emitQuestionWithTimeout(session);
       }
+
     } catch (error: any) {
       console.error('Error starting session:', error);
       socket.emit('error', 'Failed to start quiz.');
     }
   }
-
   // CHECK FOR EXISTING SESSION
   public async checkSession(socket: Socket, data: { sessionId: string }): Promise<void> {
     const { sessionId } = data;
