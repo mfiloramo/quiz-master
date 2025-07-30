@@ -49,7 +49,6 @@ export class QuizController {
 
   // GET QUIZZES BY USER ID
   static async getQuizzesByUserId(req: Request, res: Response): Promise<void> {
-    console.log('getQuizzesByUserId pinged...');
     try {
       // DESTRUCTURE USER ID
       const { userId } = req.params;
@@ -64,12 +63,10 @@ export class QuizController {
 
       if (cached) {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
-        console.log('Cache hit: loading quizzes from Redis...');
         quizzes = JSON.parse(cached);
         // SEND CACHED DATA
         res.send(quizzes[0]);
       } else {
-        console.log('Cache miss: loading quizzes from db...')
         // CACHE MISS — QUERY DATABASE FOR ALL QUIZZES BELONGING TO USER
         const quizzes: any[] = await sequelize.query(
           "EXECUTE GetQuizzesByUserId :userId",

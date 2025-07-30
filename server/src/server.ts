@@ -13,8 +13,6 @@ import { authRouter } from "./routers/auth.router";
 import { userRouter } from "./routers/user.router";
 import { quizRouter } from "./routers/quiz.router";
 import { questionRouter } from "./routers/question.router";
-import { sessionRouter } from "./routers/session.router";
-import { playerRouter } from "./routers/player.router";
 import { webSocketRouter } from "./routers/websocket.router";
 import { redisClient, connectRedis } from './config/redis';
 
@@ -54,8 +52,6 @@ app
   .use('/api/users', userRouter)
   .use('/api/quizzes', quizRouter)
   .use('/api/questions', questionRouter)
-  .use('/api/sessions', sessionRouter)
-  .use('/api/players', playerRouter);
 
 // ATTACH WEBSOCKET ROUTES
 webSocketRouter(io);
