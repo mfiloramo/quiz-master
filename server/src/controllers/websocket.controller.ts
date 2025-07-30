@@ -134,7 +134,7 @@ export class WebSocketController {
 
       if (cached) {
         // CACHE HIT — PARSE QUIZZES FROM REDIS
-        console.log('Cache Hit: Quiz Questions...');
+        console.log('Cache hit: quiz questions...');
         questions = JSON.parse(cached);
       } else {
         // CACHE MISS — QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ

@@ -10,12 +10,12 @@ if (process.env.NODE_ENV === 'production') {
       port: Number(process.env.REDIS_PORT),
     },
     username: process.env.REDIS_USERNAME,
-    password: process.env.REDIS_PASSWORD,
+    password: process.env.REDIS_PASSWORD
   });
 } else {
   // DEVELOPMENT CONFIGURATION
   redisClient = createClient({
-    url: process.env.REDIS_URL || 'redis://localhost:6379',
+    url: process.env.REDIS_URL
   });
 }
 
