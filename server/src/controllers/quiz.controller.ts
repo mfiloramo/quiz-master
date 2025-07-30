@@ -63,7 +63,7 @@ export class QuizController {
 
       if (cached) {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
-        console.log('Cache Hit: User Quizzes...');
+        console.log('Cache hit: user quizzes...');
         quizzes = JSON.parse(cached);
         // SEND CACHED DATA
         res.send(quizzes[0]);
@@ -76,8 +76,7 @@ export class QuizController {
           },
         );
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
-        console.log('Cache Miss: User Quizzes...');
-        console.log('NODE_ENV:', process.env.NODE_ENV);
+        console.log('Cache miss: user quizzes...');
         await redisClient.set(cacheKey, JSON.stringify(quizzes));
 
         // SEND NEW DATA
