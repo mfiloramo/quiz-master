@@ -31,7 +31,7 @@ export default function LibraryPage(): ReactElement {
 
     setSelectedQuiz(null);
 
-    const fetchQuizzes = async () => {
+    const fetchQuizzes = async (): Promise<void> => {
       try {
         const { data } = await axiosInstance.get<Quiz[]>(`/quizzes/user/${user.id}`);
         setQuizzes(data);
@@ -41,20 +41,20 @@ export default function LibraryPage(): ReactElement {
     };
 
     fetchQuizzes().then((response: any) => response);
-  }, [user?.id, router]);
+  }, [user!.id, router]);
 
   // HANDLE SELECTING A QUIZ
-  const handleSelectQuiz = (quiz: Quiz) => {
+  const handleSelectQuiz = (quiz: Quiz): void => {
     setSelectedQuiz(quiz);
   };
 
   // HANDLE DELETING A QUIZ FROM UI AFTER DELETE
-  const handleDeleteQuiz = (quizId: number) => {
+  const handleDeleteQuiz = (quizId: number): void => {
     setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
   };
 
   // NAVIGATE TO HOST PAGE
-  const navToHostQuiz = () => {
+  const navToHostQuiz = (): void => {
     if (!selectedQuiz) {
       alert('Please select a quiz to start!');
       return;
@@ -63,7 +63,7 @@ export default function LibraryPage(): ReactElement {
   };
 
   // NAVIGATE TO EDIT PAGE
-  const navToEdit = () => {
+  const navToEdit = (): void => {
     if (!selectedQuiz || selectedQuiz.user_id !== user!.id) {
       alert('Please select a quiz to start!');
       return;

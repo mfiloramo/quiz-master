@@ -5,7 +5,7 @@ import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
-import session from '../models/Session';
+import { redisClient } from '../config/redis';
 
 
 // MAIN SOCKET CONTROLLER CLASS
@@ -124,19 +124,39 @@ export class WebSocketController {
     }
 
     try {
-      // QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
-      const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
-        replacements: { quizId: session.quizId },
-      });
+      // GENERATE REDIS CACHE KEY
+      const cacheKey = `quiz:${session.quizId}:questions`;
 
-      // FORMAT RAW DATABASE QUESTION DATA
-      const formattedQuestions: QuestionAttributes[] = result[0].map((question: any) => ({
-        ...question,
-        options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
-      }));
+      // CACHE HIT: ATTEMPT TO RETRIEVE QUIZ QUESTIONS FROM REDIS
+      const cached = await redisClient.get(cacheKey);
+
+      let questions: QuestionAttributes[];
+
+      if (cached) {
+        // CACHE HIT — PARSE QUIZZES FROM REDIS
+        console.log('Cache Hit: Quiz Questions...');
+        questions = JSON.parse(cached);
+      } else {
+        // CACHE MISS — QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
+        console.log('Cache Miss: Quiz Questions...');
+
+        // QUERY DATABASE FOR QUIZ QUESTIONS
+        const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
+          replacements: { quizId: session.quizId },
+        });
+
+        // FORMAT RAW DATABASE QUESTION DATA
+        questions = result[0].map((question: any) => ({
+          ...question,
+          options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
+        }));
+
+        // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
+        await redisClient.set(cacheKey, JSON.stringify(questions));
+      }
 
       // ASSIGN QUESTIONS AND MARK SESSION AS STARTED
-      session.questions = formattedQuestions;
+      session.questions = questions;
       session.isStarted = true;
 
       // NOTIFY ALL CLIENTS THAT SESSION STARTED
@@ -146,16 +166,16 @@ export class WebSocketController {
       session.clearGameStartTimeout();
 
       // SEND FIRST QUESTION AND START TIMER
-      const firstQuestion = formattedQuestions[0];
+      const firstQuestion = questions[0];
       if (firstQuestion) {
         this.emitQuestionWithTimeout(session);
       }
+
     } catch (error: any) {
       console.error('Error starting session:', error);
       socket.emit('error', 'Failed to start quiz.');
     }
   }
-
   // CHECK FOR EXISTING SESSION
   public async checkSession(socket: Socket, data: { sessionId: string }): Promise<void> {
     const { sessionId } = data;

@@ -19,7 +19,7 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     setCurrentIndex(0); // RESET QUESTION INDEX
   };
 
-  // MEMOIZE CONTEXT VALUE TO PREVENT UNNECESSARY RERENDERS
+  // MEMOIZE CONTEXT VALUE TO PREVENT UNNECESSARY RE-RENDERS
   const value = useMemo(
     () => ({
       selectedQuiz,

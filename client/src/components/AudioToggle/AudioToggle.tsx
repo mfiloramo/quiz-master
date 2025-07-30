@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { useAudio } from '@/contexts/AudioContext';
-import { AudioToggleType } from '@/types/AudioToggleType';
+import { AudioToggleType } from '@/types/AudioToggle.type';
 
 export default function AudioToggle(): ReactElement {
   // CONTEXT STATE
