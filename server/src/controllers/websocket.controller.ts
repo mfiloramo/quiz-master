@@ -124,6 +124,7 @@ export class WebSocketController {
     }
 
     try {
+      // TODO: MOVE THIS TO SESSION/CONTROLLER LOGIC
       // GENERATE REDIS CACHE KEY
       const cacheKey = `quiz:${session.quizId}:questions`;
 
@@ -134,9 +135,13 @@ export class WebSocketController {
 
       if (cached) {
         // CACHE HIT — PARSE QUIZZES FROM REDIS
+        console.log('Cache hit for quiz by quiz ID')
         questions = JSON.parse(cached);
       } else {
         // CACHE MISS — QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
+        console.log('Cache miss for quiz by quiz ID')
+
+        // QUERY DATABASE FOR QUIZ QUESTIONS
         const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
           replacements: { quizId: session.quizId },
         });
@@ -148,9 +153,7 @@ export class WebSocketController {
         }));
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
-        await redisClient.set(cacheKey, JSON.stringify(questions), {
-          EX: 600 // TTL — EXPIRE CACHED DATA AFTER 600 SECONDS
-        });
+        await redisClient.set(cacheKey, JSON.stringify(questions));
       }
 
       // ASSIGN QUESTIONS AND MARK SESSION AS STARTED

@@ -49,7 +49,6 @@ export class QuestionController {
   // UPDATE EXISTING QUESTION
   static async updateQuestion(req: Request, res: Response): Promise<void> {
     // TODO: DELETE QUESTION REDIS KEY SO THAT HOST GETS UPDATED QUIZ NEXT SESSION/QUERY
-    // ...
 
     try {
       const { questionId, question, options, correct } = req.body;

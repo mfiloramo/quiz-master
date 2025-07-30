@@ -3,6 +3,7 @@ import cors, { CorsOptions } from 'cors';
 import * as http from 'node:http';
 import { Server } from 'socket.io';
 import { sequelize } from './config/sequelize';
+import { connectRedis } from './config/redis';
 import * as dotenv from 'dotenv';
 
 // LOAD ENVIRONMENT VARIABLES
@@ -14,8 +15,6 @@ import { userRouter } from "./routers/user.router";
 import { quizRouter } from "./routers/quiz.router";
 import { questionRouter } from "./routers/question.router";
 import { webSocketRouter } from "./routers/websocket.router";
-import { redisClient, connectRedis } from './config/redis';
-
 
 // GLOBAL VARIABLES
 const app: Express = express();
@@ -60,7 +59,6 @@ webSocketRouter(io);
 app.use('*', (req, res): void => {
   res.status(404).send('Resource not found');
 });
-
 
 // DATABASE CONNECTION AND SERVER STARTUP
 const startServer = async (): Promise<void> => {
