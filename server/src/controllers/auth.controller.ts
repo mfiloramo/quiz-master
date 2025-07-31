@@ -52,6 +52,7 @@ export class AuthController {
     try {
       // DESTRUCTURE EMAIL AND PASSWORD DATA FROM REQUEST BODY
       const { email, password } = req.body;
+      console.log('Password is:', password);
 
       // GENERATE REDIS CACHE KEY
       const cacheKey: string = `user:${email}`;
@@ -74,24 +75,23 @@ export class AuthController {
         )
 
         // CHECK USER VALIDITY
-        const user = rows[0];
+        user = rows[0];
 
         // SET USER DATA
         await redisClient.set(cacheKey, JSON.stringify(user));
-
-        console.log('debug password (inside cache check):', password);
 
         // CHECK IF USER IS VALID
         if (!user) {
           return res.status(401).send("Invalid email or password");
         }
       }
-      console.log('debug password outside cache check, before bcrypt validate:', password);
+
+      console.log('user:', user);
 
       // CHECK PASSWORD VALIDITY
       const isPasswordValid: boolean = await bcrypt.compare(
         password,
-        user!.password,
+        user.password,
       );
       if (!isPasswordValid) {
         return res.status(401).send("Invalid email or password");
