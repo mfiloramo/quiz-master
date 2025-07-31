@@ -79,10 +79,14 @@ export class AuthController {
         // SET USER DATA
         await redisClient.set(cacheKey, JSON.stringify(user));
 
+        console.log('debug password (inside cache check):', password);
+
+        // CHECK IF USER IS VALID
         if (!user) {
           return res.status(401).send("Invalid email or password");
         }
       }
+      console.log('debug password outside cache check, before bcrypt validate:', password);
 
       // CHECK PASSWORD VALIDITY
       const isPasswordValid: boolean = await bcrypt.compare(
