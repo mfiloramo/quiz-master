@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar/Navbar';
 import { Poppins } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
+import React from 'react';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['200', '400'] });
 
@@ -20,9 +21,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className='bg-white antialiased'>
         <AuthProvider>
           <ScrollToTop />
+          {/* NAVBAR */}
           <Navbar />
+
+          {/* APP CHILDREN */}
           <main className='pt-16'>{children}</main>
+
+          {/* VERCEL SPEED INSIGHTS */}
           <SpeedInsights />
+
+          {/* VERCEL APP TELEMETRY */}
           <Analytics />
         </AuthProvider>
       </body>

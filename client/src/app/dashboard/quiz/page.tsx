@@ -275,7 +275,9 @@ export default function QuizPage(): JSX.Element {
 
       {/* HOST CONTROLS */}
       {isHost && sessionId && (
-        <div className={'z-10 mb-3 flex flex-row gap-2 text-3xl text-sky-950'}>
+        <div
+          className={'z-10 mb-3 flex flex-col gap-2 align-middle text-3xl text-sky-950 sm:flex-row'}
+        >
           {/* AUDIO TOGGLE */}
           <div className={'mr-8'}>
             <AudioToggle />
@@ -285,7 +287,6 @@ export default function QuizPage(): JSX.Element {
         </div>
       )}
 
-      {/* TODO: EXTRACT VIEW PHASE ENGINE AS COMPONENT */}
       {/* PLAYER QUESTION VIEW */}
       {phase === QuizPhase.Question && currentQuestion && !isHost && (
         <QuizModule

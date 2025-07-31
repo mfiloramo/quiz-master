@@ -28,7 +28,7 @@ export class QuizController {
       // GENERATE REDIS CACHE KEY
       const cacheKey: string = `discover:all:quizzes`;
 
-      // CACHE HIT: ATTEMPT TO RETRIEVE ALL PUBLIC QUIZZES
+      // ATTEMPT TO GET CACHED DATA
       const cached: string | null = await redisClient.get(cacheKey);
 
       let quizzes: any[];
