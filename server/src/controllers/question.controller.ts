@@ -29,6 +29,7 @@ export class QuestionController {
     }
   }
 
+  // TODO: IS THIS BEING USED? ONLY WEBSOCKET CONTROLLER INVOKES THIS PROCEDURE AT STARTSESSION
   // GET ALL QUESTIONS BY QUIZ ID
   static async getQuestionsByQuizId(req: Request, res: Response): Promise<void> {
     try {
@@ -36,7 +37,7 @@ export class QuestionController {
       const questions: any[] = await sequelize.query(
         "EXECUTE GetQuestionsByQuizId :quizId",
         {
-          replacements: { quizId },
+          replacements: { quizId }
         },
       );
       res.send(questions[0]);

@@ -273,13 +273,15 @@ export default function QuizPage(): JSX.Element {
         <BackgroundMusic key={musicKey} tracks={quizTracks} />
       )}
 
-      {/* AUDIO TOGGLE */}
-      <div className={'pb-4'}>{isHost && <AudioToggle />}</div>
-
-      {/* SESSION ID DISPLAY */}
+      {/* HOST CONTROLS */}
       {isHost && sessionId && (
-        <div className={'text-sky-95000 left-0 top-0 z-50 w-screen text-center text-3xl'}>
-          Join with session ID: <span className={'font-bold'}>{sessionId}</span>
+        <div className={'z-10 mb-3 flex flex-row gap-2 text-3xl text-sky-950'}>
+          {/* AUDIO TOGGLE */}
+          <div className={'mr-8'}>
+            <AudioToggle />
+          </div>
+          {/* SESSION ID DISPLAY */}
+          Join with session ID:<span className={'font-bold'}>{sessionId}</span>
         </div>
       )}
 

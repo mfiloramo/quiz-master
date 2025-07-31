@@ -125,20 +125,20 @@ export class WebSocketController {
 
     try {
       // GENERATE REDIS CACHE KEY
-      const cacheKey = `quiz:${session.quizId}:questions`;
+      const cacheKey: string = `quiz:${session.quizId}:questions`;
 
       // CACHE HIT: ATTEMPT TO RETRIEVE QUIZ QUESTIONS FROM REDIS
-      const cached = await redisClient.get(cacheKey);
+      const cached: string | null = await redisClient.get(cacheKey);
 
       let questions: QuestionAttributes[];
 
       if (cached) {
-        // CACHE HIT — PARSE QUIZZES FROM REDIS
-        console.log('Cache hit: quiz questions...');
+        // CACHE HIT: PARSE QUIZZES FROM REDIS
+        console.log('Cache hit: Quiz questions...');
         questions = JSON.parse(cached);
       } else {
-        // CACHE MISS — QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
-        console.log('Cache Miss: Quiz Questions...');
+        // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
+        console.log('Cache miss: Quiz questions...');
 
         // QUERY DATABASE FOR QUIZ QUESTIONS
         const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {

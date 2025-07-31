@@ -17,7 +17,7 @@ export default function FinalScoreboard(): JSX.Element {
 
   // CHECK FOR VALID PLAYERS LIST
   if (!players || players.length === 0) {
-    return <p className='text-white'>No players available.</p>;
+    return <p className='py-3 text-white'>No players available.</p>;
   }
 
   // SORT PLAYERS LIST BY NAME (LATER SCORE)
