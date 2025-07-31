@@ -7,7 +7,7 @@ export default function AudioToggle(): ReactElement {
   const { music, handleToggleMusic, sound, handleToggleSound }: AudioToggleType = useAudio();
 
   return (
-    <div className='inline-flex items-center gap-6 pt-3 text-2xl font-bold'>
+    <div className='inline-flex items-center gap-6 text-2xl font-bold'>
       {/* MUSIC TOGGLE */}
       <label className='flex cursor-pointer items-center gap-2'>
         <div className='relative h-5 w-5'>
@@ -34,7 +34,7 @@ export default function AudioToggle(): ReactElement {
             </svg>
           </span>
         </div>
-        🎵 Music
+        🎵
       </label>
 
       {/* SOUND TOGGLE */}
@@ -63,7 +63,7 @@ export default function AudioToggle(): ReactElement {
             </svg>
           </span>
         </div>
-        🔊 Sound
+        🔊
       </label>
     </div>
   );

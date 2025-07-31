@@ -25,7 +25,28 @@ export class QuizController {
   // GET ALL QUIZZES
   static async getAllQuizzes(req: Request, res: Response): Promise<void> {
     try {
-      const quizzes: any[] = await sequelize.query("EXECUTE GetAllQuizzes");
+      // GENERATE REDIS CACHE KEY
+      const cacheKey: string = `discover:all:quizzes`;
+
+      // CACHE HIT: ATTEMPT TO RETRIEVE ALL PUBLIC QUIZZES
+      const cached: string | null = await redisClient.get(cacheKey);
+
+      let quizzes: any[];
+
+      if (cached) {
+        // CACHE HIT: ATTEMPT TO RETRIEVE ALL QUIZ QUESTIONS FROM REDIS
+        console.log('Cache hit: All quizzes...');
+        quizzes = JSON.parse(cached);
+      } else {
+        // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
+        console.log('Cache miss: Quiz questions...');
+        quizzes = await sequelize.query("EXECUTE GetAllQuizzes");
+
+        // STORE DATA IN REDIS
+        await redisClient.set(cacheKey, JSON.stringify(quizzes));
+      }
+
+      // SEND ALL PUBLIC QUIZZES
       res.send(quizzes[0]);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
@@ -54,16 +75,16 @@ export class QuizController {
       const { userId } = req.params;
 
       // GENERATE REDIS CACHE KEY
-      const cacheKey = `user:${ userId }:quizzes`;
+      const cacheKey: string = `user:${ userId }:quizzes`;
 
       // CACHE HIT: ATTEMPT TO RETRIEVE USER'S QUIZZES
-      const cached = await redisClient.get(cacheKey);
+      const cached: string | null = await redisClient.get(cacheKey);
 
       let quizzes: Quiz[]
 
       if (cached) {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
-        console.log('Cache hit: user quizzes...');
+        console.log('Cache hit: User quizzes...');
         quizzes = JSON.parse(cached);
         // SEND CACHED DATA
         res.send(quizzes[0]);
@@ -76,7 +97,7 @@ export class QuizController {
           },
         );
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
-        console.log('Cache miss: user quizzes...');
+        console.log('Cache miss: User quizzes...');
         await redisClient.set(cacheKey, JSON.stringify(quizzes));
 
         // SEND NEW DATA
