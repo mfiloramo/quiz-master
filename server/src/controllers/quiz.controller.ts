@@ -2,18 +2,25 @@ import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
 import { redisClient } from '../config/redis';
 import { QuizAttributes } from '../interfaces/QuizAttributes.interface';
+import session from '../models/Session';
 
 export class QuizController {
   // CREATE NEW QUIZ
   static async createQuiz(req: Request, res: Response): Promise<void> {
     try {
+      // DESTRUCTURE QUIZ DATA FROM REEUQEST BODY
       const { userId, username, title, description, visibility } = req.body;
+
+      // EXECUTE STORED PROCEDURE TO CREATE QUIZ AND RETURN NEW QUIZ IN QUERY
       const newQuizId: any = await sequelize.query(
         "EXECUTE CreateQuiz :userId, :username, :title, :description, :visibility",
         {
           replacements: { userId, username, title, description, visibility },
         },
       );
+
+
+
       // SEND NEW QUIZ ID
       res.status(200).json({'newQuizId': newQuizId[0][0].id});
     } catch (error: any) {
@@ -112,13 +119,22 @@ export class QuizController {
   // UPDATE QUIZ BY ID
   static async updateQuiz(req: Request, res: Response): Promise<void> {
     try {
+      // DESTRUCTURE DATA FROM REQUEST BODY
       const { id, title, description, visibility } = req.body;
+
+      // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH UPDATED QUIZ DATA
       await sequelize.query(
         "EXECUTE UpdateQuiz :id, :title, :description, :visibility",
         {
           replacements: { id, title, description, visibility },
         },
-      );
+      ).then(() => {
+        // CLEAR QUIZ FROM CACHE
+        redisClient.del(`quiz:${id}:questions`);
+        console.log('Quiz updated in cache successfully')
+      });
+
+      // SEND SUCCESS RESPONSE TO CLIENT
       res.status(200).send(`Quiz with ID: ${id} updated successfully`);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);

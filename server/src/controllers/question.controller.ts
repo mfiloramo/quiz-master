@@ -29,7 +29,6 @@ export class QuestionController {
     }
   }
 
-  // TODO: IS THIS BEING USED? ONLY WEBSOCKET CONTROLLER INVOKES THIS PROCEDURE AT STARTSESSION
   // GET ALL QUESTIONS BY QUIZ ID
   static async getQuestionsByQuizId(req: Request, res: Response): Promise<void> {
     try {
@@ -49,8 +48,6 @@ export class QuestionController {
 
   // UPDATE EXISTING QUESTION
   static async updateQuestion(req: Request, res: Response): Promise<void> {
-    // TODO: DELETE QUESTION REDIS KEY SO THAT HOST GETS UPDATED QUIZ NEXT SESSION/QUERY
-
     try {
       const { questionId, question, options, correct } = req.body;
       await sequelize.query(
