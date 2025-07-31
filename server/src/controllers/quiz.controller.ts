@@ -87,7 +87,7 @@ export class QuizController {
       // CACHE HIT: ATTEMPT TO RETRIEVE USER'S QUIZZES
       const cached: string | null = await redisClient.get(cacheKey);
 
-      let quizzes: QuizAttributes[]
+      let quizzes: QuizAttributes[];
 
       if (cached) {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
@@ -145,10 +145,19 @@ export class QuizController {
   // DELETE QUIZ BY ID
   static async deleteQuiz(req: Request, res: Response): Promise<void> {
     try {
+      // DESTRUCTURE DATA FROM REQUEST PARAMS
       const { quizId } = req.params;
+
+      // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH DELETE QUIZ DATA
       await sequelize.query("EXECUTE DeleteQuiz :quizId", {
         replacements: { quizId },
+      }).then(() => {
+        // CLEAR QUIZ FROM CACHE
+        redisClient.del(`quiz:${quizId}:questions`);
+        console.log('Quiz updated in cache successfully')
       });
+
+      // SEND SUCCESS RESPONSE TO CLIENT
       res.status(200).send(`Quiz with ID: ${quizId} deleted successfully`);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
