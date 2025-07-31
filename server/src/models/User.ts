@@ -11,6 +11,8 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public email!: string;
   public password!: string;
   public created_at!: Date;
+  public account_type!: string;
+  public isActive!: boolean;
 }
 
 User.init({
