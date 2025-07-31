@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import { sequelize } from "../config/sequelize";
 import jwt from "jsonwebtoken";
 import { EmailService } from "../services/EmailService";
+import { redisClient } from '../config/redis';
+import { UserAttributes } from '../interfaces/UserAttributes.interface';
 
 
 export class AuthController {
@@ -11,8 +13,7 @@ export class AuthController {
     try {
       const { username, email, password, accountType } = req.body;
 
-      console.log({ username, email, password, accountType })
-
+      // HASH PASSWORD
       const saltRounds: number = 10;
       const hashedPassword: string = await bcrypt.hash(password, saltRounds);
 
@@ -29,8 +30,8 @@ export class AuthController {
         }
       );
 
+      // STORE USER RESULT
       const newUserId = result[0]?.id;
-      console.log(newUserId)
 
       // SEND CONFIRMATION EMAIL
       await EmailService.sendConfirmationEmail({
@@ -52,23 +53,41 @@ export class AuthController {
       // DESTRUCTURE EMAIL AND PASSWORD DATA FROM REQUEST BODY
       const { email, password } = req.body;
 
-      // EXECUTE STORED PROCEDURE TO QUERY USER BY EMAIL
-      const [rows]: any = await sequelize.query(
-        "EXECUTE GetUserByEmail :email",
-        { replacements: { email } },
-      );
+      // GENERATE REDIS CACHE KEY
+      const cacheKey: string = `user:${email}`;
 
-      // CHECK USER VALIDITY
-      const user = rows[0];
+      // CACHE HIT: ATTEMPT TO GET CACHED DATA
+      const cached: string | null = await redisClient.get(cacheKey);
 
-      if (!user) {
-        return res.status(401).send("Invalid email or password");
+      let user!: UserAttributes;
+
+      if (cached) {
+        // CACHE HIT: ATTEMPT TO RETRIEVE USER DATA
+        console.log('Cache hit: User data for login...');
+        user = JSON.parse(cached);
+      } else {
+        // CACHE MISS: EXECUTE STORED PROCEDURE TO QUERY USER BY EMAIL
+        console.log('Cache miss: User data for login...');
+        const [ rows ]: any = await sequelize.query(
+          "EXECUTE GetUserByEmail :email",
+          { replacements: { email } }
+        )
+
+        // CHECK USER VALIDITY
+        const user = rows[0];
+
+        // SET USER DATA
+        await redisClient.set(cacheKey, JSON.stringify(user));
+
+        if (!user) {
+          return res.status(401).send("Invalid email or password");
+        }
       }
 
       // CHECK PASSWORD VALIDITY
       const isPasswordValid: boolean = await bcrypt.compare(
         password,
-        user.password,
+        user!.password,
       );
       if (!isPasswordValid) {
         return res.status(401).send("Invalid email or password");
