@@ -52,7 +52,6 @@ export class AuthController {
     try {
       // DESTRUCTURE EMAIL AND PASSWORD DATA FROM REQUEST BODY
       const { email, password } = req.body;
-      console.log('Password is:', password);
 
       // GENERATE REDIS CACHE KEY
       const cacheKey: string = `user:${email}`;
@@ -85,8 +84,6 @@ export class AuthController {
           return res.status(401).send("Invalid email or password");
         }
       }
-
-      console.log('user:', user);
 
       // CHECK PASSWORD VALIDITY
       const isPasswordValid: boolean = await bcrypt.compare(
