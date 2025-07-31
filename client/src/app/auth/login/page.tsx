@@ -28,7 +28,7 @@ export default function LoginPage(): ReactElement {
   }, []);
 
   // HANDLE LOGIN
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError(null);
 
@@ -56,7 +56,7 @@ export default function LoginPage(): ReactElement {
   };
 
   // HANDLE PASSWORD VISIBILITY TOGGLE
-  const handlePasswordToggle = () => {
+  const handlePasswordToggle = (): void => {
     setType((prev) => (prev === 'password' ? 'text' : 'password'));
   };
 

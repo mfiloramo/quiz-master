@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
 import { redisClient } from '../config/redis';
-import Quiz from '../models/Quiz';
+import { QuizAttributes } from '../interfaces/QuizAttributes.interface';
 
 export class QuizController {
   // CREATE NEW QUIZ
@@ -80,7 +80,7 @@ export class QuizController {
       // CACHE HIT: ATTEMPT TO RETRIEVE USER'S QUIZZES
       const cached: string | null = await redisClient.get(cacheKey);
 
-      let quizzes: Quiz[]
+      let quizzes: QuizAttributes[]
 
       if (cached) {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
