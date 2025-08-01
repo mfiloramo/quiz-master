@@ -14,8 +14,8 @@ export class QuizController {
       const newQuizId: any = await sequelize.query(
         "EXECUTE CreateQuiz :userId, :username, :title, :description, :visibility",
         {
-          replacements: { userId, username, title, description, visibility },
-        },
+          replacements: { userId, username, title, description, visibility }
+        }
       );
 
       // SEND NEW QUIZ ID
@@ -129,7 +129,11 @@ export class QuizController {
       ).then(() => {
         // CLEAR QUIZ FROM CACHE
         redisClient.del(`quiz:${id}:questions`);
-        console.log('Quiz updated in cache successfully')
+        console.log('Quiz updated in cache successfully...');
+
+        // CLEAR CACHE KEY CONTAINING ALL QUIZZES
+        redisClient.del(`discover:all:quizzes`);
+        console.log('Quiz Discover list deleted from cache...')
       });
 
       // SEND SUCCESS RESPONSE TO CLIENT
@@ -152,7 +156,7 @@ export class QuizController {
       }).then(() => {
         // CLEAR QUIZ FROM CACHE
         redisClient.del(`quiz:${quizId}:questions`);
-        console.log('Quiz updated in cache successfully')
+        console.log('Quiz deleted from cache successfully...');
       });
 
       // SEND SUCCESS RESPONSE TO CLIENT

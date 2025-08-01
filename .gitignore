@@ -3,3 +3,6 @@
 
 # DEVELOPER DOCUMENTS
 dev-docs
+
+# REDIS DUMP FILE
+dump.rdb
