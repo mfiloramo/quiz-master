@@ -63,7 +63,7 @@ export default function Navbar(): JSX.Element {
               .map(
                 (button: NavLinkType): ReactElement => (
                   <Link
-                    className='ml-5 text-sky-100 transition hover:text-white active:text-sky-100'
+                    className='ml-5 text-sky-100 transition hover:text-amber-300 active:text-amber-100'
                     href={button.path}
                     key={button.label}
                   >
