@@ -1,7 +1,9 @@
 import { createClient, RedisClientType } from 'redis';
 
+// DECLARE REDIS CLIENT
 let redisClient: RedisClientType;
 
+// SET ENVIRONMENT CONFIGURATION
 if (process.env.NODE_ENV === 'production') {
   // PRODUCTION CONFIGURATION
   redisClient = createClient({
@@ -26,7 +28,7 @@ redisClient.on('error', (error: any): void => console.error('Redis error:', erro
 const connectRedis = async (): Promise<void> => {
   try {
     await redisClient.connect();
-    console.log('Redis client connected');
+    console.log('Redis client connected...');
   } catch (error: any) {
     console.error('Failed to connect to Redis:', error);
   }

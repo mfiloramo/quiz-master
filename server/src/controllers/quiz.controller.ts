@@ -2,13 +2,12 @@ import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
 import { redisClient } from '../config/redis';
 import { QuizAttributes } from '../interfaces/QuizAttributes.interface';
-import session from '../models/Session';
 
 export class QuizController {
   // CREATE NEW QUIZ
   static async createQuiz(req: Request, res: Response): Promise<void> {
     try {
-      // DESTRUCTURE QUIZ DATA FROM REEUQEST BODY
+      // DESTRUCTURE QUIZ DATA FROM REQUEST BODY
       const { userId, username, title, description, visibility } = req.body;
 
       // EXECUTE STORED PROCEDURE TO CREATE QUIZ AND RETURN NEW QUIZ IN QUERY
@@ -18,8 +17,6 @@ export class QuizController {
           replacements: { userId, username, title, description, visibility },
         },
       );
-
-
 
       // SEND NEW QUIZ ID
       res.status(200).json({'newQuizId': newQuizId[0][0].id});
@@ -87,7 +84,7 @@ export class QuizController {
       // CACHE HIT: ATTEMPT TO RETRIEVE USER'S QUIZZES
       const cached: string | null = await redisClient.get(cacheKey);
 
-      let quizzes: QuizAttributes[];
+      let quizzes = [];
 
       if (cached) {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
@@ -97,12 +94,13 @@ export class QuizController {
         res.send(quizzes[0]);
       } else {
         // CACHE MISS — QUERY DATABASE FOR ALL QUIZZES BELONGING TO USER
-        const quizzes: any[] = await sequelize.query(
+        quizzes = await sequelize.query(
           "EXECUTE GetQuizzesByUserId :userId",
           {
             replacements: { userId },
           },
         );
+
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         console.log('Cache miss: User quizzes...');
         await redisClient.set(cacheKey, JSON.stringify(quizzes));
