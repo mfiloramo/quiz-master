@@ -29,7 +29,7 @@ export default function BurgerDropdown({ navLinks }: any): ReactElement {
     <motion.nav
       initial={false}
       animate={isOpen ? 'open' : 'closed'}
-      className='relative h-16 w-full'
+      className='relative h-1 w-full'
     >
       <motion.button
         whileTap={{ scale: 0.97 }}
