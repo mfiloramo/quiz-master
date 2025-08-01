@@ -53,6 +53,7 @@ export class AuthController {
       // DESTRUCTURE EMAIL AND PASSWORD DATA FROM REQUEST BODY
       const { email, password } = req.body;
 
+      // TODO: MUST CREATE KEY BASED ON USER ID
       // GENERATE REDIS CACHE KEY
       const cacheKey: string = `user:${email}`;
 
