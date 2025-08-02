@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
 import { redisClient } from '../config/redis';
-import { QuizAttributes } from '../interfaces/QuizAttributes.interface';
 
 export class QuizController {
   // CREATE NEW QUIZ
@@ -148,22 +147,31 @@ export class QuizController {
   static async deleteQuiz(req: Request, res: Response): Promise<void> {
     try {
       // DESTRUCTURE DATA FROM REQUEST PARAMS
-      const { quizId } = req.params;
+      const { userId, quizId } = req.params;
 
       // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH DELETE QUIZ DATA
       await sequelize.query("EXECUTE DeleteQuiz :quizId", {
         replacements: { quizId },
-      }).then(() => {
-        // CLEAR QUIZ FROM CACHE
-        redisClient.del(`quiz:${quizId}:questions`);
-        console.log('Quiz deleted from cache successfully...');
       });
+
+      // CLEAR QUIZ FROM CACHE
+      const deleted = await redisClient.del(`quiz:${quizId}:questions`);
+      if (deleted === 1) {
+        console.log('Quiz deleted from cache successfully...');
+      } else {
+        console.warn('Quiz not found in cache or already deleted...');
+      }
+
+      // TODO: DELETE CACHED "ALL QUIZZES" LIST FROM USER USING ID
+      // const clearedCache = await redisClient.del(`user:${userid}quizzes`)
 
       // SEND SUCCESS RESPONSE TO CLIENT
       res.status(200).send(`Quiz with ID: ${quizId} deleted successfully`);
     } catch (error: any) {
+      // HANDLE ERRORS FROM DB OR REDIS
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");
     }
   }
+
 }
