@@ -1,27 +1,36 @@
-import React, { ReactNode } from 'react';
-import Image from 'next/image';
+'use client';
 
-export default function ImageMarquee(): ReactNode {
+import React from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+
+export default function ImageMarquee() {
+  const images = [...Array(9)].map((_, i) => `/screenshots/${i + 1}.png`);
+  const allImages = [...images, ...images];
+
   return (
-    <>
-      <div
-        className={
-          'mx-auto my-12 h-fit w-full overflow-hidden rounded-lg bg-gradient-to-b from-emerald-600 to-emerald-500 px-4 shadow-xl lg:max-w-[85vw]'
-        }
+    <div className='mx-auto my-12 w-full max-w-[85vw] overflow-hidden rounded-lg bg-gradient-to-b from-emerald-600 to-emerald-500 px-4 shadow-xl'>
+      <motion.div
+        className='flex animate-marquee items-center whitespace-nowrap py-3'
+        aria-hidden='true'
       >
-        <div className='flex max-w-6xl animate-marquee items-center whitespace-nowrap py-3'>
-          {[1, 2, 3, 4, 5, 6, 1, 2, 3, 4].map((item, index) => (
+        {allImages.map((src, index) => (
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.08 }}
+            className='mx-4 min-w-fit'
+          >
             <Image
-              key={index}
-              src={'/images/placeholder-image.png'}
-              width={275}
-              height={275}
-              alt={'placeholder-image'}
-              className='max-w-full rounded-xl px-2 shadow-xl lg:visible'
+              src={src}
+              width={400}
+              height={250}
+              alt={`Screenshot ${index + 1}`}
+              className='rounded-md shadow-xl'
             />
-          ))}
-        </div>
-      </div>
-    </>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
   );
 }
