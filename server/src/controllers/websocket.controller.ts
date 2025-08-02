@@ -176,6 +176,7 @@ export class WebSocketController {
       socket.emit('error', 'Failed to start quiz.');
     }
   }
+
   // CHECK FOR EXISTING SESSION
   public async checkSession(socket: Socket, data: { sessionId: string }): Promise<void> {
     const { sessionId } = data;
