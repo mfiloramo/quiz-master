@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
 import { redisClient } from '../config/redis';
+import user from '../models/User';
 
 export class QuizController {
   // CREATE NEW QUIZ
@@ -18,7 +19,7 @@ export class QuizController {
       );
 
       // SEND NEW QUIZ ID
-      res.status(200).json({'newQuizId': newQuizId[0][0].id});
+      res.status(200).json({ 'newQuizId': newQuizId[0][0].id });
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");
@@ -127,7 +128,7 @@ export class QuizController {
         },
       ).then(() => {
         // CLEAR QUIZ FROM CACHE
-        redisClient.del(`quiz:${id}:questions`);
+        redisClient.del(`quiz:${ id }:questions`);
         console.log('Quiz updated in cache successfully...');
 
         // CLEAR CACHE KEY CONTAINING ALL QUIZZES
@@ -136,7 +137,7 @@ export class QuizController {
       });
 
       // SEND SUCCESS RESPONSE TO CLIENT
-      res.status(200).send(`Quiz with ID: ${id} updated successfully`);
+      res.status(200).send(`Quiz with ID: ${ id } updated successfully`);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");
@@ -147,31 +148,52 @@ export class QuizController {
   static async deleteQuiz(req: Request, res: Response): Promise<void> {
     try {
       // DESTRUCTURE DATA FROM REQUEST PARAMS
-      const { userId, quizId } = req.params;
+      const { quizId } = req.params;
 
       // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH DELETE QUIZ DATA
       await sequelize.query("EXECUTE DeleteQuiz :quizId", {
         replacements: { quizId },
       });
 
+      let id;
+
       // CLEAR QUIZ FROM CACHE
-      const deleted = await redisClient.del(`quiz:${quizId}:questions`);
+      const deleted = await redisClient.del(`quiz:${ quizId }:questions`);
       if (deleted === 1) {
         console.log('Quiz deleted from cache successfully...');
       } else {
         console.warn('Quiz not found in cache or already deleted...');
       }
 
-      // TODO: DELETE CACHED "ALL QUIZZES" LIST FROM USER USING ID
-      // const clearedCache = await redisClient.del(`user:${userid}quizzes`)
+      const userId = await sequelize.query('EXECUTE Temp_GetUserIdByQuizId :quizId',
+        {
+          replacements: { quizId },
+        });
+
+      // EXTRACT DATA FROM RESULT
+      if (userId) {
+        // @ts-ignore
+        id = userId[0][0].user_id;
+      }
+
+      // UPDATE USER'S CACHED QUIZZES LIST
+      await redisClient.del(`user:${ id }:quizzes`)
+        .then((response: any): void => {
+          console.log(`Quizzes deleted in User's cache with response of ${response}...`);
+        })
+
+      // DELETE ALL QUIZZES IN DISCOVER
+      await redisClient.del(`discover:all:quizzes`)
+        .then((response: any): void => {
+          console.log(`Quizzes deleted in Discover with response of: ${ response }...`);
+        });
 
       // SEND SUCCESS RESPONSE TO CLIENT
-      res.status(200).send(`Quiz with ID: ${quizId} deleted successfully`);
+      res.status(200).send(`Quiz with ID: ${ quizId } deleted successfully`);
     } catch (error: any) {
       // HANDLE ERRORS FROM DB OR REDIS
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");
     }
   }
-
 }
