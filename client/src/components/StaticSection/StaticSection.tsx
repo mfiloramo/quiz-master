@@ -20,10 +20,10 @@ export default function StaticSection({ section, listNum }: any): ReactElement {
         {photo && listNum % 2 === 0 && (
           <Image
             src={photo.src}
-            width={275}
-            height={275}
+            width={350}
+            height={350}
             alt={photo.alt}
-            className='max-w-full rounded-xl shadow-xl lg:visible'
+            className='max-w-full rounded-md shadow-xl lg:visible'
           />
         )}
 
@@ -40,10 +40,10 @@ export default function StaticSection({ section, listNum }: any): ReactElement {
         {photo && listNum % 2 !== 0 && (
           <Image
             src={photo.src}
-            width={275}
-            height={275}
+            width={350}
+            height={350}
             alt={photo.alt}
-            className='max-w-full rounded-xl shadow-xl'
+            className='max-w-full rounded-md shadow-xl'
           />
         )}
       </div>
