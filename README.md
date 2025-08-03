@@ -1,9 +1,34 @@
 <div align="center">
+
   <img src="client/public/logos/logo-banner.png" alt="readmeLogo" width="1000px"/>
-  <h1 align="center">QuizMaster: Engaging Learning Through Play</h1>
+
+  <h1>QuizMaster: Engaging Learning Through Play</h1>
+
+  <h4>
+    QuizMaster is a dynamic, educational app designed to transform K–12 instruction into an interactive, game-based experience.
+    Built for classrooms of today and tomorrow, QuizMaster empowers educators and students to explore, learn, and grow in an environment
+    that is both fun and enriching. Best of all, it integrates modern teaching methodologies to ensure it meets the diverse needs of educators and learners.
+  </h4>
+<div align="center">
+
+  <!-- Row 1: Core -->
+  <img src="https://img.shields.io/github/v/tag/mfiloramo/quiz-master?label=version" alt="version" />
+  <img src="https://img.shields.io/github/actions/workflow/status/mfiloramo/quiz-master/client.yml?branch=main&label=client%20build" alt="client build" />
+  <img src="https://img.shields.io/github/actions/workflow/status/mfiloramo/quiz-master/server.yml?branch=main&label=server%20build" alt="server build" />
+
+  <br/>
+
+  <!-- Row 2: Meta -->
+  <img src="https://img.shields.io/github/commit-activity/m/mfiloramo/quiz-master" alt="commit activity" />
+  <img src="https://img.shields.io/github/repo-size/mfiloramo/quiz-master" alt="repo size" />
+  <img src="https://img.shields.io/github/issues/mfiloramo/quiz-master" alt="open issues" />
+  <img src="https://img.shields.io/github/license/mfiloramo/quiz-master" alt="license" />
+
+</div>
 </div>
 
-<h4 align="center">QuizMaster is a dynamic, educational app designed to transform K-12 instruction into an interactive, game-based experience. Built for classrooms of today and tomorrow, QuizMaster empowers educators and students to explore, learn, and grow in an environment that is both fun and enriching. Best of all, it integrates modern teaching methodologies to ensure it meets the diverse needs of educators and learners.</h4>
+
+
 
 ---
 
