@@ -49,7 +49,7 @@ export default function Navbar(): JSX.Element {
           <Link href={'/'}>
             <Image
               className='shadow-lg'
-              src={'/logos/logo-mini.png'}
+              src={'/logos/logo-alpha-mini.png'}
               width={160}
               height={45}
               alt={'QuizMaster logo'}

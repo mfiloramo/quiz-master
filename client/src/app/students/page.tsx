@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import StaticSection from '@/components/StaticSection/StaticSection';
-import studentsPageContent from '@/data/students/students-data.json';
+import studentsPageContent from '@/data/students-data.json';
 
 export default function StudentsPage(): ReactElement {
   // RENDER PAGE
@@ -15,8 +15,8 @@ export default function StudentsPage(): ReactElement {
           'mx-auto px-5 py-14 text-center text-6xl font-bold sm:px-12 md:text-7xl lg:px-24'
         }
       >
-        <span className={'drop-shadow-strong text-yellow-300'}>Play Hard.</span>{' '}
-        <span className={'drop-shadow-strong text-lime-300'}>Learn Easy.</span>
+        <span className={'text-yellow-300 drop-shadow-strong'}>Play Hard.</span>{' '}
+        <span className={'text-lime-300 drop-shadow-strong'}>Learn Easy.</span>
       </p>
 
       {/* PAGE SECTIONS*/}

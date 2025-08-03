@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import StaticSection from '@/components/StaticSection/StaticSection';
-import teachersPageContent from '@/data/teachers/teachers-data.json';
+import teachersPageContent from '@/data/teachers-data.json';
 import { StaticSectionType } from '@/types/StaticSection.type';
 
 export default function TeachersPage(): ReactElement {
