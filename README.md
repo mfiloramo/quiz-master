@@ -9,7 +9,7 @@
     Built for classrooms of today and tomorrow, QuizMaster empowers educators and students to explore, learn, and grow in an environment
     that is both fun and enriching. Best of all, it integrates modern teaching methodologies to ensure it meets the diverse needs of educators and learners.
   </h4>
-<div align="center">
+  <div align="center">
 
   <!-- Row 1: Core -->
   <img src="https://img.shields.io/github/v/tag/mfiloramo/quiz-master?label=version" alt="version" />
