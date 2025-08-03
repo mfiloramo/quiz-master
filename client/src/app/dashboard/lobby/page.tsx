@@ -217,9 +217,11 @@ export default function LobbyPage() {
       </motion.button>
 
       {/* MUSIC/SOUND TOGGLE (SELF-CONTAINED) */}
-      <div className={'mt-4'}>
-        <AudioToggle />
-      </div>
+      {isHost && (
+        <div className={'mt-4'}>
+          <AudioToggle />
+        </div>
+      )}
     </div>
   );
 }
