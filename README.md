@@ -10,7 +10,7 @@
     that is both fun and enriching. Best of all, it integrates modern teaching methodologies to ensure it meets the diverse needs of educators and learners.
   </h4>
   <div align="center">
-client/.github/workflows/client.yml
+
   <!-- Row 1: Core -->
   <img src="https://img.shields.io/github/v/tag/mfiloramo/quiz-master?label=version" alt="version" />
   <img src="https://img.shields.io/github/actions/workflow/status/mfiloramo/quiz-master/client/.github/workflows/client.yml?branch=main&label=client%20build" alt="client build" />
