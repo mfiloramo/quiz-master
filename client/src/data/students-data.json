@@ -8,7 +8,7 @@
         "Choose from tons of subjects — math, science, history, even fun trivia — and jump into interactive challenges that keep your brain sharp and your energy high. You’re not just answering questions. You’re building knowledge, confidence, and having a great time doing it."
       ],
       "photo": {
-        "src": "/images/placeholder-image.png",
+        "src": "/screenshots/1.png",
         "alt": "Student enjoying a quiz on a tablet"
       }
     },
@@ -20,7 +20,7 @@
         "Challenge your friends in real-time or go solo and beat your personal records. Whether you're trying to top the class leaderboard or just aiming for your best score, QuizMaster keeps you motivated with instant feedback and rewards that make progress feel like victory."
       ],
       "photo": {
-        "src": "/images/placeholder-image.png",
+        "src": "/screenshots/6.png",
         "alt": "Student leaderboard and rewards screen"
       }
     },
@@ -32,7 +32,7 @@
         "You can practice for upcoming exams, review tough topics, or just explore something new — all from your phone, tablet, or laptop. With offline practice modes and mobile-friendly design, learning with QuizMaster goes wherever you do."
       ],
       "photo": {
-        "src": "/images/placeholder-image.png",
+        "src": "/screenshots/5.png",
         "alt": "Student using QuizMaster on mobile phone"
       }
     }
