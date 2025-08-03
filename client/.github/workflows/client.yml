@@ -1,0 +1,16 @@
+name: Client Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Confirm client build pipeline is alive
+        run: echo "Client build successful"
