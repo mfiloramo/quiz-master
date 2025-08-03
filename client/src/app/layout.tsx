@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Navbar />
 
           {/* APP CHILDREN */}
-          <main className='pt-16'>{children}</main>
+          <main className='mt-16'>{children}</main>
 
           {/* VERCEL SPEED INSIGHTS */}
           <SpeedInsights />
