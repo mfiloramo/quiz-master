@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
 import { redisClient } from '../config/redis';
-import user from '../models/User';
 
 export class QuizController {
   // CREATE NEW QUIZ
@@ -43,7 +42,7 @@ export class QuizController {
         quizzes = JSON.parse(cached);
       } else {
         // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
-        console.log('Cache miss: Quiz questions...');
+        console.log('Cache miss: All quizzes...');
         quizzes = await sequelize.query("EXECUTE GetAllQuizzes");
 
         // STORE DATA IN REDIS
@@ -84,6 +83,7 @@ export class QuizController {
       // CACHE HIT: ATTEMPT TO RETRIEVE USER'S QUIZZES
       const cached: string | null = await redisClient.get(cacheKey);
 
+      // DECLARE/DEFINE QUIZZES ARRAY
       let quizzes = [];
 
       if (cached) {
@@ -105,7 +105,7 @@ export class QuizController {
         console.log('Cache miss: User quizzes...');
         await redisClient.set(cacheKey, JSON.stringify(quizzes));
 
-        // SEND NEW DATA
+        // SEND QUERIED DATA FROM DATABASE
         res.send(quizzes[0]);
       }
     } catch (error: any) {

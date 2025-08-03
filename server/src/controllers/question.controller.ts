@@ -29,6 +29,7 @@ export class QuestionController {
     }
   }
 
+  // TODO: THIS SHOULD BE CALLED DIRECTLY FROM THE FRONTEND WHEN THERE IS A CACHE MISS
   // GET ALL QUESTIONS BY QUIZ ID
   static async getQuestionsByQuizId(req: Request, res: Response): Promise<void> {
     try {
