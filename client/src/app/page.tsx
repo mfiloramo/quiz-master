@@ -13,7 +13,7 @@ export default function Home(): JSX.Element {
   ];
 
   return (
-    <div className='mx-auto bg-stub-background-home bg-cover py-10 text-black'>
+    <div className='mx-auto overflow-x-hidden bg-stub-background-home bg-cover py-10 text-black'>
       <div className='px-4 text-center'>
         {/* HERO TITLE */}
         <h1 className='mx-auto mb-6 max-w-5xl text-5xl font-bold leading-tight md:text-6xl lg:text-7xl'>
