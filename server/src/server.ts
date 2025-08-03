@@ -76,8 +76,7 @@ const startServer = async (): Promise<void> => {
     });
   } catch (error) {
     console.error('Database connection failed:', error);
-    console.log('Starting server without database connection...')
-    // process.exit(1);
+    process.exit(1);
   }
 };
 
