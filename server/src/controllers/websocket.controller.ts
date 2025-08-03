@@ -130,6 +130,7 @@ export class WebSocketController {
       // CACHE HIT: ATTEMPT TO RETRIEVE QUIZ QUESTIONS FROM REDIS
       const cached: string | null = await redisClient.get(cacheKey);
 
+      // DECLARE/DEFINE QUESTIONS ARRAY
       let questions: QuestionAttributes[];
 
       if (cached) {
@@ -138,6 +139,8 @@ export class WebSocketController {
         questions = JSON.parse(cached);
       } else {
         // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
+        // TODO: THIS SHOULD BE CALLED FROM THE QUESTION CONTROLLER
+        // TODO: THE LOGIC ASSOCIATED CHECKING FOR A CACHE HIT/MISS SHOULD BE HANDLED BY THE QUESTION CONTROLLER
         console.log('Cache miss: Quiz questions...');
 
         // QUERY DATABASE FOR QUIZ QUESTIONS

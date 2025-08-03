@@ -26,8 +26,8 @@ export default function Home(): JSX.Element {
           actually look forward to.
         </p>
 
-        {/* SCROLLING MARQUEE */}
-        <div className='relative -ml-4 h-12 w-screen overflow-hidden bg-blue-800'>
+        {/* SCROLLING WORDS MARQUEE */}
+        <div className='relative -ml-4 h-12 w-screen cursor-default overflow-hidden bg-blue-800'>
           <div className='flex animate-marquee items-center whitespace-nowrap py-3'>
             {[...items, ...items].map((item, index) => (
               <span key={index} className='mx-8 shrink-0 text-base text-white md:text-lg'>

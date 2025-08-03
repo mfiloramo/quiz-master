@@ -83,6 +83,7 @@ export class QuizController {
       // CACHE HIT: ATTEMPT TO RETRIEVE USER'S QUIZZES
       const cached: string | null = await redisClient.get(cacheKey);
 
+      // DECLARE/DEFINE QUIZZES ARRAY
       let quizzes = [];
 
       if (cached) {
@@ -104,7 +105,7 @@ export class QuizController {
         console.log('Cache miss: User quizzes...');
         await redisClient.set(cacheKey, JSON.stringify(quizzes));
 
-        // SEND NEW DATA
+        // SEND QUERIED DATA FROM DATABASE
         res.send(quizzes[0]);
       }
     } catch (error: any) {
