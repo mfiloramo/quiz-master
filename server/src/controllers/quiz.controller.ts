@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
-import { redisClient } from '../config/redis';
+import { redis } from '../config/redis';
 
 export class QuizController {
   // CREATE NEW QUIZ
@@ -32,7 +32,7 @@ export class QuizController {
       const cacheKey: string = `discover:all:quizzes`;
 
       // ATTEMPT TO GET CACHED DATA
-      const cached: string | null = await redisClient.get(cacheKey);
+      const cached: string | null = await redis.get(cacheKey);
 
       let quizzes: any[];
 
@@ -46,7 +46,7 @@ export class QuizController {
         quizzes = await sequelize.query("EXECUTE GetAllQuizzes");
 
         // STORE DATA IN REDIS
-        await redisClient.set(cacheKey, JSON.stringify(quizzes));
+        await redis.set(cacheKey, JSON.stringify(quizzes));
       }
 
       // SEND ALL PUBLIC QUIZZES
@@ -81,7 +81,7 @@ export class QuizController {
       const cacheKey: string = `user:${ userId }:quizzes`;
 
       // CACHE HIT: ATTEMPT TO RETRIEVE USER'S QUIZZES
-      const cached: string | null = await redisClient.get(cacheKey);
+      const cached: string | null = await redis.get(cacheKey);
 
       // DECLARE/DEFINE QUIZZES ARRAY
       let quizzes = [];
@@ -103,7 +103,7 @@ export class QuizController {
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         console.log('Cache miss: User quizzes...');
-        await redisClient.set(cacheKey, JSON.stringify(quizzes));
+        await redis.set(cacheKey, JSON.stringify(quizzes));
 
         // SEND QUERIED DATA FROM DATABASE
         res.send(quizzes[0]);
@@ -128,11 +128,11 @@ export class QuizController {
         },
       ).then(() => {
         // CLEAR QUIZ FROM CACHE
-        redisClient.del(`quiz:${ id }:questions`);
+        redis.del(`quiz:${ id }:questions`);
         console.log('Quiz updated in cache successfully...');
 
         // CLEAR CACHE KEY CONTAINING ALL QUIZZES
-        redisClient.del(`discover:all:quizzes`);
+        redis.del(`discover:all:quizzes`);
         console.log('Quiz Discover list deleted from cache...')
       });
 
@@ -158,7 +158,7 @@ export class QuizController {
       let id;
 
       // CLEAR QUIZ FROM CACHE
-      const deleted = await redisClient.del(`quiz:${ quizId }:questions`);
+      const deleted = await redis.del(`quiz:${ quizId }:questions`);
       if (deleted === 1) {
         console.log('Quiz deleted from cache successfully...');
       } else {
@@ -177,13 +177,13 @@ export class QuizController {
       }
 
       // UPDATE USER'S CACHED QUIZZES LIST
-      await redisClient.del(`user:${ id }:quizzes`)
+      await redis.del(`user:${ id }:quizzes`)
         .then((response: any): void => {
           console.log(`Quizzes deleted in User's cache with response of ${response}...`);
         })
 
-      // DELETE ALL QUIZZES IN DISCOVER
-      await redisClient.del(`discover:all:quizzes`)
+      // CLEAR CACHE KEY CONTAINING ALL QUIZZES
+      await redis.del(`discover:all:quizzes`)
         .then((response: any): void => {
           console.log(`Quizzes deleted in Discover with response of: ${ response }...`);
         });

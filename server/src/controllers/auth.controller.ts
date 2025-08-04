@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { sequelize } from "../config/sequelize";
 import jwt from "jsonwebtoken";
 import { EmailService } from "../services/EmailService";
-import { redisClient } from '../config/redis';
+import { redis } from '../config/redis';
 import { UserAttributes } from '../interfaces/UserAttributes.interface';
 
 
@@ -58,7 +58,7 @@ export class AuthController {
       const cacheKey: string = `user:${email}`;
 
       // CACHE HIT: ATTEMPT TO GET CACHED DATA
-      const cached: string | null = await redisClient.get(cacheKey);
+      const cached: string | null = await redis.get(cacheKey);
 
       let user!: UserAttributes;
 
@@ -78,7 +78,7 @@ export class AuthController {
         user = rows[0];
 
         // SET USER DATA
-        await redisClient.set(cacheKey, JSON.stringify(user));
+        await redis.set(cacheKey, JSON.stringify(user));
 
         // CHECK IF USER IS VALID
         if (!user) {
@@ -133,10 +133,6 @@ export class AuthController {
       if (!token) {
         return res.status(400).send("No token provided");
       }
-
-      // TODO: ADD TOKEN TO BLACKLIST OR EXPIRE IT
-      // TODO: CONSIDER IMPLEMENTING EXPRESS-SESSION
-      // ...
 
       return res.status(200).send("User logged out successfully");
     } catch (error: any) {

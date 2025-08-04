@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { sequelize } from "../config/sequelize";
-import { redisClient } from '../config/redis';
+import { redis } from '../config/redis';
 
 
 export class UserController {
@@ -10,7 +10,7 @@ export class UserController {
       // CREATE CACHE KEY FOR ALL USERS
       const cacheKey: string = 'users:all';
 
-      const cached = await redisClient.get(cacheKey);
+      const cached = await redis.get(cacheKey);
 
       if (cached) {
         // CACHE HIT: SEND CACHED USER DATA TO CLIENT
@@ -42,7 +42,7 @@ export class UserController {
       // CREATE CACHE KEY FOR USER TO BE SELECTED
       const cacheKey: string = `user${userId}`;
 
-      const cached = await redisClient.get(cacheKey);
+      const cached = await redis.get(cacheKey);
 
       if (cached) {
         // CACHE HIT: RETRIEVE USER FROM CACHE
@@ -72,7 +72,7 @@ export class UserController {
       // CREATE CACHE KEY FOR USER TO BE UPDATED
       const cacheKey: string = `user:${userId}`;
 
-      const cached = await redisClient.get(cacheKey);
+      const cached = await redis.get(cacheKey);
 
       // EXECUTE STORED PROCEDURE TO UPDATE USER IN DATABASE
       await sequelize.query('EXECUTE UpdateUser :userId :username :email',
@@ -81,7 +81,7 @@ export class UserController {
         });
 
       // SET/UPDATE USER IN REDIS CACHE
-      await redisClient.set(cacheKey, JSON.stringify(cached));
+      await redis.set(cacheKey, JSON.stringify(cached));
 
       // SEND CONFIRMATION MESSAGE TO CLIENT
       res.json(`User ${ username } updated successfully`);
@@ -106,7 +106,7 @@ export class UserController {
         })
 
       // REMOVE KEY FROM CACHE
-      await redisClient.del(cacheKey)
+      await redis.del(cacheKey)
         .then((): void => console.log('User cacheKey deleted...'))
         .catch((error: any): void => console.log(`Error deleting user from Redis cache: ${error}`));
 

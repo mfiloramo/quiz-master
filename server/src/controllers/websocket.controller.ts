@@ -3,9 +3,9 @@ import { SessionManager } from '../utils/SessionManager';
 import { GameSession } from '../utils/GameSession';
 import { Player } from '../utils/Player';
 import { sequelize } from '../config/sequelize';
+import { redis } from '../config/redis';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
-import { redisClient } from '../config/redis';
 
 
 // MAIN SOCKET CONTROLLER CLASS
@@ -128,7 +128,7 @@ export class WebSocketController {
       const cacheKey: string = `quiz:${session.quizId}:questions`;
 
       // CACHE HIT: ATTEMPT TO RETRIEVE QUIZ QUESTIONS FROM REDIS
-      const cached: string | null = await redisClient.get(cacheKey);
+      const cached: string | null = await redis.get(cacheKey);
 
       // DECLARE/DEFINE QUESTIONS ARRAY
       let questions: QuestionAttributes[];
@@ -155,7 +155,7 @@ export class WebSocketController {
         }));
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
-        await redisClient.set(cacheKey, JSON.stringify(questions));
+        await redis.set(cacheKey, JSON.stringify(questions));
       }
 
       // ASSIGN QUESTIONS AND MARK SESSION AS STARTED
