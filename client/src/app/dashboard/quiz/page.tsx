@@ -219,6 +219,7 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
+    console.log(answer);
     if (!user) return;
     setUserAnswer(answer);
     setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);

@@ -49,8 +49,7 @@ export default function JoinPage() {
       return;
     }
 
-    // TODO: IS THIS NECESSARY SINCE USERNAME INPUT IS MANDATORY?
-    // CREATE USER ID IF USER DOES NOT PROVIDE ONE
+    // GENERATE NEW USER ID
     const id = user?.id ?? Math.floor(1000 + Math.random() * 9000);
     console.log('Joining with ID:', id, 'Username:', usernameInput || user?.username);
 

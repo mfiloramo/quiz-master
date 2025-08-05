@@ -33,6 +33,10 @@ export default function Navbar(): JSX.Element {
     : [
         ...navLinksLeft,
         {
+          path: 'auth/signup',
+          label: 'Sign Up',
+        },
+        {
           path: '/auth/login',
           label: 'Login',
         },
@@ -135,7 +139,7 @@ export default function Navbar(): JSX.Element {
           </div>
 
           {/* HAMBURGER MENU (ONLY ON SMALL SCREENS) */}
-          <div className='-mt-4 md:hidden'>
+          <div className='-mt-6 md:hidden'>
             <BurgerDropdown navLinks={navLinksForHamburger} />
           </div>
         </div>

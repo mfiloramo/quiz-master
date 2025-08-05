@@ -64,6 +64,8 @@ export class WebSocketController {
   public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
     // EXTRACT DATA FROM JOIN REQUEST
     let { id, sessionId, username } = data;
+
+    // FIND ACTIVE/VALID SESSION
     const session = SessionManager.getSession(sessionId);
 
     // ASSIGN UUID TO UNREGISTERED PLAYERS
@@ -84,6 +86,7 @@ export class WebSocketController {
 
     // CREATE NEW PLAYER INSTANCE
     const player = new Player(id, socket.id, username);
+
 
     // ADD PLAYER TO SESSION AND JOIN SOCKET ROOM
     if (session.allPlayersAnswered()) player.hasAnswered = true;
