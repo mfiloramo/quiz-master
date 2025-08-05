@@ -267,9 +267,7 @@ export class WebSocketController {
   // HANDLE PLAYER ANSWER SUBMISSION
   public submitAnswer(socket: Socket, sessionData: any): void {
     // DESTRUCTURE SESSION DATA
-    const { sessionId, answer, id } = sessionData;
-
-    console.log(sessionData);
+    const { sessionId, answer } = sessionData;
 
     // FETCH SESSION AND PLAYER OBJECT
     const session = SessionManager.getSession(sessionId);
