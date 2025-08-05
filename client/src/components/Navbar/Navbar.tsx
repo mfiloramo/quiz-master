@@ -33,7 +33,7 @@ export default function Navbar(): JSX.Element {
     : [
         ...navLinksLeft,
         {
-          path: 'auth/signup',
+          path: 'auth/register',
           label: 'Sign Up',
         },
         {
