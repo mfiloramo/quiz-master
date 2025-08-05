@@ -1,12 +1,12 @@
 import { createClient, RedisClientType } from 'redis';
 
 // DECLARE REDIS CLIENT
-let redisClient: RedisClientType;
+let redis: RedisClientType;
 
 // SET ENVIRONMENT CONFIGURATION
 if (process.env.NODE_ENV === 'production') {
   // PRODUCTION CONFIGURATION
-  redisClient = createClient({
+  redis = createClient({
     socket: {
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT),
@@ -16,22 +16,22 @@ if (process.env.NODE_ENV === 'production') {
   });
 } else {
   // DEVELOPMENT CONFIGURATION
-  redisClient = createClient({
+  redis = createClient({
     url: process.env.REDIS_URL
   });
 }
 
 // ERROR HANDLER
-redisClient.on('error', (error: any): void => console.error('Redis error:', error));
+redis.on('error', (error: any): void => console.error('Redis error:', error));
 
 // CONNECT FUNCTION
 const connectRedis = async (): Promise<void> => {
   try {
-    await redisClient.connect();
+    await redis.connect();
     console.log('Caching client connected...');
   } catch (error: any) {
     console.error('Failed to connect to Redis:', error);
   }
 };
 
-export { redisClient, connectRedis };
+export { redis, connectRedis };

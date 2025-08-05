@@ -18,6 +18,7 @@ export default function Navbar(): JSX.Element {
     isLoggedIn && { path: '/dashboard', label: 'Dashboard' },
     { path: '/students', label: 'Students' },
     { path: '/teachers', label: 'Teachers' },
+    { path: '/dashboard/join', label: 'Join Game' },
   ].filter(Boolean) as NavLinkType[];
 
   // HAMBURGER MENU LINKS (MOBILE VIEWPORTS)
@@ -32,6 +33,10 @@ export default function Navbar(): JSX.Element {
       ]
     : [
         ...navLinksLeft,
+        {
+          path: 'auth/register',
+          label: 'Sign Up',
+        },
         {
           path: '/auth/login',
           label: 'Login',
@@ -76,7 +81,7 @@ export default function Navbar(): JSX.Element {
 
         {/* RIGHT BUTTONS CONTAINER */}
         <div className='float-right mr-7 mt-4 flex items-center'>
-          <div className={'hidden lg:flex'}>
+          <div className={'hidden md:flex'}>
             {/* JOIN GAME BUTTON */}
             {!isLoggedIn && (
               <Link
@@ -135,7 +140,7 @@ export default function Navbar(): JSX.Element {
           </div>
 
           {/* HAMBURGER MENU (ONLY ON SMALL SCREENS) */}
-          <div className='-mt-4 md:hidden'>
+          <div className='-mt-6 md:hidden'>
             <BurgerDropdown navLinks={navLinksForHamburger} />
           </div>
         </div>

@@ -219,12 +219,12 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
-    if (!user) return;
+    // if (!user) return;
     setUserAnswer(answer);
     setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
     socket?.emit('submit-answer', {
       sessionId,
-      id: user.id,
+      id: user?.id,
       answer,
     });
     setLoading(true);
@@ -279,9 +279,11 @@ export default function QuizPage(): JSX.Element {
           className={'z-10 mb-3 flex flex-col gap-2 align-middle text-3xl text-sky-950 sm:flex-row'}
         >
           {/* AUDIO TOGGLE */}
-          <div className={'mr-8'}>
-            <AudioToggle />
-          </div>
+          {isHost && (
+            <div className={'mr-8'}>
+              <AudioToggle />
+            </div>
+          )}
           {/* SESSION ID DISPLAY */}
           Join with session ID:<span className={'font-bold'}>{sessionId}</span>
         </div>

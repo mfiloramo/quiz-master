@@ -37,11 +37,19 @@ export default function JoinPage() {
 
   // HANDLER FUNCTIONS
   const handleJoin = (): void => {
+    // ENSURE USER ENTERS SESSION ID
     if (!socket || !sessionIdInput.trim()) {
       setError('Please enter session ID.');
       return;
     }
 
+    // ENSURE USER ENTERS USERNAME
+    if (!usernameInput) {
+      setError('Please enter a username');
+      return;
+    }
+
+    // GENERATE NEW USER ID
     const id = user?.id ?? Math.floor(1000 + Math.random() * 9000);
     console.log('Joining with ID:', id, 'Username:', usernameInput || user?.username);
 

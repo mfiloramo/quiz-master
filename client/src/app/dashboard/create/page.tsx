@@ -72,7 +72,6 @@ export default function CreateQuiz(): ReactElement {
           Cover Image Module
         </div>
 
-        {/* TODO: EXTRACT FORM SECTION TO COMPONENT (???) */}
         {/* FORM SECTION */}
         <div className='min-w-5xl flex h-[50vh] w-full max-w-5xl flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'>
           <form className='my-2 w-full' onSubmit={handleSubmit}>
