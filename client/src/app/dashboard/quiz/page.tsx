@@ -219,13 +219,12 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
-    console.log(answer);
-    if (!user) return;
+    // if (!user) return;
     setUserAnswer(answer);
     setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
     socket?.emit('submit-answer', {
       sessionId,
-      id: user.id,
+      id: user?.id,
       answer,
     });
     setLoading(true);
