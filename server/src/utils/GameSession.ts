@@ -12,7 +12,6 @@ export class GameSession {
   public currentQuestionIndex: number = 0;
   public roundTimer!: number; // TIMER IN MS
   public currentRoundTimeout?: NodeJS.Timeout;
-  public currentGameStartTimeout?: NodeJS.Timeout;
   public scoreCounter: number = 100
 
   constructor(
