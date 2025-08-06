@@ -25,7 +25,8 @@ export default function RegisterUsernamePage(): ReactElement {
 
   // RENDER PAGE
   return (
-    <div className={'flex flex-col items-center pt-8'}>
+    // MAIN CONTAINER
+    <div className={'flex flex-col items-center px-5 pt-8'}>
       <h1 className={'mb-4 text-2xl font-bold text-black'}>Enter Username</h1>
       <form
         onSubmit={handleSubmit}

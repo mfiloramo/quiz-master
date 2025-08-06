@@ -14,7 +14,8 @@ export default function RegisterStart(): ReactElement {
   };
 
   return (
-    <div className={'flex flex-col items-center pt-6 text-black'}>
+    // MAIN CONTAINER
+    <div className={'flex flex-col items-center px-5 pt-6 text-black'}>
       <h1 className={'mb-4 text-2xl font-bold'}>Choose Account Type</h1>
       <div
         className={

@@ -71,7 +71,7 @@ export default function RegisterSignupOptionsPage(): ReactElement {
   // RENDER COMPONENT
   return (
     // MAIN CONTAINER
-    <div className='flex flex-col items-center pt-8'>
+    <div className='flex flex-col items-center px-5 pt-8'>
       {/* CARD TITLE */}
       <h1 className='mb-4 text-2xl font-bold text-black'>Enter Account Info</h1>
 
