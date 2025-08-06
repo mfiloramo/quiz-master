@@ -68,7 +68,6 @@ export class WebSocketController {
     // CREATE NEW PLAYER INSTANCE
     const player = new Player(id, socket.id, username);
 
-
     // ADD PLAYER TO SESSION AND JOIN SOCKET ROOM
     if (session.allPlayersAnswered()) player.hasAnswered = true;
     session.addPlayer(player);
@@ -76,16 +75,6 @@ export class WebSocketController {
 
     // BROADCAST UPDATED PLAYER LIST TO ALL CLIENTS
     this.io.to(sessionId).emit('player-joined', session.players);
-
-    // RESET GAME START TIMER COUNTDOWN WHENEVER A NEW PLAYER JOINS
-    session.clearGameStartTimeout();
-
-    session.currentGameStartTimeout = setTimeout(() => {
-      this.startSession(socket, { sessionId }).then((response: any) => response);
-    }, session.gameStartTimer);
-
-    socket.emit('game-start-timer', session.gameStartTimer);
-    this.io.to(sessionId).emit('game-start-timer-reset', session.gameStartTimer);
   }
 
   // START GAME SESSION
@@ -148,9 +137,6 @@ export class WebSocketController {
 
       // NOTIFY ALL CLIENTS THAT SESSION STARTED
       this.io.to(sessionId).emit('session-started');
-
-      // CLEAR GAME START TIMEOUT
-      session.clearGameStartTimeout();
 
       // SEND FIRST QUESTION AND START TIMER
       const firstQuestion = questions[0];
@@ -290,7 +276,6 @@ export class WebSocketController {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
-    session.clearGameStartTimeout(); // IMPORTANT: CANCEL TIMER
     this.io.to(sessionId).emit('session-ended');
     SessionManager.deleteSession(sessionId);
   }
