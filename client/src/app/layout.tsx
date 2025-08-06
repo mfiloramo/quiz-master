@@ -17,15 +17,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en' className={poppins.className}>
-      <body className='overscroll-none bg-white antialiased'>
+    <html lang='en' className={`${poppins.className} h-full bg-white`}>
+      <body className='h-full overflow-hidden bg-white antialiased'>
         <AuthProvider>
           <ScrollToTop />
-          {/* NAVBAR */}
-          <Navbar />
 
-          {/* APP CHILDREN */}
-          <main className='mt-16'>{children}</main>
+          <div className='flex h-full flex-col'>
+            {/* NAVBAR (fixed height assumed: 4rem = mt-16) */}
+            <Navbar />
+
+            {/* MAIN CONTENT AREA SCROLLS */}
+            <main className='mt-16 flex-1 overflow-y-auto overscroll-contain'>{children}</main>
+          </div>
 
           {/* VERCEL SPEED INSIGHTS */}
           <SpeedInsights />
