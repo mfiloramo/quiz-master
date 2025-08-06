@@ -35,6 +35,7 @@ export default function LibraryPage(): ReactElement {
       try {
         const { data } = await axiosInstance.get<Quiz[]>(`/quizzes/user/${user.id}`);
         setQuizzes(data);
+        console.log(data);
       } catch (err) {
         console.error('Error fetching quizzes:', err);
       }

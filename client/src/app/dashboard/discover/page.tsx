@@ -28,7 +28,7 @@ export default function DiscoverPage(): ReactElement {
       }
     };
 
-    fetchAllQuizzes();
+    fetchAllQuizzes().then((response: any): void => response);
   }, [setSelectedQuiz]);
 
   // HANDLE SELECTING A QUIZ
@@ -45,6 +45,7 @@ export default function DiscoverPage(): ReactElement {
     router.push('/dashboard/host');
   };
 
+  // RENDER PAGE
   return (
     <div className='flex flex-col items-start'>
       {/* QUIZ LIST */}
