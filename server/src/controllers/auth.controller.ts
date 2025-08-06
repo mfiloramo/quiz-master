@@ -144,14 +144,15 @@ export class AuthController {
   // ACTIVATE USER ACCOUNT
   static async activateUserAccount(req: Request, res: Response): Promise<any> {
     try {
-      // TODO: DISABLE AND ADD ADMIN APPROVAL
+      // TODO: ADD ADMIN APPROVAL (TEMP FEATURE FOR ALPHA RELEASE)
       // CHECK FOR VALID SECRET_REGISTRATION_KEY
       if (!process.env.SECRET_REGISTRATION_KEY) {
-        throw new Error('SECRET_REGISTRATION_KEY is not set');
+        console.log('SECRET_REGISTRATION_KEY is not set');
+        return;
       }
 
       // VERIFY JSON WEB TOKEN
-      const decoded: any = jwt.verify(req.params.token, process.env.SECRET_REGISTRATION_KEY!);
+      const decoded: any = jwt.verify(req.params.token, process.env.SECRET_REGISTRATION_KEY);
       const userId: any = decoded.userId;
 
       // ACTIVATE USER ACCOUNT
