@@ -26,7 +26,7 @@ export default function Navbar(): JSX.Element {
     : [
         ...navLinksLeft,
         { path: '/dashboard/join', label: 'Join Game' },
-        { path: 'auth/register', label: 'Sign Up' },
+        { path: '/auth/register', label: 'Sign Up' },
         { path: '/auth/login', label: 'Login' },
       ];
 
