@@ -5,5 +5,4 @@ export interface GameSessionAttributes {
   socketId?: string;
   username?: string;
   roundTimer: number;
-  gameStartTimer: number;
 }

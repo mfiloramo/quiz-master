@@ -178,14 +178,6 @@ export class WebSocketController {
     }
   }
 
-  // GET GAME START TIMER
-  public getGameStartTimer(socket: Socket, { sessionId }: { sessionId: string }): void {
-    const session = SessionManager.getSession(sessionId);
-    if (!session) return;
-
-    socket.emit('game-start-timer', session.gameStartTimer);
-  }
-
   // RETURN CURRENT QUESTION TO REQUESTING CLIENT
   public getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
     // FETCH SESSION AND VALIDATE
