@@ -8,7 +8,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAudio } from '@/contexts/AudioContext';
 import { motion } from 'framer-motion';
-import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 import AudioToggle from '@/components/AudioToggle/AudioToggle';
 
@@ -18,9 +17,6 @@ const hasStartedMusic =
   typeof window !== 'undefined' && sessionStorage.getItem('lobby-music-started') === 'true';
 
 export default function LobbyPage() {
-  const [gameStartTimer, setGameStartTimer] = useState<number | null>(null);
-  const [timerKey, setTimerKey] = useState<number>(0); // KEY TO FORCE RERENDER OF COUNTDOWN COMPONENT
-
   // CUSTOM HOOKS
   const router = useRouter();
   const { socket, disconnect } = useWebSocket();
@@ -52,26 +48,6 @@ export default function LobbyPage() {
       socket.off('check-session-response', handleCheck);
     };
   }, [socket]);
-
-  // INITIALIZE SOCKET EVENT LISTENERS FOR TIMER
-  useEffect(() => {
-    if (!socket || !sessionId) return;
-
-    const handleGameStartTimer = (time: number) => {
-      setGameStartTimer(time); // SET TIMER VALUE
-      setTimerKey((prev) => prev + 1); // FORCE COUNTDOWN COMPONENT TO RERENDER AND RESET
-    };
-
-    socket.on('game-start-timer', handleGameStartTimer);
-    socket.on('game-start-timer-reset', handleGameStartTimer);
-
-    socket.emit('get-game-start-timer', { sessionId });
-
-    return () => {
-      socket.off('game-start-timer', handleGameStartTimer);
-      socket.off('game-start-timer-reset', handleGameStartTimer);
-    };
-  }, [socket, sessionId]);
 
   // INITIALIZE SOCKET EVENT LISTENERS FOR PLAYER AND SESSION EVENTS
   useEffect(() => {
@@ -110,10 +86,7 @@ export default function LobbyPage() {
 
   // HANDLE START SESSION
   const handleStart = () => {
-    setGameStartTimer(null); // RESET GAME START TIMER STATE
-    setTimerKey(0); // RESET COUNTDOWN COMPONENT KEY
     resetQuiz(); // RESET QUIZ STATE IF CARRYING OVER FROM PREVIOUS SESSION
-
     socket?.emit('start-session', {
       sessionId,
       quizId: selectedQuiz?.id,
@@ -144,7 +117,7 @@ export default function LobbyPage() {
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
 
       {/* BACKGROUND MUSIC (ONLY HOST PLAYS IT ONCE) */}
-      {isHost && music && gameStartTimer !== null && !hasStartedMusic && (
+      {isHost && music && !hasStartedMusic && (
         <BackgroundMusic tracks={lobbyTracks} />
       )}
 
@@ -176,21 +149,6 @@ export default function LobbyPage() {
           </motion.li>
         ))}
       </ul>
-
-      {/* GAME START TIMER */}
-      <div className='mt-8'>
-        {gameStartTimer !== null && isHost && (
-          <CountdownCircleTimer
-            key={timerKey}
-            isPlaying
-            duration={Math.floor(gameStartTimer / 1000)}
-            colors={['#3b8600', '#F7B801', '#A30000', '#A30000']}
-            colorsTime={[7, 5, 2, 0]}
-          >
-            {({ remainingTime }) => remainingTime}
-          </CountdownCircleTimer>
-        )}
-      </div>
 
       {/* START QUIZ BUTTON (HOST ONLY) */}
       {isHost && (

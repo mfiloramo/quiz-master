@@ -17,7 +17,7 @@ export class WebSocketController {
 // CREATE NEW GAME SESSION
   public createSession(socket: Socket, data: GameSessionAttributes): void {
     // DESTRUCTURE SESSION DATA
-    const { sessionId, hostUserName, quizId, roundTimer, gameStartTimer } = data;
+    const { sessionId, hostUserName, quizId, roundTimer } = data;
 
     // CHECK FOR EXISTING SESSION
     if (SessionManager.getSession(sessionId)) {
@@ -37,27 +37,8 @@ export class WebSocketController {
     // SET ROUND TIMER DURATION (CONVERT SECONDS TO MILLISECONDS)
     session.roundTimer = roundTimer * 1000;
 
-    // SET GAME START TIMER IN LOBBY (CONVERT SECONDS TO MILLISECONDS)
-    session.gameStartTimer = gameStartTimer * 1000;
-
-    // BEGIN GAME START TIMER COUNTDOWN
-    if (!session.isStarted) {
-      session.clearGameStartTimeout();
-
-      session.currentGameStartTimeout = setTimeout(() => {
-        this.startSession(socket, { sessionId }).then((response: any) => response);
-      }, session.gameStartTimer);
-    }
-
     // ADD HOST TO SOCKET ROOM
     socket.join(sessionId);
-
-    // TODO: IS THIS NEEDED?
-    // EMIT SESSION CREATION CONFIRMATION TO HOST
-    socket.emit('session-created', {
-      sessionId,
-      hostUsername: session.hostUsername,
-    });
   }
 
 // JOIN EXISTING GAME SESSION
