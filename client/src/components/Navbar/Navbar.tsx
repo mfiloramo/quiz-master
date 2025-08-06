@@ -18,29 +18,16 @@ export default function Navbar(): JSX.Element {
     isLoggedIn && { path: '/dashboard', label: 'Dashboard' },
     { path: '/students', label: 'Students' },
     { path: '/teachers', label: 'Teachers' },
-    { path: '/dashboard/join', label: 'Join Game' },
   ].filter(Boolean) as NavLinkType[];
 
   // HAMBURGER MENU LINKS (MOBILE VIEWPORTS)
   const navLinksForHamburger: NavLinkType[] = isLoggedIn
-    ? [
-        ...navLinksLeft,
-        {
-          path: '/',
-          label: 'Logout',
-          onClick: logout,
-        },
-      ]
+    ? [...navLinksLeft, { path: '/', label: 'Logout', onClick: logout }]
     : [
         ...navLinksLeft,
-        {
-          path: 'auth/register',
-          label: 'Sign Up',
-        },
-        {
-          path: '/auth/login',
-          label: 'Login',
-        },
+        { path: '/dashboard/join', label: 'Join Game' },
+        { path: '/auth/register', label: 'Sign Up' },
+        { path: '/auth/login', label: 'Login' },
       ];
 
   // RENDER COMPONENT
