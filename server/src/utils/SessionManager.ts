@@ -9,10 +9,9 @@ export class SessionManager {
     hostSocketId: string,
     hostUsername: string
   ): GameSession {
-    // IF SESSION ALREADY EXISTS, CLEAR TIMEOUT AND DELETE STALE DATA
+    // IF SESSION ALREADY EXISTS, DELETE STALE DATA
     const existing = this.sessions.get(sessionId);
     if (existing) {
-      existing.clearGameStartTimeout(); // ENSURE TIMER IS CLEARED
       this.sessions.delete(sessionId); // REMOVE STALE SESSION COMPLETELY
     }
 
