@@ -17,6 +17,18 @@ export class QuizController {
         }
       );
 
+      // DEFINE CACHE KEYS
+      const cacheKeyUser: string = `user:${userId}:quizzes`;
+      const cacheKeyAllQuizzes: string = `discover:all:quizzes`;
+
+      // DELETE CACHE KEY ASSOCIATED WITH USER'S QUIZZES
+      await redis.del(cacheKeyUser)
+        .then(() => console.log('User cache key deleted...'));
+
+      // DELETE CACHE KEY ASSOCIATED WITH ALL QUIZZES (DISCOVER)
+      await redis.del(cacheKeyAllQuizzes)
+        .then(() => console.log('All quizzes (Discover) cache key deleted...'));
+
       // SEND NEW QUIZ ID
       res.status(200).json({ 'newQuizId': newQuizId[0][0].id });
     } catch (error: any) {

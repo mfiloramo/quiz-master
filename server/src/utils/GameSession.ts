@@ -92,12 +92,4 @@ export class GameSession {
       this.currentRoundTimeout = undefined; // ENSURE TIMEOUT CLEARED FROM MEMORY
     }
   }
-
-  // CLEAR ANY ACTIVE GAME START TIMEOUT
-  public clearGameStartTimeout(): void {
-    if (this.currentGameStartTimeout) {
-      clearTimeout(this.currentGameStartTimeout);
-      this.currentGameStartTimeout = undefined; // FIXED: PREVENT REUSE OF STALE TIMER
-    }
-  }
 }
