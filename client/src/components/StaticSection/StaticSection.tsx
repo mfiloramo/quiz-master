@@ -9,7 +9,7 @@ export default function StaticSection({ section, listNum }: any): ReactElement {
   return (
     // MAIN CONTAINER
     <div
-      className={`my-3 flex max-w-[90vw] flex-col items-center gap-4 rounded-lg bg-white bg-opacity-20 px-7 py-8 lg:max-w-[70vw]`}
+      className={`my-3 flex max-w-[90vw] flex-col items-center gap-4 rounded-lg bg-white bg-opacity-20 px-7 py-8 xl:max-w-[67vw]`}
     >
       {/* SUBTITLE*/}
       <p className={`pb-3 text-3xl font-bold`}>{subtitle}</p>
