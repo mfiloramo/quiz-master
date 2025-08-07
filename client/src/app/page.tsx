@@ -41,7 +41,7 @@ export default function Home(): JSX.Element {
         <ImageMarquee />
 
         {/* STATIC TEXT SECTIONS */}
-        <div className='mx-auto my-16 max-w-5xl space-y-16 px-4'>
+        <div className='mx-auto my-16 justify-items-center space-y-16 px-4'>
           {homePageContent.sections.map((section: any, index: number) => (
             <StaticSection key={index} section={section} listNum={index} />
           ))}

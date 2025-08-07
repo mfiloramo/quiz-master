@@ -116,7 +116,6 @@ export class WebSocketController {
         // TODO: THE LOGIC ASSOCIATED CHECKING FOR A CACHE HIT/MISS SHOULD BE HANDLED BY THE QUESTION CONTROLLER
         console.log('Cache miss: Quiz questions...');
 
-        // QUERY DATABASE FOR QUIZ QUESTIONS
         const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
           replacements: { quizId: session.quizId },
         });
