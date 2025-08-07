@@ -6,9 +6,7 @@ export default function StudentsPage(): ReactElement {
   // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div
-      className={'flex h-full flex-col items-center bg-stub-background-lobby bg-cover text-black'}
-    >
+    <div className={'flex flex-col items-center bg-stub-background-lobby bg-cover text-black'}>
       {/* PAGE TITLE HEADER */}
       <p
         className={
