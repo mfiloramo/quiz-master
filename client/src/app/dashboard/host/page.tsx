@@ -22,13 +22,16 @@ export default function HostPage() {
 
   // CREATE A NEW GAME SESSION
   const createSession = () => {
+    // VALIDATE SELECTED QUIZ
     if (!selectedQuiz) {
       setError('Please select a quiz before hosting.');
       return;
     }
 
-    const sessionId = Math.random().toString(36).substr(2, 4).toUpperCase();
+    // GENERATE SESSION ID
+    const sessionId = Math.floor(1000 + Math.random() * 9000).toString();
 
+    // EMIT CREATE-SESSION EVENT
     socket?.emit('create-session', {
       sessionId,
       hostUserName: user!.username,
@@ -36,8 +39,11 @@ export default function HostPage() {
       roundTimer,
     });
 
+    // SET PAGE STATE
     setSessionId(sessionId);
     setIsHost(true);
+
+    // ROUTE TO LOBBY
     router.push('/dashboard/lobby');
   };
 
