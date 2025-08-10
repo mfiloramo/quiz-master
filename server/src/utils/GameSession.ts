@@ -53,8 +53,8 @@ export class GameSession {
   }
 
   // INCREMENT PLAYER SCORE
-  public incrementScore(id: number) {
-    const player = this.getPlayerById(id);
+  public incrementScore(id: any) {
+    const player = this.getPlayerBySocketId(id);
     if (player) {
       player.score += Math.ceil(this.scoreCounter);
       if (player.score > 40) this.scoreCounter -= 15;
