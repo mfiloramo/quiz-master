@@ -232,7 +232,9 @@ export class WebSocketController {
     const player = session?.getPlayerBySocketId(socket.id);
 
     // PREVENT DUPLICATE OR INVALID SUBMISSIONS
-    if (!player || player.hasAnswered) return;
+    if (!player || session?.allPlayersAnswered()) return;
+
+    // MARK PLAYER ANSWER AS TRUE
     player.hasAnswered = true;
 
     // INCREMENT SCORE IF ANSWER IS CORRECT

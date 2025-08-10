@@ -219,7 +219,6 @@ export default function QuizPage(): JSX.Element {
 
   // HANDLE USER ANSWER
   const handleAnswer = (answer: string): void => {
-    // if (!user) return;
     setUserAnswer(answer);
     setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
     socket?.emit('submit-answer', {
