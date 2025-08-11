@@ -3,24 +3,23 @@ import { useAudio } from '@/contexts/AudioContext';
 import { AudioToggleType } from '@/types/AudioToggle.type';
 
 export default function AudioToggle(): ReactElement {
-  // CONTEXT STATE
   const { music, handleToggleMusic, sound, handleToggleSound }: AudioToggleType = useAudio();
 
   return (
-    <div className='inline-flex items-center gap-6 text-2xl font-bold'>
+    <div className='inline-flex items-center gap-6 text-center text-2xl font-bold leading-none'>
       {/* MUSIC TOGGLE */}
       <label className='flex cursor-pointer items-center gap-2'>
-        <div className='relative h-5 w-5'>
+        <div className='relative h-5 w-5 shrink-0'>
           <input
             type='checkbox'
-            className='peer absolute h-full w-full cursor-pointer appearance-none rounded border border-slate-300 shadow transition-all checked:border-slate-800 checked:bg-slate-800 hover:shadow-md'
+            className='peer absolute inset-0 h-full w-full cursor-pointer appearance-none rounded border border-slate-300 shadow transition-all checked:border-slate-800 checked:bg-slate-800 hover:shadow-md'
             onChange={handleToggleMusic}
             checked={music}
           />
-          <span className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100'>
+          <span className='pointer-events-none absolute inset-0 grid place-content-center text-white opacity-0 peer-checked:opacity-100'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
-              className='h-3.5 w-3.5'
+              className='block h-3.5 w-3.5'
               viewBox='0 0 20 20'
               fill='currentColor'
               stroke='currentColor'
@@ -39,17 +38,17 @@ export default function AudioToggle(): ReactElement {
 
       {/* SOUND TOGGLE */}
       <label className='flex cursor-pointer items-center gap-2'>
-        <div className='relative h-5 w-5'>
+        <div className='relative h-5 w-5 shrink-0'>
           <input
             type='checkbox'
-            className='peer absolute h-full w-full cursor-pointer appearance-none rounded border border-slate-300 shadow transition-all checked:border-slate-800 checked:bg-slate-800 hover:shadow-md'
+            className='peer absolute inset-0 h-full w-full cursor-pointer appearance-none rounded border border-slate-300 shadow transition-all checked:border-slate-800 checked:bg-slate-800 hover:shadow-md'
             onChange={handleToggleSound}
             checked={sound}
           />
-          <span className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100'>
+          <span className='pointer-events-none absolute inset-0 grid place-content-center text-white opacity-0 peer-checked:opacity-100'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
-              className='h-3.5 w-3.5'
+              className='block h-3.5 w-3.5'
               viewBox='0 0 20 20'
               fill='currentColor'
               stroke='currentColor'
