@@ -183,7 +183,7 @@ export default function QuizPage(): JSX.Element {
 
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
-      // timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), timeout);
+      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), timeout);
       if (press) socket!.emit('skip', { sessionId });
     }
 
