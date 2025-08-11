@@ -46,7 +46,7 @@ export default function PlayerAnswerGraph({
       <BarChart
         layout='vertical' // MAKE BARS GO HORIZONTALLY
         data={data}
-        margin={{ top: 20, right: 30, left: 60, bottom: 20 }}
+        margin={{ top: 20, right: 130, left: 130, bottom: 20 }}
       >
         {/* GRID BEHIND THE BARS */}
         <CartesianGrid stroke='white' strokeDasharray='3 3' />
@@ -56,24 +56,18 @@ export default function PlayerAnswerGraph({
           type='number'
           allowDecimals={false}
           stroke='white' // AXIS LINE AND TICKS
-          tick={{ fill: 'black', fontSize: 14 }} // TICK LABELS
+          tick={{ fill: 'black', fontSize: 18 }} // TICK LABELS
         />
 
         {/* Y AXIS FOR OPTION LABELS WITH WORD WRAPPING */}
         <YAxis
           type='category'
           dataKey='option'
-          tick={({ x, y, payload }) => {
-            const lines = payload.value.split(' ').map((word: string, i: number) => (
-              <tspan key={i} x={x} dy={i === 0 ? 0 : 14}>
-                {word}
-              </tspan>
-            ));
-            return (
-              <text x={x} y={y} dy={4} textAnchor='end' fill='white'>
-                {lines}
-              </text>
-            );
+          width={200}
+          tick={{
+            fill: 'white',
+            fontSize: 18,
+            textAnchor: 'end',
           }}
         />
 

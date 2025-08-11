@@ -24,6 +24,7 @@ import PlayerAnswerGraph from '@/components/PlayerAnswerGraph/PlayerAnswerGraph'
 import FinalScoreboard from '@/components/FinalScoreboard/FinalScoreboard';
 import HostQuestionDisplay from '@/components/HostQuestionDisplay/HostQuestionDisplay';
 import AudioToggle from '@/components/AudioToggle/AudioToggle';
+import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 
 // TYPE / INTERFACE / ENUM IMPORTS
 import { QuizPhase } from '@/enums/QuizPhase.enum';
@@ -182,7 +183,7 @@ export default function QuizPage(): JSX.Element {
 
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
-      timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), timeout);
+      // timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), timeout);
       if (press) socket!.emit('skip', { sessionId });
     }
 
@@ -272,14 +273,16 @@ export default function QuizPage(): JSX.Element {
   return (
     <div className='flex flex-col items-center justify-center'>
       {/* QUIZ BACKGROUND MUSIC */}
-      {/*{isHost && music && phase === QuizPhase.Question && (*/}
-      {/*  <BackgroundMusic key={musicKey} tracks={quizTracks} />*/}
-      {/*)}*/}
+      {isHost && music && phase === QuizPhase.Question && (
+        <BackgroundMusic key={musicKey} tracks={quizTracks} />
+      )}
 
       {/* HOST CONTROLS */}
       {isHost && sessionId && (
         <div
-          className={'z-10 mb-3 flex flex-col gap-2 align-middle text-3xl text-sky-950 sm:flex-row'}
+          className={
+            'z-10 mb-3 flex flex-col gap-2 text-center align-middle text-3xl text-sky-950 sm:flex-row'
+          }
         >
           {/* AUDIO TOGGLE */}
           {isHost && (
@@ -288,7 +291,7 @@ export default function QuizPage(): JSX.Element {
             </div>
           )}
           {/* SESSION ID DISPLAY */}
-          Join with session ID:<span className={'font-bold'}>{sessionId}</span>
+          Join with session ID:<span className={'text-center font-bold'}>{sessionId}</span>
         </div>
       )}
 
