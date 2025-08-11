@@ -1,4 +1,3 @@
-// GAME SESSION MODEL FOR HOST + QUESTION MANAGEMENT
 import { Player } from './Player';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
@@ -12,7 +11,8 @@ export class GameSession {
   public currentQuestionIndex: number = 0;
   public roundTimer!: number; // TIMER IN MS
   public currentRoundTimeout?: NodeJS.Timeout;
-  public scoreCounter: number = 100
+  public scoreCounter: number = 100;
+  public acceptingAnswers: boolean = false;
 
   constructor(
     public sessionId: string,
@@ -53,8 +53,8 @@ export class GameSession {
   }
 
   // INCREMENT PLAYER SCORE
-  public incrementScore(id: any) {
-    const player = this.getPlayerBySocketId(id);
+  public incrementScore(id: number) {
+    const player = this.getPlayerById(id);
     if (player) {
       player.score += Math.ceil(this.scoreCounter);
       if (player.score > 40) this.scoreCounter -= 15;
@@ -80,7 +80,7 @@ export class GameSession {
 
   // CHECK IF ALL PLAYERS ANSWERED
   public allPlayersAnswered(): boolean {
-    return this.players.every(player => player.hasAnswered);
+    return this.players.every((player: Player): boolean => player.hasAnswered);
   }
 
   // CLEAR ANY ACTIVE ROUND TIMEOUT

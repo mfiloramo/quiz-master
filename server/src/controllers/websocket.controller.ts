@@ -7,14 +7,13 @@ import { redis } from '../config/redis';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
 
-
 // MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
-  constructor(private io: Server) {
-  }
+  constructor(private io: Server) {}
 
   /** PUBLIC METHODS **/
-// CREATE NEW GAME SESSION
+
+  // CREATE NEW GAME SESSION
   public createSession(socket: Socket, data: GameSessionAttributes): void {
     // DESTRUCTURE SESSION DATA
     const { sessionId, hostUserName, quizId, roundTimer } = data;
@@ -41,7 +40,7 @@ export class WebSocketController {
     socket.join(sessionId);
   }
 
-// JOIN EXISTING GAME SESSION
+  // JOIN EXISTING GAME SESSION
   public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
     // EXTRACT DATA FROM JOIN REQUEST
     let { id, sessionId, username } = data;
@@ -66,15 +65,35 @@ export class WebSocketController {
     }
 
     // CREATE NEW PLAYER INSTANCE
-    const player = new Player(id, socket.id, username);
+    const player: Player = new Player(id, socket.id, username);
 
     // ADD PLAYER TO SESSION AND JOIN SOCKET ROOM
-    if (session.allPlayersAnswered()) player.hasAnswered = true;
     session.addPlayer(player);
     socket.join(sessionId);
 
     // BROADCAST UPDATED PLAYER LIST TO ALL CLIENTS
     this.io.to(sessionId).emit('player-joined', session.players);
+
+    // LATE JOIN BEHAVIOR MUST MATCH CURRENT ROUND STATE
+    // IF ROUND IS OPEN, SEND ONLY TO THIS SOCKET THE CURRENT QUESTION
+    // IF ROUND IS CLOSED, DO NOT SEND THE QUESTION; DRIVE THEM TO SUMMARY/LEADERBOARD INSTEAD
+    if (session.acceptingAnswers) {
+      const currentQuestion = session.questions[session.currentQuestionIndex];
+      if (currentQuestion) {
+        socket.emit('new-question', {
+          question: currentQuestion,
+          index: session.currentQuestionIndex,
+          total: session.questions.length,
+          roundTimer: session.roundTimer,
+        });
+      }
+    } else {
+      // ROUND CLOSED — MARK NEW PLAYER AS "ANSWERED" SO THEY DON'T KEEP THE ROUND OPEN
+      player.hasAnswered = true;
+
+      // SEND THEM THE CLOSED-ROUND SNAPSHOT (ANSWER SUMMARY) SO THEIR UI DOESN'T SHOW THE QUESTION
+      socket.emit('all-players-answered', session.playerAnswers);
+    }
   }
 
   // START GAME SESSION
@@ -121,7 +140,7 @@ export class WebSocketController {
         });
 
         // FORMAT RAW DATABASE QUESTION DATA
-        questions = result[0].map((question: any) => ({
+        questions = (result[0] as any[]).map((question: any) => ({
           ...question,
           options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
         }));
@@ -186,6 +205,12 @@ export class WebSocketController {
       return;
     }
 
+    // SAFETY: DO NOT SEND A QUESTION IF THE ROUND IS CLOSED
+    if (!session.acceptingAnswers) {
+      socket.emit('all-players-answered', session.playerAnswers);
+      return;
+    }
+
     // EMIT CURRENT QUESTION TO REQUESTING CLIENT
     const currentQuestion = session.questions[session.currentQuestionIndex];
     socket.emit('new-question', {
@@ -203,7 +228,7 @@ export class WebSocketController {
 
     session.nextQuestion();
 
-    // ADVANCE TO NEXT QUESTION OR END SESSION
+    // NEW QUESTION WILL RE-OPEN acceptingAnswers INSIDE emitQuestionWithTimeout()
     const next = session.questions[session.currentQuestionIndex];
     if (next) {
       this.emitQuestionWithTimeout(session);
@@ -229,28 +254,35 @@ export class WebSocketController {
 
     // FETCH SESSION AND PLAYER OBJECT
     const session = SessionManager.getSession(sessionId);
-    const player = session?.getPlayerBySocketId(socket.id);
+    const player: Player | undefined = session?.getPlayerBySocketId(socket.id);
 
     // PREVENT DUPLICATE OR INVALID SUBMISSIONS
-    if (!player || session?.allPlayersAnswered()) return;
+    if (!player || !session) return;
+
+    // HARD GATE: ONLY ACCEPT WHILE ROUND IS OPEN
+    if (!session.acceptingAnswers) return;
+
+    // PREVENT DUPES BY THE SAME PLAYER
+    if (player.hasAnswered) return;
 
     // MARK PLAYER ANSWER AS TRUE
     player.hasAnswered = true;
 
     // INCREMENT SCORE IF ANSWER IS CORRECT
-    if (answer === session?.questions[session.currentQuestionIndex].correct) {
-      session!.incrementScore(player.id);
-      this.io.to(sessionId).emit('player-joined', session!.players);
+    if (answer === session.questions[session.currentQuestionIndex].correct) {
+      session.incrementScore(player.id);
+      this.io.to(sessionId).emit('player-joined', session.players);
     }
 
     // ADD PLAYER ANSWER TO PLAYERS ANSWERED LIST
-    session?.playerAnswers.push(answer);
+    session.playerAnswers.push(answer);
 
     // CHECK IF ALL PLAYERS HAVE ANSWERED
-    if (session!.allPlayersAnswered()) {
-      session!.clearRoundTimeout(); // CANCEL ANY ACTIVE TIMEOUT
-      // NOTIFY CLIENTS THAT ROUND IS COMPLETE AND PROVIDE HOST ANSWERS
-      this.io.to(sessionId).emit('all-players-answered', session?.playerAnswers);
+    if (session.allPlayersAnswered()) {
+      // CLOSE THE ROUND EARLY BECAUSE EVERYONE ANSWERED
+      session.clearRoundTimeout(); // CANCEL ANY ACTIVE TIMEOUT
+      session.acceptingAnswers = false; // CLOSE ROUND
+      this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
     }
   }
 
@@ -261,6 +293,14 @@ export class WebSocketController {
 
     // CLEAR TIMER AND EMIT CURRENT ANSWERS
     session.clearRoundTimeout();
+
+    // CLOSE THE ROUND EXPLICITLY
+    session.acceptingAnswers = false;
+
+    // MARK EVERYONE AS "ANSWERED" SO HOST UI IS CONSISTENT
+    session.players.forEach((player: Player): boolean => (player.hasAnswered = true));
+
+    this.io.to(sessionId).emit('player-joined', session.players);
     this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
   }
 
@@ -279,21 +319,21 @@ export class WebSocketController {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
-      // VALIDATE THAT SOCKET IS HOST
-      if (socket.id !== session.hostSocketId) {
-        socket.emit('error', 'Only the host can eject players.');
-        return;
-      }
+    // VALIDATE THAT SOCKET IS HOST
+    if (socket.id !== session.hostSocketId) {
+      socket.emit('error', 'Only the host can eject players.');
+      return;
+    }
 
-      // FETCH PLAYER TO EJECT
-      const player = session.getPlayerById(id);
-      if (!player) return;
+    // FETCH PLAYER TO EJECT
+    const player = session.getPlayerById(id);
+    if (!player) return;
 
-      // SEND EJECTION MESSAGE TO PLAYER
-      this.io.to(player.socketId).emit('ejected-by-host');
+    // SEND EJECTION MESSAGE TO PLAYER
+    this.io.to(player.socketId).emit('ejected-by-host');
 
-      // REMOVE PLAYER FROM SESSION
-      session.removePlayerByPlayerId(id);
+    // REMOVE PLAYER FROM SESSION
+    session.removePlayerByPlayerId(id);
 
     // BROADCAST UPDATED PLAYER LIST
     this.io.to(sessionId).emit('player-joined', session.players);
@@ -327,14 +367,17 @@ export class WebSocketController {
 
     // RESET ROUND STATE
     session.playerAnswers = []; // CLEAR PREVIOUS ANSWERS
-    session.players.forEach((p) => (p.hasAnswered = false)); // RESET PLAYER FLAGS
+    session.players.forEach((player: Player): boolean => (player.hasAnswered = false)); // RESET PLAYER FLAGS
+
+    // OPEN THE ROUND FOR ANSWERS
+    session.acceptingAnswers = true;
 
     // EMIT NEW QUESTION TO ALL CLIENTS
     this.io.to(sessionId).emit('new-question', {
       question: currentQuestion,
       index: session.currentQuestionIndex,
       total: session.questions.length,
-      roundTimer: session.roundTimer, // FOR TIMER DISPLAY ON CLIENT
+      roundTimer: session.roundTimer, // TIMER DISPLAY ON CLIENT
     });
 
     // CLEAR ANY EXISTING TIMEOUT TO AVOID CONFLICTS
@@ -342,16 +385,17 @@ export class WebSocketController {
 
     // SET TIMEOUT TO FORCE PROGRESSION IF NOT ALL PLAYERS ANSWER IN TIME
     session.currentRoundTimeout = setTimeout(() => {
-      if (!session.allPlayersAnswered() || !session.players.length) {
-        // MARK ALL PLAYERS AS ANSWERED TO PREVENT FUTURE INPUT
-        session.players.forEach((p) => (p.hasAnswered = true));
+      // TIME EXPIRED — CLOSE THE ROUND REGARDLESS OF HOW MANY ANSWERED
+      session.acceptingAnswers = false;
 
-        // EMIT UPDATED PLAYER LIST (IN CASE HOST NEEDS TO SEE STATUS)
-        this.io.to(sessionId).emit('player-joined', session.players);
+      // MARK ALL PLAYERS AS ANSWERED TO PREVENT FUTURE INPUT
+      session.players.forEach((player: Player): boolean => (player.hasAnswered = true));
 
-        // EMIT WHATEVER ANSWERS HAVE BEEN RECEIVED (INCLUDING PARTIAL)
-        this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
-      }
+      // EMIT UPDATED PLAYER LIST (IN CASE HOST NEEDS TO SEE STATUS)
+      this.io.to(sessionId).emit('player-joined', session.players);
+
+      // EMIT WHATEVER ANSWERS HAVE BEEN RECEIVED (INCLUDING PARTIAL)
+      this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
     }, session.roundTimer);
   }
 }

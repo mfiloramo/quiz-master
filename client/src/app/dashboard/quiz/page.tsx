@@ -22,13 +22,12 @@ import Leaderboard from '@/components/Leaderboard/Leaderboard';
 import PlayerAnswerSummary from '@/components/PlayerAnswerSummary/PlayerAnswerSummary';
 import PlayerAnswerGraph from '@/components/PlayerAnswerGraph/PlayerAnswerGraph';
 import FinalScoreboard from '@/components/FinalScoreboard/FinalScoreboard';
-import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 import HostQuestionDisplay from '@/components/HostQuestionDisplay/HostQuestionDisplay';
 import AudioToggle from '@/components/AudioToggle/AudioToggle';
 
 // TYPE / INTERFACE / ENUM IMPORTS
 import { QuizPhase } from '@/enums/QuizPhase.enum';
-import { QuizQuestion, QuizSession } from '@/types/Quiz.types';
+import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
 // PAGE CONSTANTS
@@ -92,7 +91,7 @@ export default function QuizPage(): JSX.Element {
     if (!socket) return;
 
     // NEW QUESTION EMITTED FROM SERVER
-    socket.on('new-question', (data: QuizSession) => {
+    socket.on('new-question', (data: any) => {
       const { index, question, total, roundTimer } = data;
       const seconds = Math.floor(roundTimer / 1000);
       setRoundTimerSetting(seconds);
@@ -215,10 +214,13 @@ export default function QuizPage(): JSX.Element {
     if (phase !== QuizPhase.AnswerSummary && phase !== QuizPhase.Leaderboard) {
       gongSound?.stop();
     }
-  }, [phase, playGong, gongSound, isHost]);
+  }, [phase, playGong, gongSound, isHost, sound]);
 
   // HANDLE USER ANSWER
+  // SAFETY: DO NOT SUBMIT IF NOT IN THE QUESTION PHASE (SERVER ALSO GUARDS THIS)
   const handleAnswer = (answer: string): void => {
+    if (phase !== QuizPhase.Question) return;
+
     setUserAnswer(answer);
     setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
     socket?.emit('submit-answer', {
@@ -227,6 +229,8 @@ export default function QuizPage(): JSX.Element {
       answer,
     });
     setLoading(true);
+
+    // NOTE: THIS CALL IS OPTIONAL; SERVER NOW DRIVES PHASES. KEEPING FOR YOUR FLOW.
     if (isHost) {
       socket?.emit('get-current-question', { sessionId });
     }
@@ -268,9 +272,9 @@ export default function QuizPage(): JSX.Element {
   return (
     <div className='flex flex-col items-center justify-center'>
       {/* QUIZ BACKGROUND MUSIC */}
-      {isHost && music && phase === QuizPhase.Question && (
-        <BackgroundMusic key={musicKey} tracks={quizTracks} />
-      )}
+      {/*{isHost && music && phase === QuizPhase.Question && (*/}
+      {/*  <BackgroundMusic key={musicKey} tracks={quizTracks} />*/}
+      {/*)}*/}
 
       {/* HOST CONTROLS */}
       {isHost && sessionId && (
@@ -355,6 +359,7 @@ export default function QuizPage(): JSX.Element {
 
       {/* FINAL SCOREBOARD (HOST DISPLAY) */}
       {phase === QuizPhase.FinalScoreboard && isHost && <FinalScoreboard />}
+
       <div className={'flex flex-row items-center justify-between gap-3'}>
         {/* SKIP PHASE BUTTON */}
         {isHost && (
