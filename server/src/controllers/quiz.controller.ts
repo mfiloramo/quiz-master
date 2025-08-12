@@ -23,7 +23,7 @@ export class QuizController {
 
       // DELETE CACHE KEY ASSOCIATED WITH USER'S QUIZZES
       await redis.del(cacheKeyUser)
-        .then(() => console.log('User cache key deleted...'));
+        .then(() => console.log('User quizzes deleted in cache...'));
 
       // DELETE CACHE KEY ASSOCIATED WITH ALL QUIZZES (DISCOVER)
       await redis.del(cacheKeyAllQuizzes)
@@ -162,12 +162,20 @@ export class QuizController {
       // DESTRUCTURE DATA FROM REQUEST PARAMS
       const { quizId } = req.params;
 
-      // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH DELETE QUIZ DATA
-      await sequelize.query("EXECUTE DeleteQuiz :quizId", {
-        replacements: { quizId },
-      });
+      // GET USER ID BY QUIZ ID
+      const userId = await sequelize.query('EXECUTE GetUserIdByQuizId :quizId',
+        {
+          replacements: { quizId },
+        });
 
+      // EXTRACT DATA FROM RESULT
       let id;
+      if (userId) {
+        // @ts-ignore
+        id = userId[0][0].user_id;
+      } else {
+        console.error('User ID not found...');
+      }
 
       // CLEAR QUIZ FROM CACHE
       const deleted = await redis.del(`quiz:${ quizId }:questions`);
@@ -177,28 +185,22 @@ export class QuizController {
         console.warn('Quiz not found in cache or already deleted...');
       }
 
-      const userId = await sequelize.query('EXECUTE Temp_GetUserIdByQuizId :quizId',
-        {
-          replacements: { quizId },
-        });
-
-      // EXTRACT DATA FROM RESULT
-      if (userId) {
-        // @ts-ignore
-        id = userId[0][0].user_id;
-      }
-
       // UPDATE USER'S CACHED QUIZZES LIST
       await redis.del(`user:${ id }:quizzes`)
         .then((response: any): void => {
           console.log(`Quizzes deleted in User's cache with response of ${response}...`);
-        })
+        });
 
-      // CLEAR CACHE KEY CONTAINING ALL QUIZZES
+      // CLEAR ALL QUIZZES IN DISCOVER
       await redis.del(`discover:all:quizzes`)
         .then((response: any): void => {
           console.log(`Quizzes deleted in Discover with response of: ${ response }...`);
         });
+
+      // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH DELETE QUIZ DATA
+      await sequelize.query("EXECUTE DeleteQuiz :quizId", {
+        replacements: { quizId },
+      });
 
       // SEND SUCCESS RESPONSE TO CLIENT
       res.status(200).send(`Quiz with ID: ${ quizId } deleted successfully`);
