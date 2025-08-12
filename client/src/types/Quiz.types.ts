@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 // TYPE FOR A NEW QUIZ
 export type Quiz = {
-  id: number;
+  id?: number;
   user_id: number;
   author: string;
   created_date: string;

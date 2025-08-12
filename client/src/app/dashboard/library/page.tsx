@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -49,7 +49,13 @@ export default function LibraryPage(): ReactElement {
   };
 
   // HANDLE DELETING A QUIZ FROM UI AFTER DELETE
-  const handleDeleteQuiz = async (quizId: number): Promise<void> => {
+  const handleDeleteQuiz = async (): Promise<void> => {
+    if (!selectedQuiz) {
+      alert('Please select a quiz to start!');
+      return;
+    }
+
+    const quizId = selectedQuiz?.id;
     setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
     await axiosInstance.delete(`/quizzes/${quizId}`);
   };
@@ -84,15 +90,15 @@ export default function LibraryPage(): ReactElement {
             quiz={quiz}
             selected={selectedQuiz?.id === quiz.id}
             onSelect={handleSelectQuiz}
-            onDelete={handleDeleteQuiz}
           />
         ))}
       </div>
 
       {/* ACTION BUTTONS */}
       <div className='mt-8 flex gap-4'>
+        {/* HOST QUIZ BUTTON */}
         <motion.button
-          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400 active:bg-green-500'
+          className='w-sm sm:w-2xl h-16 rounded-lg bg-green-500 px-7 font-bold text-white transition hover:bg-green-400 active:bg-green-500'
           onClick={navToHostQuiz}
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
@@ -102,8 +108,10 @@ export default function LibraryPage(): ReactElement {
         >
           HOST QUIZ
         </motion.button>
+
+        {/* EDIT QUIZ BUTTON */}
         <motion.button
-          className='h-16 w-40 rounded-lg bg-amber-500 font-bold text-white transition hover:bg-amber-400 active:bg-amber-500'
+          className='w-sm sm:w-2xl h-16 rounded-lg bg-amber-500 px-7 font-bold text-white transition hover:bg-amber-400 active:bg-amber-500'
           onClick={navToEdit}
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
@@ -112,6 +120,19 @@ export default function LibraryPage(): ReactElement {
           whileTap={{ scale: 0.95 }}
         >
           EDIT QUIZ
+        </motion.button>
+
+        {/* DELETE QUIZ BUTTON */}
+        <motion.button
+          className='w-sm sm:w-2xl h-16 rounded-lg bg-red-600 px-7 font-bold text-white transition hover:bg-red-500 active:bg-red-600'
+          onClick={handleDeleteQuiz}
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.005 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          DELETE QUIZ
         </motion.button>
       </div>
     </div>
