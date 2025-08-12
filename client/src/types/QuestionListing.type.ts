@@ -9,7 +9,7 @@ export type QuestionListingType = {
 };
 
 export type EditModalProps = {
-  quizId: number;
+  quizId?: number;
   question: QuestionListingType;
   onClose: () => void;
   onSave: (updatedQuestion: QuestionListingType) => void;
