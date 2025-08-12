@@ -29,7 +29,7 @@ export default function EditQuiz(): ReactElement {
   useEffect(() => {
     if (selectedQuiz) {
       const newForm = {
-        id: selectedQuiz.id,
+        id: selectedQuiz.id!,
         title: selectedQuiz.title,
         description: selectedQuiz.description,
         visibility: selectedQuiz.visibility,
