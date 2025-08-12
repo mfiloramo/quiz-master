@@ -78,7 +78,7 @@ export class AuthController {
         user = rows[0];
 
         // SET USER DATA
-        await redis.set(cacheKey, JSON.stringify(user));
+        await redis.setEx(cacheKey, 86400, JSON.stringify(user));
 
         // CHECK IF USER IS VALID
         if (!user) {
