@@ -12,6 +12,8 @@ class Quiz extends Model<QuizAttributes, QuizCreationAttributes> implements Quiz
   public title!: string;
   public description?: string;
   public created_at!: Date;
+  public username?: string;
+  public visibility?: string;
 }
 
 Quiz.init({
@@ -39,7 +41,16 @@ Quiz.init({
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
+    allowNull: true,
   },
+  username: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
+  visibility: {
+    type: DataTypes.STRING(25),
+    allowNull: true,
+  }
 }, {
   sequelize,
   tableName: 'Quizzes',

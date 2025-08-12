@@ -11,7 +11,7 @@ class Question extends Model<QuestionAttributes, QuestionCreationAttributes> imp
   public quiz_id!: number;
   public question!: string;
   public options!: string;
-  public correct!: number;
+  public correct!: string;
 }
 
 Question.init({
@@ -37,7 +37,7 @@ Question.init({
     allowNull: false,
   },
   correct: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(255),
     allowNull: false,
   },
 }, {

@@ -4,4 +4,6 @@ export interface QuizAttributes {
   title: string;
   description?: string;
   created_at?: Date;
+  username?: string;
+  visibility?: string;
 }
