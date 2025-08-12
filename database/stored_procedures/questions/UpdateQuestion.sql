@@ -1,9 +1,9 @@
 -- STORED PROCEDURE TO UPDATE A QUESTION
-CREATE PROCEDURE UpdateQuestion
+CREATE PROCEDURE [dbo].[UpdateQuestion]
     @QuestionId INT,
     @Question NVARCHAR(MAX),
     @Options NVARCHAR(MAX),
-    @Correct INT
+    @Correct NVARCHAR(200)
 AS
 BEGIN
     -- UPDATE THE QUESTION RECORD

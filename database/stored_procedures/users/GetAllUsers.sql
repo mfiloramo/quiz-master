@@ -1,5 +1,5 @@
 -- STORED PROCEDURE TO SELECT ALL USERS
-CREATE PROCEDURE GetAllUsers
+CREATE PROCEDURE [dbo].[GetAllUsers]
 AS
 BEGIN
     SELECT id, username, email
