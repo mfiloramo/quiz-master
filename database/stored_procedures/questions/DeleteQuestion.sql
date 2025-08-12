@@ -1,5 +1,5 @@
 -- STORED PROCEDURE TO DELETE A QUESTION
-CREATE PROCEDURE DeleteQuestion
+CREATE PROCEDURE [dbo].[DeleteQuestion]
     @QuestionId INT
 AS
 BEGIN
@@ -8,3 +8,4 @@ BEGIN
     WHERE id = @QuestionId;
 END;
 GO
+

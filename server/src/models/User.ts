@@ -37,9 +37,16 @@ User.init({
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
+    allowNull: true,
   },
-  isActive: DataTypes.BOOLEAN,
-  account_type: DataTypes.STRING,
+  isActive: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+  },
+  account_type: {
+    type: DataTypes.STRING(30),
+    allowNull: true,
+  },
 }, {
   sequelize,
   tableName: 'Users',

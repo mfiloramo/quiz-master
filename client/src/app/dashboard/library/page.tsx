@@ -49,8 +49,9 @@ export default function LibraryPage(): ReactElement {
   };
 
   // HANDLE DELETING A QUIZ FROM UI AFTER DELETE
-  const handleDeleteQuiz = (quizId: number): void => {
+  const handleDeleteQuiz = async (quizId: number): Promise<void> => {
     setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
+    await axiosInstance.delete(`/quizzes/${quizId}`);
   };
 
   // NAVIGATE TO HOST PAGE

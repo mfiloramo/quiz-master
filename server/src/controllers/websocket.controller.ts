@@ -277,6 +277,9 @@ export class WebSocketController {
     // ADD PLAYER ANSWER TO PLAYERS ANSWERED LIST
     session.playerAnswers.push(answer);
 
+    // EMIT PLAYER ANSWER COUNT
+    this.io.to(sessionId).emit('player-answer-received', session.playerAnswers.length);
+
     // CHECK IF ALL PLAYERS HAVE ANSWERED
     if (session.allPlayersAnswered()) {
       // CLOSE THE ROUND EARLY BECAUSE EVERYONE ANSWERED
@@ -379,6 +382,8 @@ export class WebSocketController {
       total: session.questions.length,
       roundTimer: session.roundTimer, // TIMER DISPLAY ON CLIENT
     });
+
+    this.io.to(sessionId).emit('player-answer-received', session.playerAnswers.length);
 
     // CLEAR ANY EXISTING TIMEOUT TO AVOID CONFLICTS
     session.clearRoundTimeout();

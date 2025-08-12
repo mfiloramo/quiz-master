@@ -3,5 +3,5 @@ export interface QuestionAttributes {
   quiz_id: number;
   question: string;
   options: string;
-  correct: number;
+  correct: string;
 }

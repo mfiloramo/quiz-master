@@ -66,7 +66,7 @@ export default function CreateQuiz(): ReactElement {
       <div className='mb-4 flex flex-row text-4xl font-bold'>Create Your Own Quiz</div>
 
       {/* FORM AND IMAGE MODULE CONTAINER */}
-      <div className='my-3 flex w-[70vw] max-w-6xl flex-col justify-items-start rounded-xl md:flex-row'>
+      <div className='my-3 flex max-w-6xl flex-col justify-items-start rounded-xl md:flex-row'>
         {/* IMAGE UPLOAD STUB */}
         <div className='mx-auto mb-3 h-[50vh] w-full content-center rounded-lg bg-white p-3 text-center text-4xl sm:max-w-sm md:mb-0'>
           Cover Image Module

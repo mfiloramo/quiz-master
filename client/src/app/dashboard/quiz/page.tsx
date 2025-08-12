@@ -44,6 +44,7 @@ export default function QuizPage(): JSX.Element {
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(null);
   const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
+  const [playerAnswersCount, setPlayerAnswersCount] = useState<number>(0);
   const [error] = useState<string | null>(null);
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
   const [playerAnswers, setPlayerAnswers] = useState<string[]>([]);
@@ -104,7 +105,8 @@ export default function QuizPage(): JSX.Element {
       setTotalQuestions(total);
       setPhase(QuizPhase.Question);
       setLoading(false);
-      setUserAnswer(null); // RESET USER ANSWER ON NEW QUESTION
+      setUserAnswer(null);
+      setPlayerAnswersCount(0);
 
       // FORCE MUSIC REMOUNT ON EACH QUESTION
       setMusicKey(Date.now());
@@ -152,6 +154,11 @@ export default function QuizPage(): JSX.Element {
 
       const delay = isHost ? 8000 : 0;
       setTimeout(handleEnd, delay);
+    });
+
+    // UPDATE PLAYER ANSWER COUNTER
+    socket.on('player-answer-received', (answersCount: number): void => {
+      setPlayerAnswersCount(answersCount);
     });
 
     // CLEANUP SOCKET LISTENERS
@@ -218,7 +225,6 @@ export default function QuizPage(): JSX.Element {
   }, [phase, playGong, gongSound, isHost, sound]);
 
   // HANDLE USER ANSWER
-  // SAFETY: DO NOT SUBMIT IF NOT IN THE QUESTION PHASE (SERVER ALSO GUARDS THIS)
   const handleAnswer = (answer: string): void => {
     if (phase !== QuizPhase.Question) return;
 
@@ -316,9 +322,10 @@ export default function QuizPage(): JSX.Element {
         />
       )}
 
-      {/* PLAYER TIMER DISPLAY */}
+      {/* ROUND INFORMATION DISPLAY */}
       {phase === QuizPhase.Question && isHost && secondsLeft !== null && (
-        <div className={'mt-8'}>
+        <div className={'mt-8 flex flex-row items-center'}>
+          {/* COUNTDOWN TIMER */}
           <CountdownCircleTimer
             isPlaying
             duration={roundTimerSetting!}
@@ -328,6 +335,17 @@ export default function QuizPage(): JSX.Element {
           >
             {({ remainingTime }) => remainingTime}
           </CountdownCircleTimer>
+          {/* PLAYER ANSWERS COUNT */}
+          <div className={'mx-12 flex flex-col items-center'}>
+            <div
+              className={
+                'rounded-full bg-green-600 p-6 text-3xl font-bold text-green-100 shadow-xl'
+              }
+            >
+              {playerAnswersCount}
+            </div>
+            <div className={'text-xl font-bold'}>Answers</div>
+          </div>
         </div>
       )}
 

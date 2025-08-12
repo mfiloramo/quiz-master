@@ -85,7 +85,7 @@ export default function EditQuestionModal({
     // MAIN CONTAINER BACKGROUND
     <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 text-black'>
       {/* INNER CONTAINER */}
-      <div className='mx-6 w-full max-w-lg rounded-lg bg-white p-6 shadow-lg'>
+      <div className='mx-3 w-full max-w-lg rounded-lg bg-white p-6 shadow-lg'>
         {/* TITLE */}
         <h2 className='mb-4 text-2xl font-bold'>
           {mode.charAt(0).toUpperCase() + mode.slice(1)} Question

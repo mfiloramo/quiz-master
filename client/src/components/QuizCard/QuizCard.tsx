@@ -20,7 +20,6 @@ export default function MainQuizCard({
     e.stopPropagation(); // PREVENT onSelect WHEN CLICKING DELETE
 
     try {
-      await axiosInstance.delete(`/quizzes/${quiz.id}`);
       onDelete!(quiz.id); // TRIGGER PARENT STATE UPDATE
     } catch (err) {
       console.error('Failed to delete quiz:', err);
