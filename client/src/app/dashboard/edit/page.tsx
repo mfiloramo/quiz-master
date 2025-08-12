@@ -117,7 +117,7 @@ export default function EditQuiz(): ReactElement {
       <div className={'flex flex-row justify-start'}>
         {/* ADD QUESTION BUTTON */}
         <motion.button
-          className='m-4 h-12 w-fit rounded bg-cyan-700 px-4 py-2 text-white shadow-lg transition hover:bg-cyan-600 active:bg-cyan-700'
+          className='m-4 h-12 w-fit rounded bg-cyan-700 px-4 text-sm text-white shadow-lg transition hover:bg-cyan-600 active:bg-cyan-700 sm:text-lg'
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
           transition={{ duration: 0.005 }}
@@ -141,15 +141,15 @@ export default function EditQuiz(): ReactElement {
 
         {/* QUIZ VISIBILITY TOGGLE */}
         {selectedQuiz && form.id !== 0 && (
-          <div className='align-center m-4 h-12 rounded bg-cyan-800 px-4 py-3 font-bold text-white shadow-lg'>
+          <div className='m-4 flex h-12 items-center rounded bg-cyan-800 px-4 text-xs font-bold text-white shadow-lg sm:text-lg'>
             <input
               name='visibility'
               type='checkbox'
               checked={form.visibility === 'private'}
               onChange={handleCheckboxChange}
-              className='mr-1.5'
+              className='mr-2 h-4 w-4'
             />
-            <label>Private Visibility</label>
+            <label htmlFor='visibility'>Private Visibility</label>
           </div>
         )}
 
@@ -161,7 +161,7 @@ export default function EditQuiz(): ReactElement {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className={
-            'm-4 h-12 cursor-pointer rounded bg-emerald-600 px-4 py-3 text-lg font-bold text-white shadow-lg transition hover:bg-emerald-500 active:bg-emerald-400'
+            'm-4 h-12 cursor-pointer rounded bg-emerald-600 px-4 text-sm font-bold text-white shadow-lg transition hover:bg-emerald-500 active:bg-emerald-400 sm:text-lg'
           }
           onClick={handleSave}
         >
