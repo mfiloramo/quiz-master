@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import axiosInstance from '@/utils/axios';
+import ToastNotification from '@/components/ToastNotification/ToastNotification';
 
 export default function LoginPage(): ReactElement {
   // STATE HOOKS
@@ -119,6 +120,8 @@ export default function LoginPage(): ReactElement {
           </button>
         </form>
       </div>
+
+      <ToastNotification notificationType={'Error'} notificationMsg={'This is a success!'} />
     </div>
   );
 }

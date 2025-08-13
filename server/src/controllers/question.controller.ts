@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
+import { redis } from '../config/redis';
+import Question from '../models/Question';
 
 export class QuestionController {
   // ADD NEW QUESTION TO DATABASE
@@ -29,18 +31,44 @@ export class QuestionController {
     }
   }
 
-  // TODO: THIS SHOULD BE CALLED DIRECTLY FROM THE FRONTEND WHEN THERE IS A CACHE MISS
   // GET ALL QUESTIONS BY QUIZ ID
   static async getQuestionsByQuizId(req: Request, res: Response): Promise<void> {
     try {
+      // DESTRUCTURE QUIZ ID
       const { quizId } = req.params;
-      const questions: any[] = await sequelize.query(
-        "EXECUTE GetQuestionsByQuizId :quizId",
-        {
-          replacements: { quizId }
-        },
-      );
-      res.send(questions[0]);
+
+      // GENERATE REDIS CACHE KEY
+      const cacheKey: string = `quiz:${ quizId }:questions`;
+
+      // CACHE HIT: ATTEMPT TO RETRIEVE QUIZ QUESTIONS
+      const cached: string | null = await redis.get(cacheKey)
+
+      // DECLARE/DEFINE QUESTIONS ARRAY
+      let questions: any[];
+
+      if (cached) {
+        // CACHE HIT — PARSE QUESTIONS FROM REDIS
+        console.log('Cache hit: User quizzes...');
+        questions = JSON.parse(cached);
+
+        // SEND CACHED DATA
+        res.send(questions[0]);
+      } else {
+        // CACHE MISS — QUERY DATABASE FOR ALL QUIZZES BELONGING TO USER
+        questions = await sequelize.query(
+          "EXECUTE GetQuestionsByQuizId :quizId",
+          {
+            replacements: { quizId }
+          },
+        );
+
+        // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
+        console.log('Cache miss: User quizzes...');
+        await redis.set(cacheKey, JSON.stringify(questions));
+
+        // SEND QUERIED DATA FROM DATABASE
+        res.send(questions[0]);
+      }
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");
