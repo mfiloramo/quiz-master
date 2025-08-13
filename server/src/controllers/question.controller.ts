@@ -78,16 +78,21 @@ export class QuestionController {
   // UPDATE EXISTING QUESTION
   static async updateQuestion(req: Request, res: Response): Promise<void> {
     try {
-      const { questionId, question, options, correct } = req.body;
+      // DESTRUCTURE DATA FROM REQUEST BODY
+      const { quizId, questionId, question, options, correct } = req.body;
+
+      // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH UPDATED QUESTION DATA
       await sequelize.query(
         "EXECUTE UpdateQuestion :questionId, :question, :options, :correct",
         {
           replacements: { questionId, question, options, correct },
         },
-      );
-      res
-        .status(200)
-        .send(`Question with ID: ${questionId} updated successfully`);
+      ).then(() => {
+        // CLEAR QUIZ FROM CACHE
+        redis.del(`quiz:${ quizId }:questions`);
+        console.log('Quiz updated in cache successfully...');
+      });
+      res.status(200).send(`Question with ID: ${questionId} updated successfully`);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");
