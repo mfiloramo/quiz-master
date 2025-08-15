@@ -5,6 +5,9 @@ import type { ReactNode } from 'react';
 import type { ToastContextType, Toast, AddToastInput } from '@/types/contexts/ToastContext.type';
 import { ToastStatus } from '@/enums/ToastStatus.enum';
 
+// DO NOT STACK IDENTICAL TOASTS WITHIN THIS WINDOW (MS)
+const DEDUPE_WINDOW_MS = 3000;
+
 // ACTION TYPES
 type Action =
   | { type: 'ADD'; payload: Toast }
@@ -15,8 +18,31 @@ type Action =
 function reducer(state: Toast[], action: Action): Toast[] {
   switch (action.type) {
     case 'ADD': {
-      // OPTIONAL: DEDUPE LOGIC COULD GO HERE
-      return [action.payload, ...state];
+      const next = action.payload;
+
+      // SIMPLE NORMALIZER TO AVOID TRIVIAL MISMATCHES
+      const norm = (s: string) => s.trim().toLowerCase();
+
+      // FIND EXISTING TOAST WITH SAME MESSAGE + STATUS
+      const dupIndex = state.findIndex(
+        (t) => t.status === next.status && norm(t.message) === norm(next.message)
+      );
+
+      if (dupIndex !== -1) {
+        const existing = state[dupIndex];
+
+        // IF THE DUPLICATE IS "RECENT", DROP IT
+        if (next.createdAt - existing.createdAt < DEDUPE_WINDOW_MS) {
+          return state;
+        }
+
+        // OTHERWISE REPLACE THE OLD ONE (RESET ITS TIMER, MOVE TO TOP)
+        const without = state.filter((_, i) => i !== dupIndex);
+        return [next, ...without];
+      }
+
+      // NO DUPLICATE FOUND → ADD NORMALLY
+      return [next, ...state];
     }
     case 'DISMISS': {
       return state.filter((t) => t.id !== action.payload.id);

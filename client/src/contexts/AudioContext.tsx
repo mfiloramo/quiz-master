@@ -14,7 +14,7 @@ const AudioContext = createContext<any | null>(null);
 
 // PROVIDER COMPONENT
 export function AudioProvider({ children }: { children: ReactNode }) {
-  // LOCAL STATES
+  // STATE HOOKS
   // TODO: THIS WILL LATER SHOW USER'S STATE ACCORDING TO PERSONAL SETTINGS
   const [music, setMusic] = useState<boolean>(true);
   const [sound, setSound] = useState<boolean>(true);

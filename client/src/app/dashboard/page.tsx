@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { DashboardCardType } from '@/types/DashboardCard.type';
 
 export default function DashboardHome(): JSX.Element {
-  // PAGE STATE
+  // STATE HOOKS
   const router = useRouter();
   const { resetQuiz } = useQuiz();
   const { user, setIsHost } = useAuth();

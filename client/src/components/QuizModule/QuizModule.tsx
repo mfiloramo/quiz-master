@@ -14,7 +14,7 @@ export default function QuizModule({
   totalQuestions,
   onSubmit,
 }: QuizModuleProps) {
-  // LOCAL STATE
+  // STATE HOOKS
   const [selected, setSelected] = useState<string | null>(null);
 
   // CUSTOM HOOKS

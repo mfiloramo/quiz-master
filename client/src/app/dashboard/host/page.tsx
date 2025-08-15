@@ -9,7 +9,7 @@ import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
 
 export default function HostPage() {
-  // LOCAL STATE
+  // STATE HOOKS
   const [error, setError] = useState<string>('');
   const [roundTimer, setRoundTimer] = useState<number>(15);
 
