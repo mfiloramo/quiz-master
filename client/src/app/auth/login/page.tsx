@@ -2,6 +2,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import Image from 'next/image';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import axiosInstance from '@/utils/axios';
@@ -11,13 +12,13 @@ export default function LoginPage(): ReactElement {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [type, setType] = useState<'password' | 'text'>('password');
-  const [error, setError] = useState<string | null>(null);
 
   // ROUTER INSTANCE FOR REDIRECTION
   const router = useRouter();
 
-  // AUTH CONTEXT HOOK
+  // CONTEXT HOOKS
   const { login } = useAuth();
+  const { toastError } = useToast();
 
   // EFFECT HOOK TO CLEAR INPUT FIELDS ON UNMOUNT
   useEffect(() => {
@@ -30,11 +31,10 @@ export default function LoginPage(): ReactElement {
   // HANDLE LOGIN
   const handleLogin = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    setError(null);
 
     // VALIDATE INPUT
     if (!email.trim() || !password.trim()) {
-      setError('Email and password are required');
+      toastError('Email and password are required');
       return;
     }
 
@@ -43,15 +43,15 @@ export default function LoginPage(): ReactElement {
       const { data } = await axiosInstance.post('/auth/login', { email, password });
 
       // CALL AUTH CONTEXT LOGIN FUNCTION
-      const success = login(data.token);
+      const loginSuccess = login(data.token);
 
       // REDIRECT ON SUCCESS
-      if (success) {
+      if (loginSuccess) {
         router.push('/dashboard');
       }
     } catch (error: any) {
       // DISPLAY ERROR MESSAGE
-      setError(error.response?.data?.message || 'Login failed');
+      toastError(error.response?.data?.message || 'Login failed');
     }
   };
 
@@ -77,9 +77,6 @@ export default function LoginPage(): ReactElement {
       <div className='relative mt-8 w-[90%] max-w-md content-center rounded-xl bg-sky-50 p-8 shadow-2xl'>
         {/* TITLE */}
         <h2 className='mb-6 text-center text-2xl font-bold text-sky-800'>Log In</h2>
-
-        {/* DISPLAY ERROR */}
-        {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
 
         {/* LOGIN FORM */}
         <form onSubmit={handleLogin} className='flex flex-col gap-4'>

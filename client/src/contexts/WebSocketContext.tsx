@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { WebSocketContextType } from '@/types/WebSocketContext.type';
+import { WebSocketContextType } from '@/types/contexts/WebSocketContext.type';
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 

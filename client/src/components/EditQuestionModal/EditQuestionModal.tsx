@@ -3,6 +3,7 @@
 import React, { ReactElement, useState } from 'react';
 import { EditModalProps } from '@/types/QuestionListing.type';
 import axiosInstance from '@/utils/axios';
+import { useQuiz } from '@/contexts/QuizContext';
 
 export default function EditQuestionModal({
   quizId,
@@ -14,6 +15,9 @@ export default function EditQuestionModal({
   // LOCAL STATE FOR QUESTION EDITING
   const [editedQuestion, setEditedQuestion] = useState<string>(question.question);
   const [editedOptions, setEditedOptions] = useState<string[]>([...question.options]);
+
+  // CONTEXT HOOKS
+  const { selectedQuiz } = useQuiz();
 
   // TRACK QUESTIONS
   const initialIndex = question.options.findIndex((opt) => opt === question.correct);
@@ -29,6 +33,7 @@ export default function EditQuestionModal({
   const handleSave = async () => {
     try {
       const payload = {
+        quizId: selectedQuiz?.id,
         questionId: question.id,
         question: editedQuestion,
         options: JSON.stringify(editedOptions),

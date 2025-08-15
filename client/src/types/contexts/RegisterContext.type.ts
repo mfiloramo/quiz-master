@@ -9,5 +9,4 @@ export type RegisterContextType = {
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
   setConfirmPassword: (confirmPassword: string) => void;
-  reset: () => void;
 };

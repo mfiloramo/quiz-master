@@ -8,10 +8,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { DashboardCardType } from '@/types/DashboardCard.type';
 
 export default function DashboardHome(): JSX.Element {
+  // PAGE STATE
   const router = useRouter();
   const { resetQuiz } = useQuiz();
   const { user, setIsHost } = useAuth();
 
+  // PAGE VARIABLES
   const DashboardCards: DashboardCardType[] = [
     {
       label: '🎮 Join Game',

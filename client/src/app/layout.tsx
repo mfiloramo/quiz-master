@@ -1,12 +1,13 @@
+import React from 'react';
 import './globals.css';
 import type { Metadata } from 'next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
-import Navbar from '@/components/Navbar/Navbar';
 import { Poppins } from 'next/font/google';
+import Navbar from '@/components/Navbar/Navbar';
 import { AuthProvider } from '@/contexts/AuthContext';
-import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
-import React from 'react';
+import { ToastProvider } from '@/contexts/ToastContext';
+import ToastNotification from '@/components/ToastNotification/ToastNotification';
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['200', '400'] });
 
@@ -20,21 +21,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en' className={`${poppins.className} h-full bg-white`}>
       <body className='h-full overflow-hidden bg-white antialiased'>
         <AuthProvider>
-          <ScrollToTop />
+          <ToastProvider>
+            <div className='flex h-full flex-col'>
+              {/* NAVBAR */}
+              <Navbar />
 
-          <div className='flex h-full flex-col'>
-            {/* NAVBAR (fixed height assumed: 4rem = mt-16) */}
-            <Navbar />
+              {/* MAIN CONTENT AREA SCROLLS */}
+              <main className='mt-16 flex-1 overflow-y-auto overscroll-contain'>{children}</main>
 
-            {/* MAIN CONTENT AREA SCROLLS */}
-            <main className='mt-16 flex-1 overflow-y-auto overscroll-contain'>{children}</main>
-          </div>
+              {/* TOAST NOTIFICATION VIEWPORT (PORTAL) */}
+              <ToastNotification />
+            </div>
 
-          {/* VERCEL SPEED INSIGHTS */}
-          <SpeedInsights />
-
-          {/* VERCEL APP TELEMETRY */}
-          <Analytics />
+            {/* VERCEL INTERNALS */}
+            <SpeedInsights />
+            <Analytics />
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>
