@@ -4,18 +4,13 @@ import React, { createContext, useContext, useMemo, useReducer } from 'react';
 import type { ReactNode } from 'react';
 import type { ToastContextType, Toast, AddToastInput } from '@/types/contexts/ToastContext.type';
 import { ToastStatus } from '@/enums/ToastStatus.enum';
+import { ToastAction } from '@/types/ToastActions.types';
 
 // DO NOT STACK IDENTICAL TOASTS WITHIN THIS WINDOW (MS)
 const DEDUPE_WINDOW_MS = 3000;
 
-// ACTION TYPES
-type Action =
-  | { type: 'ADD'; payload: Toast }
-  | { type: 'DISMISS'; payload: { id: string } }
-  | { type: 'CLEAR' };
-
 // SIMPLE REDUCER
-function reducer(state: Toast[], action: Action): Toast[] {
+function toastReducer(state: Toast[], action: ToastAction): Toast[] {
   switch (action.type) {
     case 'ADD': {
       const next = action.payload;
@@ -60,7 +55,7 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 // PROVIDER LIVES AT ROOT LAYOUT SO IT DOESN'T UNMOUNT ON ROUTE CHANGES
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, dispatch] = useReducer(reducer, []);
+  const [toasts, dispatch] = useReducer(toastReducer, []);
 
   // ID GENERATION (LOCAL, COLLISION-RESISTANT FOR CLIENT USE)
   const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
