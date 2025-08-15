@@ -51,10 +51,6 @@ export default function DashboardHome(): JSX.Element {
     },
   ].filter(Boolean) as DashboardCardType[];
 
-  useEffect(() => {
-    info('Entered the page successfully!');
-  }, []);
-
   // CHECK IF USER IS LOGGED IN
   useEffect(() => {
     // FETCH TOKEN FROM LOCALSTORAGE
