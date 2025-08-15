@@ -4,11 +4,9 @@ import React, { ReactElement, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRegister } from '@/contexts/RegisterContext';
 import axiosInstance from '@/utils/axios';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function RegisterSignupOptionsPage(): ReactElement {
-  // PAGE STATE
-  const [error, setError] = useState<string | null>(null);
-
   // CONTEXT AND ROUTER
   const {
     accountType,
@@ -19,52 +17,56 @@ export default function RegisterSignupOptionsPage(): ReactElement {
     setEmail,
     setPassword,
     setConfirmPassword,
-    reset,
   } = useRegister();
   const router = useRouter();
+  const { toastSuccess, toastError } = useToast();
 
   // HANDLE FORM SUBMIT
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    setError(null);
 
     // VALIDATE INPUT
     if (!email.trim()) {
-      setError('Email is required');
+      toastError('Email is required');
       return;
     }
 
     if (!password) {
-      setError('Password is required');
+      toastError('Password is required');
       return;
     }
 
     if (!confirmPassword) {
-      setError('Confirm Password is required');
+      toastError('Confirm Password is required');
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Password and Confirm Password must match');
+      toastError('Password and Confirm Password must match');
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      toastError('Password must be at least 8 characters');
       return;
     }
 
     try {
       // SEND POST REQUEST TO BACKEND
-      await axiosInstance.post('/auth/register', { accountType, username, email, password });
+      await axiosInstance
+        .post('/auth/register', { accountType, username, email, password })
+        .then((response: any) => {
+          toastSuccess(response.data);
 
-      // MANUALLY RESET STATE BEFORE REDIRECT
-      reset();
-
-      // IMMEDIATELY NAVIGATE TO HOMEPAGE
-      router.push('/');
+          // NAVIGATE TO HOMEPAGE ON SUCCESS
+          router.push('/');
+        })
+        .catch((response: any) => {
+          toastError(response.message);
+          return;
+        });
     } catch (error: any) {
-      console.error('Registration Error:', error.response?.data?.message || error.message);
+      toastError('Registration Error:', error.response?.data?.message || error.message);
     }
   };
 
@@ -80,9 +82,6 @@ export default function RegisterSignupOptionsPage(): ReactElement {
         onSubmit={handleSubmit}
         className='flex w-full max-w-md flex-col items-center gap-4 rounded-xl bg-cyan-100 p-6 shadow-xl'
       >
-        {/* DISPLAY ERROR */}
-        {error && <p className='mb-4 text-lg text-red-500'>{error}</p>}
-
         {/* EMAIL INPUT */}
         <input
           type='email'

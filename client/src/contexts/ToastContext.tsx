@@ -57,13 +57,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const clear = () => dispatch({ type: 'CLEAR' });
 
   // ERGONOMIC HELPERS
-  const success = (message: string, duration?: number) =>
+  const toastSuccess = (message: string, duration?: number) =>
     addToast({ message, status: ToastStatus.Success, duration });
-  const warning = (message: string, duration?: number) =>
+  const toastWarning = (message: string, duration?: number) =>
     addToast({ message, status: ToastStatus.Warning, duration });
-  const error = (message: string, duration?: number) =>
+  const toastError = (message: string, duration?: number) =>
     addToast({ message, status: ToastStatus.Error, duration });
-  const info = (message: string, duration?: number) =>
+  const toastInfo = (message: string, duration?: number) =>
     addToast({ message, status: ToastStatus.Info, duration });
 
   const value = useMemo<ToastContextType>(
@@ -75,10 +75,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       dismiss,
       clear,
       // SHORTHANDS
-      success,
-      warning,
-      error,
-      info,
+      toastSuccess,
+      toastWarning,
+      toastError,
+      toastInfo,
     }),
     [toasts]
   );
