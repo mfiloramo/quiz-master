@@ -37,8 +37,9 @@ export default function JoinPage() {
   }, [socket]);
 
   // HANDLER FUNCTIONS
-  const handleJoin = (): void => {
-    // ENSURE USER ENTERS SESSION ID
+  const handleJoin = (e?: React.FormEvent): void => {
+    if (e) e.preventDefault(); // ENSURE USER ENTERS SESSION ID
+
     if (!socket || !sessionIdInput.trim()) {
       toastError('Please enter session ID.');
       return;
@@ -80,7 +81,10 @@ export default function JoinPage() {
       {/* TITLE */}
       <h1 className='mb-[20vh] text-4xl font-bold'>Join Game</h1>
       {/* INNER CONTAINER */}
-      <div className='flex flex-col items-center justify-center rounded-xl bg-white/30 px-6 py-4'>
+      <form
+        onSubmit={handleJoin}
+        className='flex flex-col items-center justify-center rounded-xl bg-white/30 px-6 py-4'
+      >
         {/* INNER CONTAINER ITEMS */}
         <div className='flex flex-col items-center justify-center'>
           {/* PLAYER NAME INPUT */}
@@ -112,7 +116,7 @@ export default function JoinPage() {
             Join Session
           </motion.button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

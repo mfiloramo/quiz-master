@@ -8,15 +8,18 @@ import { Quiz } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import axiosInstance from '@/utils/axios';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function LibraryPage(): ReactElement {
-  // STATE FOR ALL QUIZZES
+  // STATE HOOKS
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
 
   // CONTEXT HOOKS
   const { user } = useAuth();
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
+  const { toastSuccess, toastWarning, toastError } = useToast();
 
+  // CUSTOM HOOKS
   const router = useRouter();
 
   // FETCH QUIZZES ON LOAD
@@ -51,19 +54,21 @@ export default function LibraryPage(): ReactElement {
   // HANDLE DELETING A QUIZ FROM UI AFTER DELETE
   const handleDeleteQuiz = async (): Promise<void> => {
     if (!selectedQuiz) {
-      alert('Please select a quiz to start!');
+      toastWarning('Please select a quiz to start!');
       return;
     }
 
     const quizId = selectedQuiz?.id;
     setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
-    await axiosInstance.delete(`/quizzes/${quizId}`);
+    await axiosInstance
+      .delete(`/quizzes/${quizId}`)
+      .then(() => toastSuccess(`Quiz ${quizId} deleted successfully`));
   };
 
   // NAVIGATE TO HOST PAGE
   const navToHostQuiz = (): void => {
     if (!selectedQuiz) {
-      alert('Please select a quiz to start!');
+      toastWarning('Please select a quiz to start!');
       return;
     }
     router.push('/dashboard/host');
@@ -72,7 +77,7 @@ export default function LibraryPage(): ReactElement {
   // NAVIGATE TO EDIT PAGE
   const navToEdit = (): void => {
     if (!selectedQuiz || selectedQuiz.user_id !== user!.id) {
-      alert('Please select a quiz to start!');
+      toastWarning('Please select a quiz to start!');
       return;
     }
     router.push('/dashboard/edit');

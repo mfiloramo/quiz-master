@@ -7,6 +7,10 @@ import axiosInstance from '@/utils/axios';
 import { useToast } from '@/contexts/ToastContext';
 
 export default function RegisterSignupOptionsPage(): ReactElement {
+  // STATE HOOKS
+  const [capsOnConfirm, setCapsOnConfirm] = useState<boolean>(false);
+  const [capsOnNew, setCapsOnNew] = useState<boolean>(false);
+
   // CONTEXT AND ROUTER
   const {
     accountType,
@@ -106,17 +110,34 @@ export default function RegisterSignupOptionsPage(): ReactElement {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           autoComplete='new-password'
+          onKeyDown={(e) => setCapsOnNew(e.getModifierState('CapsLock'))}
+          onKeyUp={(e) => setCapsOnNew(e.getModifierState('CapsLock'))}
+          onBlur={() => setCapsOnNew(false)}
           className='w-full rounded-xl border border-gray-300 p-3 text-black placeholder-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
         />
+        {capsOnNew && (
+          <div className='-mt-2 mb-2 text-sm text-amber-700' role='status'>
+            Caps Lock is ON
+          </div>
+        )}
 
+        {/* CONFIRM PASSWORD INPUT */}
         <input
           type='password'
           name='confirm-password'
           placeholder='Confirm password'
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          onKeyDown={(e) => setCapsOnConfirm(e.getModifierState('CapsLock'))}
+          onKeyUp={(e) => setCapsOnConfirm(e.getModifierState('CapsLock'))}
+          onBlur={() => setCapsOnConfirm(false)}
           className='w-full rounded-xl border border-gray-300 p-3 text-black placeholder-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
         />
+        {capsOnConfirm && (
+          <div className='-mt-2 mb-2 text-sm text-amber-700' role='status'>
+            Caps Lock is ON
+          </div>
+        )}
 
         {/* SUBMIT BUTTON */}
         <button
