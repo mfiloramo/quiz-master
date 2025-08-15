@@ -15,7 +15,7 @@ const itemVariants: Variants = {
 };
 
 export default function BurgerDropdown({ navLinks }: any): ReactElement {
-  // LOCAL STATE
+  // STATE HOOKS
   const [isOpen, setIsOpen] = useState(false);
 
   // HANDLER FUNCTIONS

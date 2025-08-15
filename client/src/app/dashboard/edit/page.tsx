@@ -6,12 +6,14 @@ import QuestionListing from '@/components/QuestionListing/QuestionListing';
 import EditQuestionModal from '@/components/EditQuestionModal/EditQuestionModal';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
+import { useToast } from '@/contexts/ToastContext';
 import { motion } from 'framer-motion';
 import axiosInstance from '@/utils/axios';
 
 export default function EditQuiz(): ReactElement {
-  // CONTEXT HOOKS
+  // CUSTOM HOOKS
   const { selectedQuiz } = useQuiz();
+  const { toastSuccess, toastError } = useToast();
   const router = useRouter();
 
   // STATE HOOKS
@@ -62,8 +64,9 @@ export default function EditQuiz(): ReactElement {
       // UPDATE STATE WITH FORMATTED QUESTIONS
       setQuestions(formattedData);
     } catch (error) {
-      // LOG ERROR IF FETCH FAILS
-      console.error('ERROR FETCHING QUESTIONS:', error);
+      const errorMsg: string = `Error fetching quizzes: ${error}`;
+      toastError(errorMsg);
+      console.error(error);
     }
   };
 
@@ -101,13 +104,15 @@ export default function EditQuiz(): ReactElement {
       await axiosInstance.put(`/quizzes/${selectedQuiz?.id}`, payload);
 
       // LOG SUCCESS MESSAGE
-      console.log(`Quiz ${selectedQuiz?.id} updated successfully`);
+      toastSuccess(`Quiz ${selectedQuiz?.id} updated successfully`);
 
       // REDIRECT TO LIBRARY PAGE
       router.push('/dashboard/library');
     } catch (error: any) {
       // LOG ERROR IF REQUEST FAILS
-      console.error('Error updating quiz:', error);
+      const errorMsg: string = `Error updating quiz: ${error}`;
+      toastError(errorMsg);
+      console.error(error);
     }
   };
 

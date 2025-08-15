@@ -9,7 +9,7 @@ export default function RegisterUsernamePage(): ReactElement {
   const { setUsername } = useRegister();
   const router = useRouter();
 
-  // LOCAL STATE FOR INPUT
+  // STATE HOOKS FOR INPUT
   const [usernameInput, setUsernameInput] = useState('');
 
   // HANDLE FORM SUBMIT

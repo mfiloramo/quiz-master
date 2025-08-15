@@ -4,6 +4,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import { Quiz } from '@/types/Quiz.types';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/contexts/ToastContext';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import axiosInstance from '@/utils/axios';
 
@@ -13,7 +14,8 @@ export default function DiscoverPage(): ReactElement {
 
   // CONTEXT HOOKS
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
-  const router: any = useRouter();
+  const { toastError } = useToast();
+  const router = useRouter();
 
   // FETCH ALL QUIZZES ON LOAD
   useEffect(() => {
@@ -23,8 +25,11 @@ export default function DiscoverPage(): ReactElement {
       try {
         const { data } = await axiosInstance.get<Quiz[]>('/quizzes');
         setQuizzes(data);
-      } catch (err) {
-        console.error('Error fetching quizzes:', err);
+      } catch (error: any) {
+        // LOG/TOAST ERROR IF FETCH FAILS
+        const errorMsg: string = `Error fetching quizzes: ${error}`;
+        toastError(errorMsg);
+        console.error(error);
       }
     };
 

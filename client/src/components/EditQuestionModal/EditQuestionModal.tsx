@@ -12,7 +12,7 @@ export default function EditQuestionModal({
   onSave,
   mode,
 }: EditModalProps): ReactElement {
-  // LOCAL STATE FOR QUESTION EDITING
+  // STATE HOOKS FOR QUESTION EDITING
   const [editedQuestion, setEditedQuestion] = useState<string>(question.question);
   const [editedOptions, setEditedOptions] = useState<string[]>([...question.options]);
 

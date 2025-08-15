@@ -5,26 +5,27 @@ import { useRouter } from 'next/navigation';
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from '@/contexts/SessionContext';
+import { useToast } from '@/contexts/ToastContext';
 import { motion } from 'framer-motion';
 
 export default function JoinPage() {
-  // LOCAL STATE
+  // STATE HOOKS
   const [sessionIdInput, setSessionIdInput] = useState('');
   const [usernameInput, setUsernameInput] = useState<string>('');
-  const [error, setError] = useState('');
 
   // CUSTOM HOOKS
   const { socket } = useWebSocket();
   const { user } = useAuth();
   const { setSessionId } = useSession();
+  const { toastError } = useToast();
   const router = useRouter();
 
   // EFFECT HOOKS
   useEffect(() => {
     if (!socket) return;
 
-    const handleError = (err: string) => {
-      setError(err || 'Failed to join session.');
+    const handleError = (error: string) => {
+      toastError(error || 'Failed to join session.');
     };
 
     // INITIALIZE SOCKET EVENT LISTENERS FOR ERROR HANDLING
@@ -36,16 +37,17 @@ export default function JoinPage() {
   }, [socket]);
 
   // HANDLER FUNCTIONS
-  const handleJoin = (): void => {
-    // ENSURE USER ENTERS SESSION ID
+  const handleJoin = (e?: React.FormEvent): void => {
+    if (e) e.preventDefault(); // ENSURE USER ENTERS SESSION ID
+
     if (!socket || !sessionIdInput.trim()) {
-      setError('Please enter session ID.');
+      toastError('Please enter session ID.');
       return;
     }
 
     // ENSURE USER ENTERS USERNAME
     if (!usernameInput) {
-      setError('Please enter a username');
+      toastError('Please enter a username');
       return;
     }
 
@@ -67,8 +69,8 @@ export default function JoinPage() {
     });
 
     // ON FAILURE, DISPLAY ERROR
-    socket.on('error', (err: string) => {
-      setError(err || 'Unable to join the session.');
+    socket.on('error', (error: string) => {
+      toastError(error || 'Unable to join the session.');
     });
   };
 
@@ -79,7 +81,10 @@ export default function JoinPage() {
       {/* TITLE */}
       <h1 className='mb-[20vh] text-4xl font-bold'>Join Game</h1>
       {/* INNER CONTAINER */}
-      <div className='flex flex-col items-center justify-center rounded-xl bg-white/30 px-6 py-4'>
+      <form
+        onSubmit={handleJoin}
+        className='flex flex-col items-center justify-center rounded-xl bg-white/30 px-6 py-4'
+      >
         {/* INNER CONTAINER ITEMS */}
         <div className='flex flex-col items-center justify-center'>
           {/* PLAYER NAME INPUT */}
@@ -110,11 +115,8 @@ export default function JoinPage() {
           >
             Join Session
           </motion.button>
-
-          {/* SHOW ERROR IF ERROR*/}
-          {error && <p className='text-red-500'>{error}</p>}
         </div>
-      </div>
+      </form>
     </div>
   );
 }

@@ -12,6 +12,7 @@ export default function LoginPage(): ReactElement {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [type, setType] = useState<'password' | 'text'>('password');
+  const [capsOn, setCapsOn] = useState<boolean>(false);
 
   // ROUTER INSTANCE FOR REDIRECTION
   const router = useRouter();
@@ -96,6 +97,9 @@ export default function LoginPage(): ReactElement {
               placeholder='Password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => setCapsOn(e.getModifierState('CapsLock'))}
+              onKeyUp={(e) => setCapsOn(e.getModifierState('CapsLock'))}
+              onBlur={() => setCapsOn(false)}
               className='w-full rounded-lg border border-gray-300 p-3 pr-10 text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-500'
             />
             {/* ICON FOR TOGGLING PASSWORD VISIBILITY */}
@@ -106,6 +110,13 @@ export default function LoginPage(): ReactElement {
               {type === 'password' ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </span>
           </div>
+
+          {/* INFO: SHOW INDEFINITELY WHILE CAPS LOCK IS ON */}
+          {capsOn && (
+            <div className='mt-1 text-sm text-amber-700' role='status'>
+              Caps Lock is ON
+            </div>
+          )}
 
           {/* SUBMIT BUTTON */}
           <button
