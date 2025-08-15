@@ -6,8 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
 import axiosInstance from '@/utils/axios';
-import ToastNotification, { ToastModes } from '@/components/ToastNotification/ToastNotification';
-import { Quiz } from '@/types/Quiz.types';
 
 export default function CreateQuiz(): ReactElement {
   // FORM STATE
