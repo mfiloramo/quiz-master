@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { RegisterContextType } from '@/types/RegisterContext.type';
+import { RegisterContextType } from '@/types/contexts/RegisterContext.type';
 
 // CREATE CONTEXT
 const RegisterContext = createContext<RegisterContextType | undefined>(undefined);

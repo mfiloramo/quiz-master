@@ -80,7 +80,7 @@ export default function LoginPage(): ReactElement {
         <h2 className='mb-6 text-center text-2xl font-bold text-sky-800'>Log In</h2>
 
         {/* DISPLAY ERROR */}
-        {error && <p className='mb-4 text-sm text-red-500'>{error}</p>}
+        {error && <ToastNotification notificationType={'Error'} notificationMsg={error} />}
 
         {/* LOGIN FORM */}
         <form onSubmit={handleLogin} className='flex flex-col gap-4'>
@@ -120,8 +120,6 @@ export default function LoginPage(): ReactElement {
           </button>
         </form>
       </div>
-
-      <ToastNotification notificationType={'Error'} notificationMsg={'This is a success!'} />
     </div>
   );
 }

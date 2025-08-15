@@ -8,6 +8,7 @@ import { SessionProvider } from '@/contexts/SessionContext';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { AudioProvider } from '@/contexts/AudioContext';
+import React from 'react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   // CUSTOM HOOKS

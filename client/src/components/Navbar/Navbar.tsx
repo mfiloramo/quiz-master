@@ -88,7 +88,7 @@ export default function Navbar(): JSX.Element {
                 <span className='mr-4'>{`Welcome, ${user?.username}`}</span>
                 <button
                   onClick={logout}
-                  className='text-sky-100 transition hover:text-white active:text-sky-100'
+                  className='text-sky-100 transition hover:text-amber-300 active:text-amber-200'
                 >
                   Log Out
                 </button>
@@ -110,14 +110,14 @@ export default function Navbar(): JSX.Element {
             {isLoggedIn ? (
               <button
                 onClick={logout}
-                className='ml-4 mt-1 text-sky-100 transition hover:text-white active:text-sky-100 md:hidden'
+                className='ml-4 mt-1 font-bold text-sky-100 transition hover:text-amber-300 active:text-amber-200 md:hidden'
               >
                 Log Out
               </button>
             ) : (
               // LOGIN BUTTON
               <Link
-                className='ml-4 text-sky-100 transition hover:text-white active:text-sky-100'
+                className='ml-4 font-bold text-sky-100 transition hover:text-amber-300 active:text-amber-200'
                 href={'/auth/login'}
                 key={'login'}
               >

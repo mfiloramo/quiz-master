@@ -106,9 +106,7 @@ export class QuestionController {
       await sequelize.query("EXECUTE DeleteQuestion :questionId", {
         replacements: { questionId },
       });
-      res
-        .status(200)
-        .send(`Question with ID: ${questionId} deleted successfully`);
+      res.status(200).send(`Question with ID: ${questionId} deleted successfully`);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
       res.status(500).send("Internal server error");

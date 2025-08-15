@@ -6,12 +6,18 @@ import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardCardType } from '@/types/DashboardCard.type';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function DashboardHome(): JSX.Element {
+  // PAGE STATE
   const router = useRouter();
   const { resetQuiz } = useQuiz();
   const { user, setIsHost } = useAuth();
 
+  // CONTEXT HOOKS
+  const { success, info, addToast, dismiss } = useToast();
+
+  // PAGE VARIABLES
   const DashboardCards: DashboardCardType[] = [
     {
       label: '🎮 Join Game',
@@ -44,6 +50,10 @@ export default function DashboardHome(): JSX.Element {
       description: 'Manage admin controls across application.',
     },
   ].filter(Boolean) as DashboardCardType[];
+
+  useEffect(() => {
+    info('Entered the page successfully!');
+  }, []);
 
   // CHECK IF USER IS LOGGED IN
   useEffect(() => {

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { SessionContextType } from '@/types/SessionContext.type';
+import { SessionContextType } from '@/types/contexts/SessionContext.type';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
 // CONTEXT INSTANCE

@@ -1,49 +1,156 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { ReactElement, useState } from 'react';
+'use client';
 
-type ToastNotificationProps = {
-  notificationType: string;
-  notificationMsg: string;
+import React, { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ToastStatus, useToast } from '@/contexts/ToastContext';
+
+// STATIC STYLE MAP TO KEEP TAILWIND PURGE-SAFE (NO DYNAMIC CLASS STRINGS)
+const STATUS_STYLES: Record<ToastStatus, string> = {
+  [ToastStatus.Success]: 'bg-green-500 text-white border-green-600',
+  [ToastStatus.Warning]: 'bg-amber-500 text-white border-amber-600',
+  [ToastStatus.Error]: 'bg-red-500 text-white border-red-600',
+  [ToastStatus.Info]: 'bg-blue-500 text-white border-blue-600',
 };
 
-enum ToastMode {
-  Success = 'green',
-  Warning = 'amber',
-  Error = 'red',
+// TOAST ITEM WITH ITS OWN TIMER (APPEAR FOR DURATION THEN DISAPPEAR)
+function ToastItem({
+  id,
+  message,
+  status,
+  duration,
+  onDismiss,
+}: {
+  id: string;
+  message: string;
+  status: ToastStatus;
+  duration: number;
+  onDismiss: (id: string) => void;
+}) {
+  // COMPONENT STATE
+  const [hovered, setHovered] = useState(false);
+
+  // TIMER REFS
+  const remainingRef = useRef<number>(duration);
+  const startRef = useRef<number | null>(null);
+  const timerRef = useRef<number | null>(null);
+
+  // START TIMER
+  const startTimer = () => {
+    // DO NOT START IF ALREADY RUNNING
+    if (timerRef.current != null) return;
+    startRef.current = performance.now();
+    timerRef.current = window.setTimeout(() => onDismiss(id), remainingRef.current);
+  };
+
+  // CLEAR TIMER
+  const clearTimer = () => {
+    if (timerRef.current != null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (startRef.current != null) {
+      const elapsed = performance.now() - startRef.current;
+      remainingRef.current = Math.max(0, remainingRef.current - elapsed);
+      startRef.current = null;
+    }
+  };
+
+  // HOVER PAUSES THE TIMER
+  const onMouseEnter = () => {
+    setHovered(true);
+    clearTimer();
+  };
+
+  const onMouseLeave = () => {
+    setHovered(false);
+    // ONLY RESTART IF STILL HAVE TIME LEFT
+    if (remainingRef.current > 0) startTimer();
+  };
+
+  // EFFECT: START TIMER ON MOUNT; CLEAN UP ON UNMOUNT
+  useEffect(() => {
+    startTimer();
+    return () => clearTimer();
+    // INTENTIONALLY EMPTY DEP ARRAY SO IT RUNS ONLY ONCE PER ITEM
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // REDUCED MOTION RESPECT
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  return (
+    <motion.div
+      layout
+      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+      animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+      transition={{ duration: 0.2 }}
+      className={`pointer-events-auto mb-3 flex max-w-md items-start gap-3 rounded-xl border px-4 py-3 shadow-2xl ${STATUS_STYLES[status]}`}
+      role='status'
+      aria-live='polite'
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      {/* MESSAGE CONTENT */}
+      <div className='flex-1 break-words text-base'>
+        {message}
+        {/* OPTIONAL: SHOW REMAINING WHEN HOVERED (DEBUGGING/UX) */}
+        {/* {hovered && <div className="mt-1 text-xs opacity-80">closing in {Math.ceil(remainingRef.current / 100) / 10}s</div>} */}
+      </div>
+
+      {/* MANUAL DISMISS BUTTON */}
+      <button
+        type='button'
+        aria-label='Dismiss notification'
+        className='rounded-md/50 ml-2 inline-flex h-6 w-6 items-center justify-center bg-black/20 text-white hover:bg-black/30 focus:outline-none focus:ring-2 focus:ring-white/60'
+        onClick={() => onDismiss(id)}
+      >
+        ×
+      </button>
+    </motion.div>
+  );
 }
 
-export default function ToastNotification({
-  notificationType,
-  notificationMsg,
-}: ToastNotificationProps): ReactElement {
-  // COMPONENT STATE
-  const [isVisible, setIsVisible] = useState<boolean>(true);
+// VIEWPORT LIVES AT ROOT; USES A PORTAL TO AVOID Z-INDEX CLASHES AND STACKING CONTEXT ISSUES
+export default function ToastNotification(): ReactElement | null {
+  // CONTEXT HOOKS
+  const { toasts, dismiss } = useToast();
 
-  // COMPONENT VARIABLES
-  const toastColor = ToastMode[notificationType];
-  let timer: NodeJS.Timeout | number | null = null;
-  const timeout: number = 5000;
+  // MOUNT GUARD TO AVOID SSR/CSR MISMATCH
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) return null;
 
-  // TIMER TO DISAPPEAR
-  timer = setTimeout(() => setIsVisible(false), timeout);
+  // PORTAL TARGET (DEFENSIVE CHECKS FOR SSR)
+  const portalTarget = typeof document === 'undefined' ? null : document.body;
+  if (!portalTarget) return null;
 
-  // RENDER COMPONENT
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className={`absolute bottom-4 z-50 bg-${toastColor}-500 rounded-xl px-24 py-8 text-center text-xl shadow-2xl`}
-        >
-          {notificationMsg}
-          <button className={'p-1'} onClick={() => setIsVisible(false)}>
-            X
-          </button>
-        </motion.div>
-      )}
-    </AnimatePresence>
+  return createPortal(
+    <div
+      // FIXED CONTAINER, BOTTOM-CENTER; SET POINTER-EVENTS TO NONE SO CLICKS PASS THROUGH, THEN ENABLE ON TOASTS
+      className='pointer-events-none fixed inset-x-0 bottom-4 z-[1000] mx-auto flex w-full max-w-2xl flex-col items-center px-4'
+      // LIVE REGION CONTAINER (INDIVIDUAL ITEMS CARRY role/status AS WELL)
+      aria-live='polite'
+    >
+      <AnimatePresence>
+        {toasts.map((t) => (
+          <ToastItem
+            key={t.id}
+            id={t.id}
+            message={t.message}
+            status={t.status}
+            duration={t.duration}
+            onDismiss={dismiss}
+          />
+        ))}
+      </AnimatePresence>
+    </div>,
+    portalTarget
   );
 }
