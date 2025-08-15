@@ -17,6 +17,7 @@ export default function RegisterSignupOptionsPage(): ReactElement {
     setEmail,
     setPassword,
     setConfirmPassword,
+    reset,
   } = useRegister();
   const router = useRouter();
   const { toastSuccess, toastError } = useToast();
@@ -56,12 +57,17 @@ export default function RegisterSignupOptionsPage(): ReactElement {
       await axiosInstance
         .post('/auth/register', { accountType, username, email, password })
         .then((response: any) => {
+          // DISPLAY TOAST SUCCESS MESSAGE
           toastSuccess(response.data);
+
+          // RESET REGISTRATION IN PUT BEFORE NAVIGATION
+          reset();
 
           // NAVIGATE TO HOMEPAGE ON SUCCESS
           router.push('/');
         })
         .catch((response: any) => {
+          // DISPLAY TOAST ERROR MESSAGE
           toastError(response.message);
           return;
         });
