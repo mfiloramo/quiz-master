@@ -3,7 +3,8 @@
 import React, { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ToastStatus, useToast } from '@/contexts/ToastContext';
+import { ToastStatus } from '@/enums/ToastStatus.enum';
+import { useToast } from '@/contexts/ToastContext';
 
 // STATIC STYLE MAP TO KEEP TAILWIND PURGE-SAFE (NO DYNAMIC CLASS STRINGS)
 const STATUS_STYLES: Record<ToastStatus, string> = {
