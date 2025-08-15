@@ -1,4 +1,4 @@
-import type { ToastStatus } from '@/contexts/ToastContext';
+import { ToastStatus } from '@/enums/ToastStatus.enum';
 
 // TOAST ENTITY
 export type Toast = {

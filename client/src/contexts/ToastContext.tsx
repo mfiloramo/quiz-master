@@ -3,14 +3,7 @@
 import React, { createContext, useContext, useMemo, useReducer } from 'react';
 import type { ReactNode } from 'react';
 import type { ToastContextType, Toast, AddToastInput } from '@/types/contexts/ToastContext.type';
-
-// TOAST STATUS ENUM DRIVES SEMANTICS, NOT RAW COLORS
-export enum ToastStatus {
-  Success = 'success',
-  Warning = 'warning',
-  Error = 'error',
-  Info = 'info',
-}
+import { ToastStatus } from '@/enums/ToastStatus.enum';
 
 // ACTION TYPES
 type Action =
