@@ -19,20 +19,20 @@ function toastReducer(state: Toast[], action: ToastAction): Toast[] {
       const norm = (s: string) => s.trim().toLowerCase();
 
       // FIND EXISTING TOAST WITH SAME MESSAGE + STATUS
-      const dupIndex = state.findIndex(
+      const dupeIndex = state.findIndex(
         (t) => t.status === next.status && norm(t.message) === norm(next.message)
       );
 
-      if (dupIndex !== -1) {
-        const existing = state[dupIndex];
+      if (dupeIndex !== -1) {
+        const existing = state[dupeIndex];
 
         // IF THE DUPLICATE IS "RECENT", DROP IT
-        if (next.createdAt - existing.createdAt < DEDUPE_WINDOW_MS) {
+        if (next.createdAt! - existing.createdAt! < DEDUPE_WINDOW_MS) {
           return state;
         }
 
         // OTHERWISE REPLACE THE OLD ONE (RESET ITS TIMER, MOVE TO TOP)
-        const without = state.filter((_, i) => i !== dupIndex);
+        const without = state.filter((_, i) => i !== dupeIndex);
         return [next, ...without];
       }
 

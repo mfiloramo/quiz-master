@@ -6,7 +6,8 @@ export type Toast = {
   message: string;
   status: ToastStatus;
   duration: number; // MS
-  createdAt: number; // EPOCH MS
+  createdAt?: number; // EPOCH MS
+  onDismiss?: (id: string) => void;
 };
 
 // INPUT SHAPE FOR ADDING A TOAST
