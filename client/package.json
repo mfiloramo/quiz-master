@@ -1,6 +1,7 @@
 {
   "name": "quiz-master",
   "version": "1.3.0",
+  "description": "Client for QuizMaster web application",
   "private": true,
   "author": "Michael Filoramo",
   "scripts": {
