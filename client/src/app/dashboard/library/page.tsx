@@ -17,7 +17,7 @@ export default function LibraryPage(): ReactElement {
   // CONTEXT HOOKS
   const { user } = useAuth();
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
-  const { toastSuccess, toastWarning, toastError } = useToast();
+  const { toastSuccess, toastError } = useToast();
 
   // CUSTOM HOOKS
   const router = useRouter();
@@ -54,7 +54,7 @@ export default function LibraryPage(): ReactElement {
   // HANDLE DELETING A QUIZ FROM UI AFTER DELETE
   const handleDeleteQuiz = async (): Promise<void> => {
     if (!selectedQuiz) {
-      toastWarning('Please select a quiz to start!');
+      toastError('Please select a quiz to start!');
       return;
     }
 
@@ -68,7 +68,7 @@ export default function LibraryPage(): ReactElement {
   // NAVIGATE TO HOST PAGE
   const navToHostQuiz = (): void => {
     if (!selectedQuiz) {
-      toastWarning('Please select a quiz to start!');
+      toastError('Please select a quiz to start!');
       return;
     }
     router.push('/dashboard/host');
@@ -77,7 +77,7 @@ export default function LibraryPage(): ReactElement {
   // NAVIGATE TO EDIT PAGE
   const navToEdit = (): void => {
     if (!selectedQuiz || selectedQuiz.user_id !== user!.id) {
-      toastWarning('Please select a quiz to start!');
+      toastError('Please select a quiz to start!');
       return;
     }
     router.push('/dashboard/edit');

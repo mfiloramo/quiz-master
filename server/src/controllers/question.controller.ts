@@ -103,9 +103,15 @@ export class QuestionController {
   static async deleteQuestion(req: Request, res: Response): Promise<void> {
     try {
       const { questionId } = req.params;
+
+      // TODO: FIND QUIZ ASSOCIATED WITH QUIZ AND DELETE FROM CACHE
+
       await sequelize.query("EXECUTE DeleteQuestion :questionId", {
         replacements: { questionId },
       });
+
+
+
       res.status(200).send(`Question with ID: ${questionId} deleted successfully`);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
