@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ToastStatus } from '@/enums/ToastStatus.enum';
 import { useToast } from '@/contexts/ToastContext';
+import { Toast } from '@/types/contexts/ToastContext.type';
 
 // STATIC STYLE MAP TO KEEP TAILWIND PURGE-SAFE (NO DYNAMIC CLASS STRINGS)
 const STATUS_STYLES: Record<ToastStatus, string> = {
@@ -15,19 +16,7 @@ const STATUS_STYLES: Record<ToastStatus, string> = {
 };
 
 // TOAST ITEM WITH ITS OWN TIMER (APPEAR FOR DURATION THEN DISAPPEAR)
-function ToastItem({
-  id,
-  message,
-  status,
-  duration,
-  onDismiss,
-}: {
-  id: string;
-  message: string;
-  status: ToastStatus;
-  duration: number;
-  onDismiss: (id: string) => void;
-}) {
+function ToastItem({ id, message, status, duration, onDismiss }: Toast) {
   // COMPONENT STATE
   const [hovered, setHovered] = useState(false);
 
@@ -39,9 +28,9 @@ function ToastItem({
   // START TIMER
   const startTimer = () => {
     // DO NOT START IF ALREADY RUNNING
-    if (timerRef.current != null) return;
+    if (timerRef.current !== null) return;
     startRef.current = performance.now();
-    timerRef.current = window.setTimeout(() => onDismiss(id), remainingRef.current);
+    timerRef.current = window.setTimeout(() => onDismiss!(id), remainingRef.current);
   };
 
   // CLEAR TIMER
@@ -63,13 +52,14 @@ function ToastItem({
     clearTimer();
   };
 
+  // UN-HOVERING RESETS/RESUMES TIMER
   const onMouseLeave = () => {
     setHovered(false);
     // ONLY RESTART IF STILL HAVE TIME LEFT
     if (remainingRef.current > 0) startTimer();
   };
 
-  // EFFECT: START TIMER ON MOUNT; CLEAN UP ON UNMOUNT
+  // START TIMER ON MOUNT; CLEAN UP ON UNMOUNT
   useEffect(() => {
     startTimer();
     return () => clearTimer();
@@ -108,7 +98,7 @@ function ToastItem({
         type='button'
         aria-label='Dismiss notification'
         className='rounded-md/50 ml-2 inline-flex h-6 w-6 items-center justify-center bg-black/20 text-white hover:bg-black/30 focus:outline-none focus:ring-2 focus:ring-white/60'
-        onClick={() => onDismiss(id)}
+        onClick={() => onDismiss!(id)}
       >
         ×
       </button>
@@ -122,8 +112,8 @@ export default function ToastNotification(): ReactElement | null {
   const { toasts, dismiss } = useToast();
 
   // MOUNT GUARD TO AVOID SSR/CSR MISMATCH
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
     setMounted(true);
   }, []);
   if (!mounted) return null;
@@ -140,13 +130,13 @@ export default function ToastNotification(): ReactElement | null {
       aria-live='polite'
     >
       <AnimatePresence>
-        {toasts.map((t) => (
+        {toasts.map((toast: Toast) => (
           <ToastItem
-            key={t.id}
-            id={t.id}
-            message={t.message}
-            status={t.status}
-            duration={t.duration}
+            key={toast.id}
+            id={toast.id}
+            message={toast.message}
+            status={toast.status}
+            duration={toast.duration}
             onDismiss={dismiss}
           />
         ))}
