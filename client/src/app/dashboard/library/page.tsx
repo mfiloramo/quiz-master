@@ -62,7 +62,7 @@ export default function LibraryPage(): ReactElement {
     setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
     await axiosInstance
       .delete(`/quizzes/${quizId}`)
-      .then(() => toastSuccess(`Quiz ${quizId} deleted successfully`));
+      .then(() => toastSuccess(`Quiz deleted successfully`));
   };
 
   // NAVIGATE TO HOST PAGE

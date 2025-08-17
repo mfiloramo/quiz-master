@@ -1,18 +1,23 @@
 'use client';
 
 import React, { ReactElement, useState } from 'react';
-import { EditModalProps } from '@/types/QuestionListing.type';
+import { EditModalProps } from '@/types/QuestionListingProps';
+import { QuizQuestion } from '@/types/Quiz.types';
 import axiosInstance from '@/utils/axios';
 import { useQuiz } from '@/contexts/QuizContext';
+
+// MAKE QUESTION REQUIRED FOR THIS COMPONENT (DO NOT CHANGE GLOBAL TYPE)
+type Props = Omit<EditModalProps, 'question'> & { question: QuizQuestion };
 
 export default function EditQuestionModal({
   quizId,
   question,
-  onClose,
-  onSave,
+  onCloseAction,
+  onSaveAction,
   mode,
-}: EditModalProps): ReactElement {
+}: Props): ReactElement {
   // STATE HOOKS FOR QUESTION EDITING
+  // QUESTION IS REQUIRED HERE; SAFE TO READ FIELDS
   const [editedQuestion, setEditedQuestion] = useState<string>(question.question);
   const [editedOptions, setEditedOptions] = useState<string[]>([...question.options]);
 
@@ -43,23 +48,21 @@ export default function EditQuestionModal({
       // SEND REQUEST TO UPDATE QUESTION
       await axiosInstance.put(`/questions/${question.id}`, payload);
 
-      console.log(`Question ${question.id} updated successfully`);
-
       // UPDATE PARENT LISTING
-      onSave({
+      onSaveAction({
         ...question,
         question: editedQuestion,
         options: editedOptions,
         correct: editedOptions[correctAnswerIndex],
       });
 
-      onClose();
+      onCloseAction();
     } catch (error) {
       console.error('Error updating question:', error);
     }
   };
 
-  // HANDLE ADD (NEW)
+  // HANDLE ADD
   const handleAdd = async () => {
     try {
       const payload = {
@@ -72,14 +75,14 @@ export default function EditQuestionModal({
       const { data } = await axiosInstance.post(`questions/${quizId}`, payload);
 
       // PASS UP TO PARENT
-      onSave({
+      onSaveAction({
         id: data.id,
         question: data.question,
         options: JSON.parse(data.options),
         correct: data.correct,
       });
 
-      onClose();
+      onCloseAction();
     } catch (error) {
       console.error('Error adding question:', error);
     }
@@ -149,15 +152,20 @@ export default function EditQuestionModal({
 
         {/* ACTION BUTTONS */}
         <div className='flex justify-end gap-2'>
-          <button onClick={onClose} className='rounded bg-gray-500 px-4 py-2 text-white transition'>
+          <button
+            onClick={onCloseAction}
+            className='rounded bg-slate-500 px-4 py-2 text-white transition ease-in-out hover:bg-slate-400 active:bg-slate-500'
+          >
             Cancel
           </button>
           {mode === 'edit' && (
             <button
               onClick={handleSave}
               disabled={!isFormValid}
-              className={`rounded px-4 py-2 text-white transition ${
-                isFormValid ? 'bg-blue-600' : 'cursor-not-allowed bg-blue-300'
+              className={`rounded px-4 py-2 text-white transition ease-in-out ${
+                isFormValid
+                  ? 'bg-blue-600 hover:bg-blue-500 active:bg-blue-600'
+                  : 'cursor-not-allowed bg-blue-300'
               }`}
             >
               Save
@@ -167,8 +175,10 @@ export default function EditQuestionModal({
             <button
               onClick={handleAdd}
               disabled={!isFormValid}
-              className={`rounded px-4 py-2 text-white transition ${
-                isFormValid ? 'bg-cyan-600' : 'cursor-not-allowed bg-cyan-300'
+              className={`rounded px-4 py-2 text-white transition ease-in-out ${
+                isFormValid
+                  ? 'bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-600'
+                  : 'cursor-not-allowed bg-cyan-300'
               }`}
             >
               Add
