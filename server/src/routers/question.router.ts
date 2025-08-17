@@ -10,6 +10,6 @@ router.use(authenticateJWT);
 router.post("/:quizId", QuestionController.addQuestion);
 router.get("/quiz/:quizId/", QuestionController.getQuestionsByQuizId);
 router.put("/:questionId", QuestionController.updateQuestion);
-router.delete("/:questionId", QuestionController.deleteQuestion);
+router.delete("/:quizId/:questionId", QuestionController.deleteQuestion);
 
 export const questionRouter: Router = router;

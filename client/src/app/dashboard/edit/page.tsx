@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactElement, useEffect, useState } from 'react';
-import { QuestionListingType } from '@/types/QuestionListing.type';
+import { QuestionListingProps } from '@/types/QuestionListingProps';
 import QuestionListing from '@/components/QuestionListing/QuestionListing';
 import EditQuestionModal from '@/components/EditQuestionModal/EditQuestionModal';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,7 @@ import { useQuiz } from '@/contexts/QuizContext';
 import { useToast } from '@/contexts/ToastContext';
 import { motion } from 'framer-motion';
 import axiosInstance from '@/utils/axios';
+import { QuizQuestion } from '@/types/Quiz.types';
 
 export default function EditQuiz(): ReactElement {
   // CUSTOM HOOKS
@@ -17,8 +18,8 @@ export default function EditQuiz(): ReactElement {
   const router = useRouter();
 
   // STATE HOOKS
-  const [questions, setQuestions] = useState<QuestionListingType[]>([]);
-  const [editingQuestion, setEditingQuestion] = useState<QuestionListingType | null>(null);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(null);
   const [modalMode, setModalMode] = useState<'edit' | 'add'>('edit');
   const [form, setForm] = useState({
     id: 0,
@@ -42,7 +43,8 @@ export default function EditQuiz(): ReactElement {
 
   // LOAD ONCE QUIZ SELECTED
   useEffect(() => {
-    fetchQuestions().then((response: any) => response);
+    // DO NOT AWAIT HERE; FIRE AND FORGET IS FINE FOR INITIAL LOAD
+    fetchQuestions().then((r) => r);
   }, [selectedQuiz]);
 
   // FETCH ALL QUESTIONS FOR QUIZ
@@ -71,7 +73,7 @@ export default function EditQuiz(): ReactElement {
   };
 
   // UPDATE QUESTIONS LISTING & OPEN MODAL
-  const updateQuestionsModal = (updatedQuestion: QuestionListingType): void => {
+  const updateQuestionsModal = (updatedQuestion: QuizQuestion): void => {
     if (modalMode === 'edit') {
       setQuestions((prev) => prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)));
     } else if (modalMode === 'add') {
@@ -104,7 +106,7 @@ export default function EditQuiz(): ReactElement {
       await axiosInstance.put(`/quizzes/${selectedQuiz?.id}`, payload);
 
       // LOG SUCCESS MESSAGE
-      toastSuccess(`Quiz ${selectedQuiz?.id} updated successfully`);
+      toastSuccess(`Quiz updated successfully`);
 
       // REDIRECT TO LIBRARY PAGE
       router.push('/dashboard/library');
@@ -116,6 +118,26 @@ export default function EditQuiz(): ReactElement {
     }
   };
 
+  // HANDLE QUESTION DELETION (PARENT OWNS SIDE-EFFECTS)
+  const handleDelete = async (questionId: string | number): Promise<void> => {
+    // OPTIMISTIC UPDATE: REMOVE LOCALLY FIRST
+    const prev = questions;
+    setQuestions((curr) => curr.filter((q) => String(q.id) !== String(questionId)));
+
+    try {
+      // SEND DELETE REQUEST TO SERVER
+      await axiosInstance
+        .delete(`/questions/${selectedQuiz?.id}/${questionId}`)
+        .then((response: any): string => toastSuccess(response.data));
+      // SUCCESS IS SILENT HERE; TOAST OPTIONAL
+    } catch (error: any) {
+      // ROLLBACK ON FAILURE
+      setQuestions(prev);
+      toastError(error?.response?.data?.message || 'Failed to delete question');
+    }
+  };
+
+  // RENDER PAGE
   return (
     <div className='flex flex-col'>
       {/* GENERAL SETTINGS CONTAINER */}
@@ -131,9 +153,6 @@ export default function EditQuiz(): ReactElement {
           onClick={() => {
             setModalMode('add');
             setEditingQuestion({
-              index: 0,
-              onDelete(): void {},
-              onEdit(): void {},
               id: 0,
               question: '',
               options: ['', '', '', ''],
@@ -178,8 +197,8 @@ export default function EditQuiz(): ReactElement {
       {editingQuestion && (
         <EditQuestionModal
           question={editingQuestion}
-          onClose={() => setEditingQuestion(null)}
-          onSave={updateQuestionsModal}
+          onCloseAction={() => setEditingQuestion(null)}
+          onSaveAction={updateQuestionsModal}
           mode={modalMode}
           quizId={selectedQuiz!.id}
         />
@@ -187,6 +206,7 @@ export default function EditQuiz(): ReactElement {
 
       {/* LIST QUESTIONS */}
       {questions.length ? (
+        // CHILD COMPONENT NOW CALLS onDelete(id) INSTEAD OF FORWARDING DOM EVENTS
         questions.map((question, index) => (
           <QuestionListing
             key={question.id}
@@ -195,13 +215,12 @@ export default function EditQuiz(): ReactElement {
             options={question.options}
             correct={question.correct}
             index={index}
-            onEdit={() => {
+            onEditAction={() => {
               setModalMode('edit');
               setEditingQuestion(question);
             }}
-            onDelete={() => {
-              setQuestions((prev) => prev.filter((q) => q.id !== question.id));
-            }}
+            // PASS HANDLER; CHILD WILL CALL IT WITH THE ID
+            onDeleteAction={handleDelete}
           />
         ))
       ) : (

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
 import { redis } from '../config/redis';
 import Question from '../models/Question';
+import Quiz from '../models/Quiz';
 
 export class QuestionController {
   // ADD NEW QUESTION TO DATABASE
@@ -89,7 +90,8 @@ export class QuestionController {
         },
       ).then(() => {
         // CLEAR QUIZ FROM CACHE
-        redis.del(`quiz:${ quizId }:questions`);
+        const cacheKey: string = `quiz:${ quizId }:questions`
+        redis.del(cacheKey);
         console.log('Quiz updated in cache successfully...');
       });
       res.status(200).send(`Question with ID: ${questionId} updated successfully`);
@@ -102,10 +104,25 @@ export class QuestionController {
   // DELETE EXISTING QUESTION
   static async deleteQuestion(req: Request, res: Response): Promise<void> {
     try {
-      const { questionId } = req.params;
+      // DESTRUCTURE QUESTION ID FROM PARAMS
+      const { quizId, questionId } = req.params;
+
+      // DELETE QUESTION FROM DATABASE
       await sequelize.query("EXECUTE DeleteQuestion :questionId", {
         replacements: { questionId },
       });
+
+      // DELETE QUESTION FROM QUIZ IN CACHE
+      const cacheKey: string = `quiz:${ quizId }:questions`;
+
+      // CLEAR QUIZ FROM CACHE
+      const deleted = await redis.del(cacheKey);
+      if (deleted === 1) {
+        console.log('Quiz deleted from cache successfully...');
+      } else {
+        console.warn('Quiz not found in cache or already deleted...');
+      }
+
       res.status(200).send(`Question with ID: ${questionId} deleted successfully`);
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);

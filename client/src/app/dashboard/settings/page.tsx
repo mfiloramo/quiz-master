@@ -5,7 +5,7 @@ export default function Settings(): ReactElement {
   return (
     <div className={'flex flex-col items-center'}>
       <Image
-        src={'/backgrounds/under-construction.jpg'}
+        src={'/images/under-construction.jpg'}
         width={612}
         height={320}
         alt={'under-construction'}
