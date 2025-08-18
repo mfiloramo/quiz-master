@@ -18,3 +18,8 @@ body {
   color: var(--foreground);
   background: var(--background);
 }
+
+/* TEMP: DISABLE NEXT.JS ERROR OVERLAY*/
+nextjs-portal { display: none; }
+body > iframe { display: none; }
+
