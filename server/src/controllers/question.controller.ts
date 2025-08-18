@@ -103,6 +103,7 @@ export class QuestionController {
 
   // DELETE EXISTING QUESTION
   static async deleteQuestion(req: Request, res: Response): Promise<void> {
+    console.log('deleteQuestion is being hit...');
     try {
       // DESTRUCTURE QUESTION ID FROM PARAMS
       const { quizId, questionId } = req.params;
