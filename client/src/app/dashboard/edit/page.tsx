@@ -49,12 +49,14 @@ export default function EditQuiz(): ReactElement {
 
   // FETCH ALL QUESTIONS FOR QUIZ
   const fetchQuestions = async (): Promise<void> => {
+    console.log('fetchQuestions hit...');
     // RETURN EARLY IF NO QUIZ SELECTED
     if (!selectedQuiz?.id) return;
 
     try {
       // SEND GET REQUEST TO FETCH QUESTIONS FOR SELECTED QUIZ
       const { data } = await axiosInstance.get(`/questions/quiz/${selectedQuiz.id}`);
+      console.log('data', data);
 
       // FORMAT OPTIONS IF THEY ARE STORED AS STRINGS
       const formattedData = data.map((question: any) => ({

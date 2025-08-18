@@ -3,6 +3,7 @@ import { sequelize } from "../config/sequelize";
 import { redis } from '../config/redis';
 import Question from '../models/Question';
 import Quiz from '../models/Quiz';
+import question from '../models/Question';
 
 export class QuestionController {
   // ADD NEW QUESTION TO DATABASE
@@ -51,6 +52,7 @@ export class QuestionController {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
         console.log('Cache hit: User quizzes...');
         questions = JSON.parse(cached);
+        console.log(questions[0]);
 
         // SEND CACHED DATA
         res.send(questions[0]);
@@ -65,7 +67,7 @@ export class QuestionController {
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         console.log('Cache miss: User quizzes...');
-        await redis.set(cacheKey, JSON.stringify(questions));
+        await redis.set(cacheKey, JSON.stringify(questions[0]));
 
         // SEND QUERIED DATA FROM DATABASE
         res.send(questions[0]);
