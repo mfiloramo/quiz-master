@@ -52,10 +52,9 @@ export class QuestionController {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
         console.log('Cache hit: User quizzes...');
         questions = JSON.parse(cached);
-        console.log(questions[0]);
 
         // SEND CACHED DATA
-        res.send(questions[0]);
+        res.send(questions);
       } else {
         // CACHE MISS — QUERY DATABASE FOR ALL QUIZZES BELONGING TO USER
         questions = await sequelize.query(
