@@ -6,7 +6,6 @@ import { sequelize } from '../config/sequelize';
 import { redis } from '../config/redis';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
-import Question from '../models/Question';
 
 // MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
