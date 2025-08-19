@@ -62,6 +62,10 @@ export default function QuizPage(): JSX.Element {
   // MOUNT GONG SOUND
   const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
 
+  useEffect(() => {
+    console.log(currentQuestion);
+  }, []);
+
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {
     if (!socket || !sessionId) return;

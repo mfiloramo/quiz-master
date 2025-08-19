@@ -15,7 +15,7 @@ export const authenticateJWT = (
   }
 
   try {
-    // req.body.user = jwt.verify(token, JWT_SECRET);
+    req.body.user = jwt.verify(token, JWT_SECRET);
     next();
   } catch (error) {
     console.error("Token verification failed:", error);
