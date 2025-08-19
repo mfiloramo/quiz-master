@@ -6,6 +6,7 @@ import { sequelize } from '../config/sequelize';
 import { redis } from '../config/redis';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
+import Question from '../models/Question';
 
 // MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
@@ -123,7 +124,7 @@ export class WebSocketController {
       const cached: string | null = await redis.get(cacheKey);
 
       // DECLARE/DEFINE QUESTIONS ARRAY
-      let questions: QuestionAttributes[];
+      let questions!: QuestionAttributes[];
 
       if (cached) {
         // CACHE HIT: PARSE QUIZZES FROM REDIS
@@ -140,7 +141,7 @@ export class WebSocketController {
         });
 
         // FORMAT RAW DATABASE QUESTION DATA
-        questions = (result[0] as any[]).map((question: any) => ({
+        questions = (result[0] as QuestionAttributes[]).map((question: any) => ({
           ...question,
           options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
         }));

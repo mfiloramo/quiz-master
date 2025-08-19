@@ -113,7 +113,7 @@ export class AuthController {
           account_type: user.account_type
         },
         process.env.JWT_SECRET!,
-        { expiresIn: "1h" },
+        { expiresIn: process.env.NODE_ENV === 'development' ? '24h' : '1h' },
       );
 
       // RETURN TOKEN TO CLIENT
