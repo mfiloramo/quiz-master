@@ -7,10 +7,10 @@ import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function HostPage() {
   // STATE HOOKS
-  const [error, setError] = useState<string>('');
   const [roundTimer, setRoundTimer] = useState<number>(15);
 
   // CUSTOM HOOKS
@@ -19,12 +19,13 @@ export default function HostPage() {
   const { setSessionId } = useSession();
   const { setIsHost, user } = useAuth();
   const { selectedQuiz } = useQuiz();
+  const { toastError } = useToast();
 
   // CREATE A NEW GAME SESSION
   const createSession = () => {
     // VALIDATE SELECTED QUIZ
     if (!selectedQuiz) {
-      setError('Please select a quiz before hosting.');
+      toastError('No quiz is selected. Please select a quiz before hosting.');
       return;
     }
 
@@ -88,7 +89,6 @@ export default function HostPage() {
           Create Session
         </motion.button>
       </div>
-      {error && <p className='text-red-500'>{error}</p>}
     </div>
   );
 }
