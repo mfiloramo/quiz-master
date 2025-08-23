@@ -4,11 +4,12 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import { Quiz } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import axiosInstance from '@/utils/axios';
-import { useToast } from '@/contexts/ToastContext';
+import { PacmanLoader } from 'react-spinners';
 
 export default function LibraryPage(): ReactElement {
   // STATE HOOKS
@@ -17,12 +18,13 @@ export default function LibraryPage(): ReactElement {
   // CONTEXT HOOKS
   const { user } = useAuth();
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
-  const { toastSuccess, toastWarning, toastError } = useToast();
+  const { toastSuccess, toastError } = useToast();
 
   // CUSTOM HOOKS
   const router = useRouter();
 
   // FETCH QUIZZES ON LOAD
+  // IMPORTANT: EFFECT DEPENDS ON USER.ID SO IT RE-RUNS AFTER AUTH POPULATES
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -30,6 +32,7 @@ export default function LibraryPage(): ReactElement {
       return;
     }
 
+    // WAIT UNTIL USER IS AVAILABLE FROM AUTH PROVIDER
     if (!user?.id) return;
 
     setSelectedQuiz(null);
@@ -39,12 +42,14 @@ export default function LibraryPage(): ReactElement {
         const { data } = await axiosInstance.get<Quiz[]>(`/quizzes/user/${user.id}`);
         setQuizzes(data);
       } catch (error: any) {
-        toastError('Error fetching quizzes:', error);
+        const errorMsg: string = `Error fetching quizzes: ${error}`;
+        toastError(errorMsg);
+        console.error(error);
       }
     };
 
-    fetchQuizzes().then((r) => r);
-  }, [user!.id, router]);
+    fetchQuizzes().then((response: any): void => response);
+  }, [user?.id, router, setSelectedQuiz, toastError]);
 
   // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz): void => {
@@ -76,12 +81,28 @@ export default function LibraryPage(): ReactElement {
 
   // NAVIGATE TO EDIT PAGE
   const navToEdit = (): void => {
-    if (!selectedQuiz || selectedQuiz.user_id !== user!.id) {
+    if (!selectedQuiz || !user || selectedQuiz.user_id !== user.id) {
       toastError('Please select a quiz to edit');
       return;
     }
     router.push('/dashboard/edit');
   };
+
+  // SHOW LOADING STATE WHILE USER IS BEING RESOLVED
+  if (!user) {
+    return (
+      <>
+        <div className='p-6 text-xl text-black'>Loading your quizzes...</div>
+        {/*<PacmanLoader*/}
+        {/*  color={'black'}*/}
+        {/*  loading={true}*/}
+        {/*  size={15}*/}
+        {/*  aria-label='Loading Spinner'*/}
+        {/*  data-testid='loader'*/}
+        {/*/>*/}
+      </>
+    );
+  }
 
   // RENDER PAGE
   return (
