@@ -34,8 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             {/* VERCEL INTERNALS */}
-            <SpeedInsights />
-            <Analytics />
+            <SpeedInsights debug={false} />
+            <Analytics debug={false} />
           </ToastProvider>
         </AuthProvider>
       </body>

@@ -17,7 +17,7 @@ export default function LibraryPage(): ReactElement {
   // CONTEXT HOOKS
   const { user } = useAuth();
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
-  const { toastSuccess, toastError } = useToast();
+  const { toastSuccess, toastWarning, toastError } = useToast();
 
   // CUSTOM HOOKS
   const router = useRouter();
@@ -38,12 +38,12 @@ export default function LibraryPage(): ReactElement {
       try {
         const { data } = await axiosInstance.get<Quiz[]>(`/quizzes/user/${user.id}`);
         setQuizzes(data);
-      } catch (err) {
-        console.error('Error fetching quizzes:', err);
+      } catch (error: any) {
+        toastError('Error fetching quizzes:', error);
       }
     };
 
-    fetchQuizzes().then((response: any) => response);
+    fetchQuizzes().then((r) => r);
   }, [user!.id, router]);
 
   // HANDLE SELECTING A QUIZ
@@ -54,7 +54,7 @@ export default function LibraryPage(): ReactElement {
   // HANDLE DELETING A QUIZ FROM UI AFTER DELETE
   const handleDeleteQuiz = async (): Promise<void> => {
     if (!selectedQuiz) {
-      toastError('Please select a quiz to start!');
+      toastError('Please select a quiz to delete');
       return;
     }
 
@@ -68,7 +68,7 @@ export default function LibraryPage(): ReactElement {
   // NAVIGATE TO HOST PAGE
   const navToHostQuiz = (): void => {
     if (!selectedQuiz) {
-      toastError('Please select a quiz to start!');
+      toastError('Please select a quiz to host');
       return;
     }
     router.push('/dashboard/host');
@@ -77,7 +77,7 @@ export default function LibraryPage(): ReactElement {
   // NAVIGATE TO EDIT PAGE
   const navToEdit = (): void => {
     if (!selectedQuiz || selectedQuiz.user_id !== user!.id) {
-      toastError('Please select a quiz to start!');
+      toastError('Please select a quiz to edit');
       return;
     }
     router.push('/dashboard/edit');

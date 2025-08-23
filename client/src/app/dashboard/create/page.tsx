@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { motion } from 'framer-motion';
 import axiosInstance from '@/utils/axios';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function CreateQuiz(): ReactElement {
   // FORM STATE
@@ -18,6 +19,7 @@ export default function CreateQuiz(): ReactElement {
   // CONTEXT HOOKS
   const { user } = useAuth();
   const { setSelectedQuiz } = useQuiz();
+  const { toastError } = useToast();
 
   // HANDLE FORM SUBMISSION
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,7 +45,8 @@ export default function CreateQuiz(): ReactElement {
       setSelectedQuiz(newQuiz);
       router.push('/dashboard/edit');
     } catch (error: any) {
-      console.error('Quiz creation failed:', error.response?.data?.message || error.message);
+      console.error('Quiz creation failed:', error);
+      toastError('Quiz creation failed:', error.response?.data?.message || error.message);
     }
   };
 
