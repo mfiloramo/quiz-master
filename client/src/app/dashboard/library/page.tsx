@@ -9,7 +9,7 @@ import { Quiz } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import axiosInstance from '@/utils/axios';
-import { PacmanLoader } from 'react-spinners';
+import { ClipLoader } from 'react-spinners';
 
 export default function LibraryPage(): ReactElement {
   // STATE HOOKS
@@ -93,13 +93,14 @@ export default function LibraryPage(): ReactElement {
     return (
       <>
         <div className='p-6 text-xl text-black'>Loading your quizzes...</div>
-        {/*<PacmanLoader*/}
-        {/*  color={'black'}*/}
-        {/*  loading={true}*/}
-        {/*  size={15}*/}
-        {/*  aria-label='Loading Spinner'*/}
-        {/*  data-testid='loader'*/}
-        {/*/>*/}
+        <ClipLoader
+          color={'black'}
+          loading={true}
+          size={30}
+          aria-label='Loading Spinner'
+          data-testid='loader'
+          speedMultiplier={3}
+        />
       </>
     );
   }
