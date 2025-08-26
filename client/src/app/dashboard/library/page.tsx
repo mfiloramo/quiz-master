@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import axiosInstance from '@/utils/axios';
 import { ClipLoader } from 'react-spinners';
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 
 export default function LibraryPage(): ReactElement {
   // STATE HOOKS
@@ -89,20 +90,9 @@ export default function LibraryPage(): ReactElement {
   };
 
   // SHOW LOADING STATE WHILE USER IS BEING RESOLVED
+  // DEBUG: ADD  NOT OPERATOR TO user
   if (!user) {
-    return (
-      <>
-        <div className='p-6 text-xl text-black'>Loading your quizzes...</div>
-        <ClipLoader
-          color={'black'}
-          loading={true}
-          size={30}
-          aria-label='Loading Spinner'
-          data-testid='loader'
-          speedMultiplier={3}
-        />
-      </>
-    );
+    return <LoadingSpinner color={'#000000'} loadingMessage={'Loading your quizzes...'} />;
   }
 
   // RENDER PAGE
