@@ -1,6 +1,6 @@
 {
   "name": "quiz-master-server",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Server for QuizMaster web application",
   "scripts": {
     "start": "node dist/server.js",
