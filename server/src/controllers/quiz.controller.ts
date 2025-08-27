@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { sequelize } from "../config/sequelize";
 import { redis } from '../config/redis';
+import Quiz from '../models/Quiz';
+import { QuizAttributes } from '../interfaces/QuizAttributes.interface';
 
 export class QuizController {
   // CREATE NEW QUIZ
@@ -96,17 +98,17 @@ export class QuizController {
       const cached: string | null = await redis.get(cacheKey);
 
       // DECLARE/DEFINE QUIZZES ARRAY
-      let quizzes = [];
+      let quizzes: any[];
 
       if (cached) {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
         console.log('Cache hit: User quizzes...');
         quizzes = JSON.parse(cached);
         // SEND CACHED DATA
-        res.send(quizzes[0]);
+        res.send(quizzes);
       } else {
         // CACHE MISS — QUERY DATABASE FOR ALL QUIZZES BELONGING TO USER
-        quizzes = await sequelize.query(
+        [quizzes] = await sequelize.query(
           "EXECUTE GetQuizzesByUserId :userId",
           {
             replacements: { userId },
@@ -118,7 +120,7 @@ export class QuizController {
         await redis.set(cacheKey, JSON.stringify(quizzes));
 
         // SEND QUERIED DATA FROM DATABASE
-        res.send(quizzes[0]);
+        res.send(quizzes);
       }
     } catch (error: any) {
       console.error("Error executing Stored Procedure:", error.message);
