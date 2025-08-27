@@ -1,16 +1,24 @@
 'use client';
 
+// CORE MODULES
 import React, { ReactElement, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+
+// CUSTOM HOOKS
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { Quiz } from '@/types/Quiz.types';
-import { motion } from 'framer-motion';
+
+// COMPONENTS
 import MainQuizCard from '@/components/QuizCard/QuizCard';
-import axiosInstance from '@/utils/axios';
-import { ClipLoader } from 'react-spinners';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
+
+// UTILITIES
+import axiosInstance from '@/utils/axios';
+
+// TYPES
+import { Quiz } from '@/types/Quiz.types';
 
 export default function LibraryPage(): ReactElement {
   // STATE HOOKS

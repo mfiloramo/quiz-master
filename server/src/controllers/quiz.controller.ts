@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { sequelize } from "../config/sequelize";
+import { Request, Response } from 'express';
+import { sequelize } from '../config/sequelize';
 import { redis } from '../config/redis';
-import Quiz from '../models/Quiz';
+import { QueryTypes } from 'sequelize';
 import { QuizAttributes } from '../interfaces/QuizAttributes.interface';
 
 export class QuizController {
@@ -75,7 +75,7 @@ export class QuizController {
   static async getQuizById(req: Request, res: Response): Promise<void> {
     try {
       const { quizId } = req.params;
-      const quiz: any = await sequelize.query("EXECUTE GetQuizById :quizId", {
+      const quiz = await sequelize.query("EXECUTE GetQuizById :quizId", {
         replacements: { quizId },
       });
       res.send(quiz[0][0]);
@@ -98,7 +98,7 @@ export class QuizController {
       const cached: string | null = await redis.get(cacheKey);
 
       // DECLARE/DEFINE QUIZZES ARRAY
-      let quizzes: any[];
+      let quizzes: QuizAttributes[];
 
       if (cached) {
         // CACHE HIT — PARSE QUESTIONS FROM REDIS
@@ -112,6 +112,7 @@ export class QuizController {
           "EXECUTE GetQuizzesByUserId :userId",
           {
             replacements: { userId },
+            type: QueryTypes.SELECT
           },
         );
 

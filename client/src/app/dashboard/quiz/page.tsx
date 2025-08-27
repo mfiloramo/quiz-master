@@ -1,22 +1,22 @@
 'use client';
 
-// CORE MODULE/HOOK IMPORTS
+// CORE MODULES
 import { JSX, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 // MODULE IMPORTS
 import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import useSound from 'use-sound';
 
-// CUSTOM HOOK IMPORTS
-import { useRouter } from 'next/navigation';
+// CUSTOM HOOKS
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAudio } from '@/contexts/AudioContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from '@/contexts/SessionContext';
 
-// COMPONENT IMPORTS
+// COMPONENTS
 import QuizModule from '@/components/QuizModule/QuizModule';
 import Leaderboard from '@/components/Leaderboard/Leaderboard';
 import PlayerAnswerSummary from '@/components/PlayerAnswerSummary/PlayerAnswerSummary';
