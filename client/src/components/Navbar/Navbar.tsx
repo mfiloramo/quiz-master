@@ -81,7 +81,7 @@ export default function Navbar(): JSX.Element {
             )}
 
             {/* SIGN UP OR PROFILE INDICATOR */}
-            {isLoggedsafdsfdIn ? (
+            {isLoggedIn ? (
               // PROFILE INDICATOR + LOGOUT BUTTON
               <div className='text-md flex items-center font-bold text-sky-200'>
                 <FaUserCircle className='mr-2' size={28} />
