@@ -49,7 +49,7 @@ export default function Navbar(): JSX.Element {
           </Link>
 
           {/* LEFT BUTTONS (ONLY SHOW ON LARGE SCREENS) */}
-          <div className='hidden items-center sm:flex'>
+          <div className='hidden items-center lg:flex'>
             {navLinksLeft
               .filter((button) => button.label !== 'Dashboard' || isLoggedIn)
               .map(
@@ -68,7 +68,7 @@ export default function Navbar(): JSX.Element {
 
         {/* RIGHT BUTTONS CONTAINER */}
         <div className='float-right mr-7 mt-4 flex items-center'>
-          <div className={'hidden md:flex'}>
+          <div className={'hidden lg:flex'}>
             {/* JOIN GAME BUTTON */}
             {!isLoggedIn && (
               <Link
@@ -106,7 +106,7 @@ export default function Navbar(): JSX.Element {
           </div>
 
           {/* LOGIN / LOGOUT BUTTON */}
-          <div className={'hidden md:flex'}>
+          <div className={'hidden lg:flex'}>
             {isLoggedIn ? (
               <button
                 onClick={logout}
@@ -127,7 +127,7 @@ export default function Navbar(): JSX.Element {
           </div>
 
           {/* HAMBURGER MENU (ONLY ON SMALL SCREENS) */}
-          <div className='-mt-6 md:hidden'>
+          <div className='-mt-6 lg:hidden'>
             <BurgerDropdown navLinks={navLinksForHamburger} />
           </div>
         </div>
