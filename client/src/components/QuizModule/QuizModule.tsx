@@ -47,7 +47,7 @@ export default function QuizModule({
             transition={{ duration: 0.001 }}
             onClick={() => handleClick(option)}
             disabled={lockedIn}
-            className={`cursor-pointer rounded-lg py-6 text-lg font-bold text-white shadow-md transition-all duration-200 ${colorMap[index % colorMap.length]} ${
+            className={`cursor-pointer rounded-lg px-2 py-6 text-lg font-bold text-white shadow-md transition-all duration-200 ${colorMap[index % colorMap.length]} ${
               selected === option ? 'ring-4 ring-black' : ''
             }`}
           >

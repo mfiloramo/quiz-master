@@ -1,7 +1,6 @@
 'use client';
 
 import React, { ReactElement, useEffect, useState } from 'react';
-import { QuestionListingProps } from '@/types/QuestionListingProps';
 import QuestionListing from '@/components/QuestionListing/QuestionListing';
 import EditQuestionModal from '@/components/EditQuestionModal/EditQuestionModal';
 import { useRouter } from 'next/navigation';
