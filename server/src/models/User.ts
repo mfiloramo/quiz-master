@@ -1,9 +1,8 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import { sequelize } from "../config/sequelize";
-import { UserAttributes } from "../interfaces/UserAttributes.interface";
+import { sequelize } from '../config/sequelize';
+import { UserAttributes } from '../interfaces/UserAttributes.interface';
 
 type UserCreationAttributes = Optional<UserAttributes, 'id' | 'created_at'>;
-
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;
@@ -15,42 +14,45 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public account_type!: string;
 }
 
-User.init({
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    username: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: true,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
+    account_type: {
+      type: DataTypes.STRING(30),
+      allowNull: true,
+    },
   },
-  username: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-    unique: true,
-  },
-  password: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  created_at: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-    allowNull: true,
-  },
-  isActive: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
-  },
-  account_type: {
-    type: DataTypes.STRING(30),
-    allowNull: true,
-  },
-}, {
-  sequelize,
-  tableName: 'Users',
-  timestamps: false,
-});
+  {
+    sequelize,
+    tableName: 'Users',
+    timestamps: false,
+  }
+);
 
 export default User;

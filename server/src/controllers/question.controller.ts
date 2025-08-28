@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { sequelize } from "../config/sequelize";
+import { Request, Response } from 'express';
+import { sequelize } from '../config/sequelize';
 import { redis } from '../config/redis';
 import Question from '../models/Question';
 import Quiz from '../models/Quiz';
@@ -12,7 +12,7 @@ export class QuestionController {
       const { quizId, question, options, correct } = req.body;
 
       const result: any = await sequelize.query(
-        "EXECUTE AddQuestion :quizId, :question, :options, :correct",
+        'EXECUTE AddQuestion :quizId, :question, :options, :correct',
         {
           replacements: { quizId, question, options, correct },
         }
@@ -28,8 +28,8 @@ export class QuestionController {
         correct,
       });
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 
@@ -40,10 +40,10 @@ export class QuestionController {
       const { quizId } = req.params;
 
       // GENERATE REDIS CACHE KEY
-      const cacheKey: string = `quiz:${ quizId }:questions`;
+      const cacheKey: string = `quiz:${quizId}:questions`;
 
       // CACHE HIT: ATTEMPT TO RETRIEVE QUIZ QUESTIONS
-      const cached: string | null = await redis.get(cacheKey)
+      const cached: string | null = await redis.get(cacheKey);
 
       // DECLARE/DEFINE QUESTIONS ARRAY
       let questions: any[];
@@ -57,12 +57,9 @@ export class QuestionController {
         res.send(questions);
       } else {
         // CACHE MISS — QUERY DATABASE FOR ALL QUIZZES BELONGING TO USER
-        questions = await sequelize.query(
-          "EXECUTE GetQuestionsByQuizId :quizId",
-          {
-            replacements: { quizId }
-          },
-        );
+        questions = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
+          replacements: { quizId },
+        });
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         console.log('Cache miss: User quizzes...');
@@ -72,8 +69,8 @@ export class QuestionController {
         res.send(questions[0]);
       }
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 
@@ -84,21 +81,20 @@ export class QuestionController {
       const { quizId, questionId, question, options, correct } = req.body;
 
       // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH UPDATED QUESTION DATA
-      await sequelize.query(
-        "EXECUTE UpdateQuestion :questionId, :question, :options, :correct",
-        {
+      await sequelize
+        .query('EXECUTE UpdateQuestion :questionId, :question, :options, :correct', {
           replacements: { questionId, question, options, correct },
-        },
-      ).then(() => {
-        // CLEAR QUIZ FROM CACHE
-        const cacheKey: string = `quiz:${ quizId }:questions`
-        redis.del(cacheKey);
-        console.log('Quiz updated in cache successfully...');
-      });
+        })
+        .then(() => {
+          // CLEAR QUIZ FROM CACHE
+          const cacheKey: string = `quiz:${quizId}:questions`;
+          redis.del(cacheKey);
+          console.log('Quiz updated in cache successfully...');
+        });
       res.status(200).send(`Question with ID: ${questionId} updated successfully`);
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 
@@ -109,12 +105,12 @@ export class QuestionController {
       const { quizId, questionId } = req.params;
 
       // DELETE QUESTION FROM DATABASE
-      await sequelize.query("EXECUTE DeleteQuestion :questionId", {
+      await sequelize.query('EXECUTE DeleteQuestion :questionId', {
         replacements: { questionId },
       });
 
       // DELETE QUESTION FROM QUIZ IN CACHE
-      const cacheKey: string = `quiz:${ quizId }:questions`;
+      const cacheKey: string = `quiz:${quizId}:questions`;
 
       // CLEAR QUIZ FROM CACHE
       const deleted = await redis.del(cacheKey);
@@ -126,8 +122,8 @@ export class QuestionController {
 
       res.status(200).send(`Question with ID: ${questionId} deleted successfully`);
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 }

@@ -1,0 +1,6 @@
+# IGNORE BUILD DIRECTORIES
+dist
+
+# IGNORE MODULE DIRECTORIES
+node_modules
+.next

@@ -37,19 +37,18 @@ export class GameSession {
   // REMOVE PLAYER BY PLAYER ID
   public removePlayerByPlayerId(id: number): boolean {
     const initialLength: number = this.players.length;
-    this.players = this.players.filter((player: Player): boolean =>
-      player.id !== id);
+    this.players = this.players.filter((player: Player): boolean => player.id !== id);
     return this.players.length < initialLength;
   }
 
   // GET PLAYER BY ID
   public getPlayerById(id: number): Player | undefined {
-    return this.players.find(player => player.id === id);
+    return this.players.find((player) => player.id === id);
   }
 
   // GET PLAYER BY SOCKET ID
   public getPlayerBySocketId(socketId: string): Player | undefined {
-    return this.players.find(player => player.socketId === socketId);
+    return this.players.find((player) => player.socketId === socketId);
   }
 
   // INCREMENT PLAYER SCORE

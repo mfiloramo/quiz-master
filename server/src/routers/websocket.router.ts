@@ -22,7 +22,7 @@ export const webSocketRouter = (io: Server): void => {
     socket.on('skip-question', (data: any) => controller.handleSkipQuestion(data));
     socket.on('disconnect', () => {
       console.log(`Socket disconnected: ${socket.id}`);
-      controller.handleDisconnect(socket)
+      controller.handleDisconnect(socket);
     });
   });
 };
