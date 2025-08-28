@@ -108,7 +108,7 @@ export class QuizController {
         res.send(quizzes);
       } else {
         // CACHE MISS — QUERY DATABASE FOR ALL QUIZZES BELONGING TO USER
-        [quizzes] = await sequelize.query('EXECUTE GetQuizzesByUserId :userId', {
+        quizzes = await sequelize.query('EXECUTE GetQuizzesByUserId :userId', {
           replacements: { userId },
           type: QueryTypes.SELECT,
         });
