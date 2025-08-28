@@ -10,7 +10,11 @@ import { useToast } from '@/contexts/ToastContext';
 
 export default function CreateQuiz(): ReactElement {
   // FORM STATE
-  const [form, setForm] = useState({ title: '', description: '', visibility: 'public' });
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    visibility: 'public',
+  });
   const [checked, setChecked] = useState<boolean>(false);
 
   // ROUTER INSTANCE
@@ -46,7 +50,10 @@ export default function CreateQuiz(): ReactElement {
       router.push('/dashboard/edit');
     } catch (error: any) {
       console.error('Quiz creation failed:', error);
-      toastError('Quiz creation failed:', error.response?.data?.message || error.message);
+      toastError(
+        'Quiz creation failed:',
+        error.response?.data?.message || error.message
+      );
     }
   };
 
@@ -55,7 +62,9 @@ export default function CreateQuiz(): ReactElement {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleCheckboxChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     const isChecked = e.target.checked;
     setChecked(isChecked);
     setForm({ ...form, visibility: isChecked ? 'private' : 'public' });
@@ -66,7 +75,9 @@ export default function CreateQuiz(): ReactElement {
     // MAIN CONTAINER
     <div className='m-3 flex flex-col items-start'>
       {/* PAGE TITLE */}
-      <div className='mb-4 flex flex-row text-4xl font-bold'>Create Your Own Quiz</div>
+      <div className='mb-4 flex flex-row text-4xl font-bold'>
+        Create Your Own Quiz
+      </div>
 
       {/* FORM AND IMAGE MODULE CONTAINER */}
       <div className='my-3 flex max-w-6xl flex-col justify-items-start rounded-xl md:flex-row'>

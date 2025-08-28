@@ -77,7 +77,10 @@ export default function PlayerAnswerGraph({
         {/* BAR ELEMENTS WITH COLOR MAPPING */}
         <Bar dataKey='count' barSize={30}>
           {data!.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={barColors[index] || '#FFFFFFFF'} />
+            <Cell
+              key={`cell-${index}`}
+              fill={barColors[index] || '#FFFFFFFF'}
+            />
           ))}
         </Bar>
       </BarChart>

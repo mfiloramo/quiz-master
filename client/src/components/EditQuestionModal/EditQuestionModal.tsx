@@ -18,21 +18,28 @@ export default function EditQuestionModal({
 }: Props): ReactElement {
   // STATE HOOKS FOR QUESTION EDITING
   // QUESTION IS REQUIRED HERE; SAFE TO READ FIELDS
-  const [editedQuestion, setEditedQuestion] = useState<string>(question.question);
-  const [editedOptions, setEditedOptions] = useState<string[]>([...question.options]);
+  const [editedQuestion, setEditedQuestion] = useState<string>(
+    question.question
+  );
+  const [editedOptions, setEditedOptions] = useState<string[]>([
+    ...question.options,
+  ]);
 
   // CONTEXT HOOKS
   const { selectedQuiz } = useQuiz();
 
   // TRACK QUESTIONS
-  const initialIndex = question.options.findIndex((opt) => opt === question.correct);
+  const initialIndex = question.options.findIndex(
+    (opt) => opt === question.correct
+  );
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number>(
     initialIndex !== -1 ? initialIndex : 0
   );
 
   // VALIDATE FORM
   const isFormValid =
-    editedQuestion.trim() !== '' && editedOptions.every((opt) => opt.trim() !== '');
+    editedQuestion.trim() !== '' &&
+    editedOptions.every((opt) => opt.trim() !== '');
 
   // HANDLE SAVE (EDIT)
   const handleSave = async () => {

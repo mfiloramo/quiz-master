@@ -46,7 +46,9 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AudioContext.Provider value={{ music, handleToggleMusic, sound, handleToggleSound }}>
+    <AudioContext.Provider
+      value={{ music, handleToggleMusic, sound, handleToggleSound }}
+    >
       {children}
     </AudioContext.Provider>
   );

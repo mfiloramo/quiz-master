@@ -2,7 +2,11 @@
 
 import React, { createContext, useContext, useMemo, useReducer } from 'react';
 import type { ReactNode } from 'react';
-import type { ToastContextType, Toast, AddToastInput } from '@/types/contexts/ToastContext.type';
+import type {
+  ToastContextType,
+  Toast,
+  AddToastInput,
+} from '@/types/contexts/ToastContext.type';
 import { ToastStatus } from '@/enums/ToastStatus.enum';
 import { ToastAction } from '@/types/ToastActions.types';
 
@@ -20,7 +24,8 @@ function toastReducer(state: Toast[], action: ToastAction): Toast[] {
 
       // FIND EXISTING TOAST WITH SAME MESSAGE + STATUS
       const dupeIndex = state.findIndex(
-        (t) => t.status === next.status && norm(t.message) === norm(next.message)
+        (t) =>
+          t.status === next.status && norm(t.message) === norm(next.message)
       );
 
       if (dupeIndex !== -1) {
@@ -58,7 +63,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, dispatch] = useReducer(toastReducer, []);
 
   // ID GENERATION (LOCAL, COLLISION-RESISTANT FOR CLIENT USE)
-  const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  const genId = () =>
+    Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 
   // PUBLIC API
   const addToast = (input: AddToastInput) => {
@@ -74,7 +80,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     return id;
   };
 
-  const dismiss = (id: string) => dispatch({ type: 'DISMISS', payload: { id } });
+  const dismiss = (id: string) =>
+    dispatch({ type: 'DISMISS', payload: { id } });
   const clear = () => dispatch({ type: 'CLEAR' });
 
   // ERGONOMIC HELPERS
@@ -104,7 +111,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [toasts]
   );
 
-  return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>;
+  return (
+    <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
+  );
 }
 
 // CUSTOM HOOK

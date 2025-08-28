@@ -7,19 +7,33 @@ export default function TeachersPage(): ReactElement {
   // RENDER PAGE
   return (
     // MAIN CONTAINER
-    <div className={'flex flex-col items-center bg-stub-background-dashboard bg-cover text-black'}>
+    <div
+      className={
+        'flex flex-col items-center bg-stub-background-dashboard bg-cover text-black'
+      }
+    >
       {/* PAGE TITLE HEADER */}
-      <p className={'mx-auto px-5 py-14 text-center text-6xl font-bold sm:px-12 md:text-7xl'}>
-        <span className={'text-orange-200 drop-shadow-strong'}>Fuel Their Curiosity.</span>
+      <p
+        className={
+          'mx-auto px-5 py-14 text-center text-6xl font-bold sm:px-12 md:text-7xl'
+        }
+      >
+        <span className={'text-orange-200 drop-shadow-strong'}>
+          Fuel Their Curiosity.
+        </span>
         <br />
-        <span className={'text-cyan-300 drop-shadow-strong'}>Track Their Growth.</span>
+        <span className={'text-cyan-300 drop-shadow-strong'}>
+          Track Their Growth.
+        </span>
       </p>
 
       {/* PAGE SECTIONS*/}
       <div className={'last:pb-8'}>
-        {teachersPageContent.sections.map((section: StaticSectionType, index: number) => (
-          <StaticSection key={index} section={section} listNum={index} />
-        ))}
+        {teachersPageContent.sections.map(
+          (section: StaticSectionType, index: number) => (
+            <StaticSection key={index} section={section} listNum={index} />
+          )
+        )}
       </div>
     </div>
   );

@@ -14,7 +14,8 @@ import AudioToggle from '@/components/AudioToggle/AudioToggle';
 // LOAD LOBBY BACKGROUND MUSIC TRACKS
 const lobbyTracks = ['/audio/lobby-groove-a.mp3', '/audio/lobby-groove-b.mp3'];
 const hasStartedMusic =
-  typeof window !== 'undefined' && sessionStorage.getItem('lobby-music-started') === 'true';
+  typeof window !== 'undefined' &&
+  sessionStorage.getItem('lobby-music-started') === 'true';
 
 export default function LobbyPage() {
   // CUSTOM HOOKS
@@ -118,14 +119,24 @@ export default function LobbyPage() {
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
 
       {/* BACKGROUND MUSIC (ONLY HOST PLAYS IT ONCE) */}
-      {isHost && music && !hasStartedMusic && <BackgroundMusic tracks={lobbyTracks} />}
+      {isHost && music && !hasStartedMusic && (
+        <BackgroundMusic tracks={lobbyTracks} />
+      )}
 
       {/* JOIN SESSION CODE */}
       {isHost && (
         <motion.h1
           className='mb-6 animate-bounce rounded-xl border-2 border-black bg-slate-50 px-4 py-2 text-3xl font-bold shadow'
           animate={{
-            color: ['#ff0000', '#ff9900', '#009800', '#0000ff', '#4b0082', '#b600b6', '#ff0000'],
+            color: [
+              '#ff0000',
+              '#ff9900',
+              '#009800',
+              '#0000ff',
+              '#4b0082',
+              '#b600b6',
+              '#ff0000',
+            ],
             opacity: [1, 0.8, 1],
           }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}

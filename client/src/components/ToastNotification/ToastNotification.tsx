@@ -1,6 +1,12 @@
 'use client';
 
-import React, { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ToastStatus } from '@/enums/ToastStatus.enum';
@@ -30,7 +36,10 @@ function ToastItem({ id, message, status, duration, onDismiss }: Toast) {
     // DO NOT START IF ALREADY RUNNING
     if (timerRef.current !== null) return;
     startRef.current = performance.now();
-    timerRef.current = window.setTimeout(() => onDismiss!(id), remainingRef.current);
+    timerRef.current = window.setTimeout(
+      () => onDismiss!(id),
+      remainingRef.current
+    );
   };
 
   // CLEAR TIMER

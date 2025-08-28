@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, ReactNode, useContext, useState, useMemo } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useMemo,
+} from 'react';
 import { Quiz, QuizContextType } from '@/types/Quiz.types';
 
 // CREATE CONTEXT

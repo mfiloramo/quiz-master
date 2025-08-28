@@ -25,7 +25,11 @@ export class WebSocketController {
     }
 
     // CREATE NEW SESSION INSTANCE
-    const session = SessionManager.createSession(sessionId, socket.id, hostUserName);
+    const session = SessionManager.createSession(
+      sessionId,
+      socket.id,
+      hostUserName
+    );
 
     // CLEANUP: RESET QUESTIONS ARRAY IN CASE OF ANY STALE STATE
     session.questions = [];
@@ -41,7 +45,10 @@ export class WebSocketController {
   }
 
   // JOIN EXISTING GAME SESSION
-  public joinSession(socket: Socket, data: Player & GameSessionAttributes): void {
+  public joinSession(
+    socket: Socket,
+    data: Player & GameSessionAttributes
+  ): void {
     // EXTRACT DATA FROM JOIN REQUEST
     let { id, sessionId, username } = data;
 
@@ -58,9 +65,14 @@ export class WebSocketController {
     }
 
     // CHECK IF USERNAME ALREADY EXISTS IN SESSION
-    const nameExists = session.players.some((player: Player) => player.username === username);
+    const nameExists = session.players.some(
+      (player: Player) => player.username === username
+    );
     if (nameExists) {
-      socket.emit('error', 'Player with this username already joined the game.');
+      socket.emit(
+        'error',
+        'Player with this username already joined the game.'
+      );
       return;
     }
 
@@ -97,7 +109,10 @@ export class WebSocketController {
   }
 
   // START GAME SESSION
-  public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void> {
+  public async startSession(
+    socket: Socket,
+    { sessionId }: { sessionId: string }
+  ): Promise<void> {
     // FETCH SESSION BY ID
     const session = SessionManager.getSession(sessionId);
     if (!session) {
@@ -131,20 +146,26 @@ export class WebSocketController {
         questions = JSON.parse(cached);
       } else {
         // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
-        // TODO: THIS SHOULD BE CALLED FROM THE QUESTION CONTROLLER
-        // TODO: THE LOGIC ASSOCIATED CHECKING FOR A CACHE HIT/MISS SHOULD BE HANDLED BY THE QUESTION CONTROLLER
+        // TODO: THE LOGIC ASSOCIATED WITH CHECKING FOR A CACHE HIT/MISS SHOULD BE HANDLED BY THE QUESTION CONTROLLER
         console.log('Cache miss: Quiz questions...');
 
-        const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
-          replacements: { quizId: session.quizId },
-        });
+        const result = await sequelize.query(
+          'EXECUTE GetQuestionsByQuizId :quizId',
+          {
+            replacements: { quizId: session.quizId },
+          }
+        );
 
         // FORMAT RAW DATABASE QUESTION DATA
-        questions = (result[0] as QuestionAttributes[]).map((question: any) => ({
-          ...question,
-          options:
-            typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
-        }));
+        questions = (result[0] as QuestionAttributes[]).map(
+          (question: any) => ({
+            ...question,
+            options:
+              typeof question.options === 'string'
+                ? JSON.parse(question.options)
+                : question.options,
+          })
+        );
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         await redis.set(cacheKey, JSON.stringify(questions));
@@ -169,7 +190,10 @@ export class WebSocketController {
   }
 
   // CHECK FOR EXISTING SESSION
-  public async checkSession(socket: Socket, data: { sessionId: string }): Promise<void> {
+  public async checkSession(
+    socket: Socket,
+    data: { sessionId: string }
+  ): Promise<void> {
     const { sessionId } = data;
 
     // LOOK UP SESSION IN SESSION MANAGER
@@ -197,7 +221,10 @@ export class WebSocketController {
   }
 
   // RETURN CURRENT QUESTION TO REQUESTING CLIENT
-  public getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
+  public getCurrentQuestion(
+    socket: Socket,
+    { sessionId }: { sessionId: string }
+  ): void {
     // FETCH SESSION AND VALIDATE
     const session = SessionManager.getSession(sessionId);
     if (!session || !session.questions.length) {
@@ -239,7 +266,10 @@ export class WebSocketController {
   }
 
   // GET FULL PLAYER LIST FOR CLIENT THAT JOINED MIDWAY
-  public getPlayers(socket: Socket, { sessionId }: { sessionId: string }): void {
+  public getPlayers(
+    socket: Socket,
+    { sessionId }: { sessionId: string }
+  ): void {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
@@ -278,7 +308,9 @@ export class WebSocketController {
     session.playerAnswers.push(answer);
 
     // EMIT PLAYER ANSWER COUNT
-    this.io.to(sessionId).emit('player-answer-received', session.playerAnswers.length);
+    this.io
+      .to(sessionId)
+      .emit('player-answer-received', session.playerAnswers.length);
 
     // CHECK IF ALL PLAYERS HAVE ANSWERED
     if (session.allPlayersAnswered()) {
@@ -301,7 +333,9 @@ export class WebSocketController {
     session.acceptingAnswers = false;
 
     // MARK EVERYONE AS "ANSWERED" SO HOST UI IS CONSISTENT
-    session.players.forEach((player: Player): boolean => (player.hasAnswered = true));
+    session.players.forEach(
+      (player: Player): boolean => (player.hasAnswered = true)
+    );
 
     this.io.to(sessionId).emit('player-joined', session.players);
     this.io.to(sessionId).emit('all-players-answered', session.playerAnswers);
@@ -373,7 +407,9 @@ export class WebSocketController {
 
     // RESET ROUND STATE
     session.playerAnswers = []; // CLEAR PREVIOUS ANSWERS
-    session.players.forEach((player: Player): boolean => (player.hasAnswered = false)); // RESET PLAYER FLAGS
+    session.players.forEach(
+      (player: Player): boolean => (player.hasAnswered = false)
+    ); // RESET PLAYER FLAGS
 
     // OPEN THE ROUND FOR ANSWERS
     session.acceptingAnswers = true;
@@ -386,7 +422,9 @@ export class WebSocketController {
       roundTimer: session.roundTimer, // TIMER DISPLAY ON CLIENT
     });
 
-    this.io.to(sessionId).emit('player-answer-received', session.playerAnswers.length);
+    this.io
+      .to(sessionId)
+      .emit('player-answer-received', session.playerAnswers.length);
 
     // CLEAR ANY EXISTING TIMEOUT TO AVOID CONFLICTS
     session.clearRoundTimeout();
@@ -397,7 +435,9 @@ export class WebSocketController {
       session.acceptingAnswers = false;
 
       // MARK ALL PLAYERS AS ANSWERED TO PREVENT FUTURE INPUT
-      session.players.forEach((player: Player): boolean => (player.hasAnswered = true));
+      session.players.forEach(
+        (player: Player): boolean => (player.hasAnswered = true)
+      );
 
       // EMIT UPDATED PLAYER LIST (IN CASE HOST NEEDS TO SEE STATUS)
       this.io.to(sessionId).emit('player-joined', session.players);

@@ -41,7 +41,10 @@ export default function LoginPage(): ReactElement {
 
     try {
       // API CALL TO LOGIN ENDPOINT
-      const { data } = await axiosInstance.post('/auth/login', { email, password });
+      const { data } = await axiosInstance.post('/auth/login', {
+        email,
+        password,
+      });
 
       // CALL AUTH CONTEXT LOGIN FUNCTION
       const loginSuccess = login(data.token);
@@ -77,7 +80,9 @@ export default function LoginPage(): ReactElement {
       {/* LOGIN CARD */}
       <div className='relative mt-8 w-[90%] max-w-md content-center rounded-xl bg-sky-50 p-8 shadow-2xl'>
         {/* TITLE */}
-        <h2 className='mb-6 text-center text-2xl font-bold text-sky-800'>Log In</h2>
+        <h2 className='mb-6 text-center text-2xl font-bold text-sky-800'>
+          Log In
+        </h2>
 
         {/* LOGIN FORM */}
         <form onSubmit={handleLogin} className='flex flex-col gap-4'>
@@ -107,7 +112,11 @@ export default function LoginPage(): ReactElement {
               className='absolute right-3 top-3 cursor-pointer text-sky-800 hover:text-sky-950'
               onClick={handlePasswordToggle}
             >
-              {type === 'password' ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              {type === 'password' ? (
+                <FiEyeOff size={20} />
+              ) : (
+                <FiEye size={20} />
+              )}
             </span>
           </div>
 

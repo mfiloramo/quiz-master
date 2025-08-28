@@ -25,7 +25,9 @@ export default function Leaderboard(): ReactElement {
         {players.map((player: Player, index: number) => (
           <div
             key={index}
-            className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}
+            className={
+              'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'
+            }
           >
             <div>{player.username}</div>
             <div>Score: {player.score}</div>

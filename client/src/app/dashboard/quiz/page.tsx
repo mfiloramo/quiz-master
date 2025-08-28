@@ -32,17 +32,26 @@ import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
 // PAGE CONSTANTS
-const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
+const colorMap: string[] = [
+  'bg-red-500',
+  'bg-blue-500',
+  'bg-yellow-400',
+  'bg-green-500',
+];
 
 // QUIZ BACKGROUND MUSIC TRACKS
 const quizTracks = ['/audio/countdown-a.mp3', '/audio/countdown-b.mp3'];
 
 export default function QuizPage(): JSX.Element {
-  const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(
+    null
+  );
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
-  const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(null);
+  const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(
+    null
+  );
   const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
   const [playerAnswersCount, setPlayerAnswersCount] = useState<number>(0);
   const [error] = useState<string | null>(null);
@@ -60,7 +69,9 @@ export default function QuizPage(): JSX.Element {
   const { music, sound } = useAudio();
 
   // MOUNT GONG SOUND
-  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
+  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', {
+    volume: 0.1,
+  });
 
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {
@@ -71,7 +82,9 @@ export default function QuizPage(): JSX.Element {
   // ON MOUNT, REQUEST PLAYER LIST
   useEffect(() => {
     if (!socket || !sessionId) return;
-    socket.emit('get-players', { sessionId });
+    socket.emit('get-players', {
+      sessionId,
+    });
   }, [socket, sessionId]);
 
   // TIMER COUNTDOWN DURING QUESTION PHASE
@@ -121,7 +134,10 @@ export default function QuizPage(): JSX.Element {
       if (Array.isArray(answers)) {
         setPlayerAnswers(answers);
       } else {
-        console.warn('Received undefined or invalid player answers from server:', answers);
+        console.warn(
+          'Received undefined or invalid player answers from server:',
+          answers
+        );
         setPlayerAnswers([]);
       }
     });
@@ -191,7 +207,10 @@ export default function QuizPage(): JSX.Element {
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
       timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), timeout);
-      if (press) socket!.emit('skip', { sessionId });
+      if (press)
+        socket!.emit('skip', {
+          sessionId,
+        });
     }
 
     // PHASE: LEADERBOARD -> NEXT QUESTION / FINAL SCORES
@@ -229,7 +248,10 @@ export default function QuizPage(): JSX.Element {
     if (phase !== QuizPhase.Question) return;
 
     setUserAnswer(answer);
-    setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
+    setPlayerAnswers((previousAnswers: string[]) => [
+      ...previousAnswers,
+      answer,
+    ]);
     socket?.emit('submit-answer', {
       sessionId,
       id: user?.id,
@@ -249,14 +271,18 @@ export default function QuizPage(): JSX.Element {
 
     switch (phase) {
       case QuizPhase.Question:
-        socket.emit('skip-question', { sessionId });
+        socket.emit('skip-question', {
+          sessionId,
+        });
         break;
       case QuizPhase.AnswerSummary:
         setPhase(QuizPhase.Leaderboard);
         break;
       case QuizPhase.Leaderboard:
         setLoading(true);
-        socket.emit('next-question', { sessionId });
+        socket.emit('next-question', {
+          sessionId,
+        });
         break;
     }
   };
@@ -265,7 +291,9 @@ export default function QuizPage(): JSX.Element {
   const handleLeave = (): void => {
     if (isHost) {
       setIsHost(false);
-      socket?.emit('host-left', { sessionId });
+      socket?.emit('host-left', {
+        sessionId,
+      });
     }
 
     disconnect();
@@ -297,7 +325,8 @@ export default function QuizPage(): JSX.Element {
             </div>
           )}
           {/* SESSION ID DISPLAY */}
-          Join with session ID:<span className={'text-center font-bold'}>{sessionId}</span>
+          Join with session ID:
+          <span className={'text-center font-bold'}>{sessionId}</span>
         </div>
       )}
 
@@ -352,7 +381,10 @@ export default function QuizPage(): JSX.Element {
       {/* HOST ANSWER SUMMARY VIEW */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
         <>
-          <PlayerAnswerGraph playerAnswers={playerAnswers} options={currentQuestion.options} />
+          <PlayerAnswerGraph
+            playerAnswers={playerAnswers}
+            options={currentQuestion.options}
+          />
           <HostQuestionDisplay
             question={currentQuestion.question}
             options={currentQuestion.options}
@@ -368,7 +400,10 @@ export default function QuizPage(): JSX.Element {
       {phase === QuizPhase.AnswerSummary && currentQuestion && !isHost && (
         <div className='min-w-2xl my-8 rounded-xl bg-white p-6 text-center text-2xl font-medium text-gray-900 shadow-md'>
           {userAnswer ? (
-            <PlayerAnswerSummary userAnswer={userAnswer} correctAnswer={currentQuestion.correct} />
+            <PlayerAnswerSummary
+              userAnswer={userAnswer}
+              correctAnswer={currentQuestion.correct}
+            />
           ) : (
             <p>Time&apos;s up!</p>
           )}
@@ -387,9 +422,17 @@ export default function QuizPage(): JSX.Element {
           <motion.button
             className='mt-7 h-16 w-40 rounded-lg bg-slate-100 font-bold text-black transition hover:bg-slate-200 active:bg-slate-300'
             onClick={handleSkip}
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.005 }}
+            initial={{
+              x: -100,
+              opacity: 0,
+            }}
+            animate={{
+              x: 0,
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.005,
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -401,9 +444,14 @@ export default function QuizPage(): JSX.Element {
         <motion.button
           className='mt-7 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
           onClick={handleLeave}
-          initial={{ x: -100, opacity: 0 }}
+          initial={{
+            x: -100,
+            opacity: 0,
+          }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.005 }}
+          transition={{
+            duration: 0.005,
+          }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

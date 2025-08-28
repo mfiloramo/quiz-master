@@ -53,7 +53,12 @@ export default function JoinPage() {
 
     // GENERATE NEW USER ID
     const id = user?.id ?? Math.floor(1000 + Math.random() * 9000);
-    console.log('Joining with ID:', id, 'Username:', usernameInput || user?.username);
+    console.log(
+      'Joining with ID:',
+      id,
+      'Username:',
+      usernameInput || user?.username
+    );
 
     // EMIT JOIN REQUEST
     socket.emit('join-session', {

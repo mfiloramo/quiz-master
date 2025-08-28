@@ -48,7 +48,9 @@ export default function LibraryPage(): ReactElement {
 
     const fetchQuizzes = async (): Promise<void> => {
       try {
-        const { data } = await axiosInstance.get<Quiz[]>(`/quizzes/user/${user.id}`);
+        const { data } = await axiosInstance.get<Quiz[]>(
+          `/quizzes/user/${user.id}`
+        );
         setQuizzes(data);
       } catch (error: any) {
         const errorMsg: string = `Error fetching quizzes: ${error}`;
@@ -100,7 +102,12 @@ export default function LibraryPage(): ReactElement {
   // SHOW LOADING STATE WHILE USER IS BEING RESOLVED
   // DEBUG: ADD  NOT OPERATOR TO user
   if (!user) {
-    return <LoadingSpinner color={'#ffffff'} loadingMessage={'Loading your quizzes...'} />;
+    return (
+      <LoadingSpinner
+        color={'#ffffff'}
+        loadingMessage={'Loading your quizzes...'}
+      />
+    );
   }
 
   // RENDER PAGE
