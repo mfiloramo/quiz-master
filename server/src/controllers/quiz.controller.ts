@@ -13,9 +13,9 @@ export class QuizController {
 
       // EXECUTE STORED PROCEDURE TO CREATE QUIZ AND RETURN NEW QUIZ IN QUERY
       const newQuizId: any = await sequelize.query(
-        "EXECUTE CreateQuiz :userId, :username, :title, :description, :visibility",
+        'EXECUTE CreateQuiz :userId, :username, :title, :description, :visibility',
         {
-          replacements: { userId, username, title, description, visibility }
+          replacements: { userId, username, title, description, visibility },
         }
       );
 
@@ -24,18 +24,18 @@ export class QuizController {
       const cacheKeyAllQuizzes: string = `discover:all:quizzes`;
 
       // DELETE CACHE KEY ASSOCIATED WITH USER'S QUIZZES
-      await redis.del(cacheKeyUser)
-        .then(() => console.log('User quizzes deleted in cache...'));
+      await redis.del(cacheKeyUser).then(() => console.log('User quizzes deleted in cache...'));
 
       // DELETE CACHE KEY ASSOCIATED WITH ALL QUIZZES (DISCOVER)
-      await redis.del(cacheKeyAllQuizzes)
+      await redis
+        .del(cacheKeyAllQuizzes)
         .then(() => console.log('All quizzes (Discover) cache key deleted...'));
 
       // SEND NEW QUIZ ID
-      res.status(200).json({ 'newQuizId': newQuizId[0][0].id });
+      res.status(200).json({ newQuizId: newQuizId[0][0].id });
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 
@@ -57,7 +57,7 @@ export class QuizController {
       } else {
         // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
         console.log('Cache miss: All quizzes...');
-        quizzes = await sequelize.query("EXECUTE GetAllQuizzes");
+        quizzes = await sequelize.query('EXECUTE GetAllQuizzes');
 
         // STORE DATA IN REDIS
         await redis.set(cacheKey, JSON.stringify(quizzes));
@@ -66,8 +66,8 @@ export class QuizController {
       // SEND ALL PUBLIC QUIZZES
       res.send(quizzes[0]);
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 
@@ -75,13 +75,13 @@ export class QuizController {
   static async getQuizById(req: Request, res: Response): Promise<void> {
     try {
       const { quizId } = req.params;
-      const quiz = await sequelize.query("EXECUTE GetQuizById :quizId", {
+      const quiz = await sequelize.query('EXECUTE GetQuizById :quizId', {
         replacements: { quizId },
       });
       res.send(quiz[0][0]);
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 
@@ -92,7 +92,7 @@ export class QuizController {
       const { userId } = req.params;
 
       // GENERATE REDIS CACHE KEY
-      const cacheKey: string = `user:${ userId }:quizzes`;
+      const cacheKey: string = `user:${userId}:quizzes`;
 
       // CACHE HIT: ATTEMPT TO RETRIEVE USER'S QUIZZES
       const cached: string | null = await redis.get(cacheKey);
@@ -108,13 +108,10 @@ export class QuizController {
         res.send(quizzes);
       } else {
         // CACHE MISS — QUERY DATABASE FOR ALL QUIZZES BELONGING TO USER
-        [quizzes] = await sequelize.query(
-          "EXECUTE GetQuizzesByUserId :userId",
-          {
-            replacements: { userId },
-            type: QueryTypes.SELECT
-          },
-        );
+        [quizzes] = await sequelize.query('EXECUTE GetQuizzesByUserId :userId', {
+          replacements: { userId },
+          type: QueryTypes.SELECT,
+        });
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         console.log('Cache miss: User quizzes...');
@@ -124,8 +121,8 @@ export class QuizController {
         res.send(quizzes);
       }
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 
@@ -136,26 +133,25 @@ export class QuizController {
       const { id, title, description, visibility } = req.body;
 
       // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH UPDATED QUIZ DATA
-      await sequelize.query(
-        "EXECUTE UpdateQuiz :id, :title, :description, :visibility",
-        {
+      await sequelize
+        .query('EXECUTE UpdateQuiz :id, :title, :description, :visibility', {
           replacements: { id, title, description, visibility },
-        },
-      ).then(() => {
-        // CLEAR QUIZ FROM CACHE
-        redis.del(`quiz:${ id }:questions`);
-        console.log('Quiz updated in cache successfully...');
+        })
+        .then(() => {
+          // CLEAR QUIZ FROM CACHE
+          redis.del(`quiz:${id}:questions`);
+          console.log('Quiz updated in cache successfully...');
 
-        // CLEAR CACHE KEY CONTAINING ALL QUIZZES
-        redis.del(`discover:all:quizzes`);
-        console.log('Quiz Discover list deleted from cache...')
-      });
+          // CLEAR CACHE KEY CONTAINING ALL QUIZZES
+          redis.del(`discover:all:quizzes`);
+          console.log('Quiz Discover list deleted from cache...');
+        });
 
       // SEND SUCCESS RESPONSE TO CLIENT
-      res.status(200).send(`Quiz with ID: ${ id } updated successfully`);
+      res.status(200).send(`Quiz with ID: ${id} updated successfully`);
     } catch (error: any) {
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 
@@ -166,10 +162,9 @@ export class QuizController {
       const { quizId } = req.params;
 
       // GET USER ID BY QUIZ ID
-      const userId = await sequelize.query('EXECUTE GetUserIdByQuizId :quizId',
-        {
-          replacements: { quizId },
-        });
+      const userId = await sequelize.query('EXECUTE GetUserIdByQuizId :quizId', {
+        replacements: { quizId },
+      });
 
       // EXTRACT DATA FROM RESULT
       let id;
@@ -181,7 +176,7 @@ export class QuizController {
       }
 
       // CLEAR QUIZ FROM CACHE
-      const deleted = await redis.del(`quiz:${ quizId }:questions`);
+      const deleted = await redis.del(`quiz:${quizId}:questions`);
       if (deleted === 1) {
         console.log('Quiz deleted from cache successfully...');
       } else {
@@ -189,28 +184,26 @@ export class QuizController {
       }
 
       // UPDATE USER'S CACHED QUIZZES LIST
-      await redis.del(`user:${ id }:quizzes`)
-        .then((response: any): void => {
-          console.log(`Quizzes deleted in User's cache with response of ${response}...`);
-        });
+      await redis.del(`user:${id}:quizzes`).then((response: any): void => {
+        console.log(`Quizzes deleted in User's cache with response of ${response}...`);
+      });
 
       // CLEAR ALL QUIZZES IN DISCOVER
-      await redis.del(`discover:all:quizzes`)
-        .then((response: any): void => {
-          console.log(`Quizzes deleted in Discover with response of: ${ response }...`);
-        });
+      await redis.del(`discover:all:quizzes`).then((response: any): void => {
+        console.log(`Quizzes deleted in Discover with response of: ${response}...`);
+      });
 
       // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH DELETE QUIZ DATA
-      await sequelize.query("EXECUTE DeleteQuiz :quizId", {
+      await sequelize.query('EXECUTE DeleteQuiz :quizId', {
         replacements: { quizId },
       });
 
       // SEND SUCCESS RESPONSE TO CLIENT
-      res.status(200).send(`Quiz with ID: ${ quizId } deleted successfully`);
+      res.status(200).send(`Quiz with ID: ${quizId} deleted successfully`);
     } catch (error: any) {
       // HANDLE ERRORS FROM DB OR REDIS
-      console.error("Error executing Stored Procedure:", error.message);
-      res.status(500).send("Internal server error");
+      console.error('Error executing Stored Procedure:', error.message);
+      res.status(500).send('Internal server error');
     }
   }
 }

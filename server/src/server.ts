@@ -7,14 +7,14 @@ import { connectRedis } from './config/redis';
 import * as dotenv from 'dotenv';
 
 // LOAD ENVIRONMENT VARIABLES
-dotenv.config()
+dotenv.config();
 
 // ROUTE IMPORTS
-import { authRouter } from "./routers/auth.router";
-import { userRouter } from "./routers/user.router";
-import { quizRouter } from "./routers/quiz.router";
-import { questionRouter } from "./routers/question.router";
-import { webSocketRouter } from "./routers/websocket.router";
+import { authRouter } from './routers/auth.router';
+import { userRouter } from './routers/user.router';
+import { quizRouter } from './routers/quiz.router';
+import { questionRouter } from './routers/question.router';
+import { webSocketRouter } from './routers/websocket.router';
 
 // GLOBAL VARIABLES
 const app: Express = express();
@@ -24,14 +24,22 @@ const server: any = http.createServer(app);
 // INITIALIZE SERVER
 const io = new Server(server, {
   cors: {
-    origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app', 'https://quiz-master.io' ],
-    methods: [ 'GET', 'POST' ],
+    origin: [
+      'http://localhost:3000',
+      'https://quiz-master-client.vercel.app',
+      'https://quiz-master.io',
+    ],
+    methods: ['GET', 'POST'],
   },
 });
 
 // CORS MIDDLEWARE
 const corsOptions: CorsOptions = {
-  origin: [ 'http://localhost:3000', 'https://quiz-master-client.vercel.app', 'https://quiz-master.io' ],
+  origin: [
+    'http://localhost:3000',
+    'https://quiz-master-client.vercel.app',
+    'https://quiz-master.io',
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
@@ -50,7 +58,7 @@ app
   .use('/api/auth', authRouter)
   .use('/api/users', userRouter)
   .use('/api/quizzes', quizRouter)
-  .use('/api/questions', questionRouter)
+  .use('/api/questions', questionRouter);
 
 // ATTACH WEBSOCKET ROUTES
 webSocketRouter(io);

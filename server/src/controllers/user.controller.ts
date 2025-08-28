@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { sequelize } from "../config/sequelize";
+import { sequelize } from '../config/sequelize';
 import { redis } from '../config/redis';
-
 
 export class UserController {
   static async getAllUsers(req: Request, res: Response): Promise<void> {
@@ -22,7 +21,7 @@ export class UserController {
         console.log('Cache miss: All users...');
 
         // EXECUTE STORED PROCEDURE TO QUERY DATABASE FOR ALL USERS
-        const selectAll = await sequelize.query('EXECUTE GetAllUsers')
+        const selectAll = await sequelize.query('EXECUTE GetAllUsers');
 
         // SEND ALL USERS TO CLIENT
         res.send(selectAll[0]);
@@ -32,7 +31,7 @@ export class UserController {
       res.status(500).send('Internal server error');
     }
   }
-  
+
   static async getUserById(req: Request, res: Response): Promise<void> {
     // SELECT USER BY ID
     try {
@@ -51,10 +50,10 @@ export class UserController {
         res.send(user);
       } else {
         // CACHE MISS: EXECUTE STORED PROCEDURE TO GET USER BY ID
-        console.log('Cache miss: Select user data...')
+        console.log('Cache miss: Select user data...');
         const user: any = await sequelize.query('EXECUTE GetUserById :userId', {
-          replacements: { userId }
-        })
+          replacements: { userId },
+        });
         res.send(user[0][0]);
       }
     } catch (error: any) {
@@ -67,7 +66,7 @@ export class UserController {
     // UPDATE EXISTING USER
     try {
       // DESTRUCTURE USER DATA FROM REQUEST BODY
-      const { userId, username, email }  = req.body;
+      const { userId, username, email } = req.body;
 
       // CREATE CACHE KEY FOR USER TO BE UPDATED
       const cacheKey: string = `user:${userId}`;
@@ -75,16 +74,15 @@ export class UserController {
       const cached = await redis.get(cacheKey);
 
       // EXECUTE STORED PROCEDURE TO UPDATE USER IN DATABASE
-      await sequelize.query('EXECUTE UpdateUser :userId :username :email',
-        {
-          replacements: { userId, username, email }
-        });
+      await sequelize.query('EXECUTE UpdateUser :userId :username :email', {
+        replacements: { userId, username, email },
+      });
 
       // SET/UPDATE USER IN REDIS CACHE
       await redis.set(cacheKey, JSON.stringify(cached));
 
       // SEND CONFIRMATION MESSAGE TO CLIENT
-      res.json(`User ${ username } updated successfully`);
+      res.json(`User ${username} updated successfully`);
     } catch (error: any) {
       console.error('Error executing Stored Procedure:', error.message);
       res.status(500).send('Internal server error');
@@ -97,26 +95,24 @@ export class UserController {
       const { userId } = req.body;
 
       // CREATE CACHE KEY FOR USER TO BE DELETED
-      const cacheKey: string = `user:${userId}`
+      const cacheKey: string = `user:${userId}`;
 
       // EXECUTE STORED PROCEDURE TO DELETE USER FROM DATABASE[
-      await sequelize.query('EXECUTE DeleteUser :userId',
-        {
-          replacements: { userId }
-        })
+      await sequelize.query('EXECUTE DeleteUser :userId', {
+        replacements: { userId },
+      });
 
       // REMOVE KEY FROM CACHE
-      await redis.del(cacheKey)
+      await redis
+        .del(cacheKey)
         .then((): void => console.log('User cacheKey deleted...'))
         .catch((error: any): void => console.log(`Error deleting user from Redis cache: ${error}`));
 
       // SEND CONFIRMATION RESPONSE TO USER
-      res.json(`User with ID ${ userId } deleted successfully`);
+      res.json(`User with ID ${userId} deleted successfully`);
     } catch (error: any) {
       console.error('Error executing Stored Procedure:', error.message);
       res.status(500).send('Internal server error');
     }
   }
 }
-
-

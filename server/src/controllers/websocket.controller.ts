@@ -142,7 +142,8 @@ export class WebSocketController {
         // FORMAT RAW DATABASE QUESTION DATA
         questions = (result[0] as QuestionAttributes[]).map((question: any) => ({
           ...question,
-          options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
+          options:
+            typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
         }));
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
@@ -161,7 +162,6 @@ export class WebSocketController {
       if (firstQuestion) {
         this.emitQuestionWithTimeout(session);
       }
-
     } catch (error: any) {
       console.error('Error starting session:', error);
       socket.emit('error', 'Failed to start quiz.');
@@ -189,7 +189,7 @@ export class WebSocketController {
     if (!result) return;
 
     // REMOVE PLAYER AND BROADCAST UPDATED PLAYER LIST
-    const [ sessionId, session ] = result;
+    const [sessionId, session] = result;
     const removed = session.removePlayerBySocketId(socket.id);
     if (removed) {
       this.io.to(sessionId).emit('player-joined', session.players);
@@ -217,7 +217,7 @@ export class WebSocketController {
       question: currentQuestion,
       index: session.currentQuestionIndex,
       total: session.questions.length,
-      roundTimer: session.roundTimer
+      roundTimer: session.roundTimer,
     });
   }
 
@@ -317,7 +317,10 @@ export class WebSocketController {
   }
 
   // HOST-ONLY: EJECT SPECIFIC PLAYER FROM SESSION
-  public handleEjectPlayer(socket: Socket, { id, sessionId }: { id : number, sessionId: string }): void {
+  public handleEjectPlayer(
+    socket: Socket,
+    { id, sessionId }: { id: number; sessionId: string }
+  ): void {
     // FETCH SESSION
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
@@ -347,7 +350,7 @@ export class WebSocketController {
     const result = SessionManager.getSessionBySocketId(socket.id);
     if (!result) return;
 
-    const [ sessionId, session ] = result;
+    const [sessionId, session] = result;
 
     // IF HOST DISCONNECTS, END SESSION FOR ALL
     if (session.hostSocketId === socket.id) {
