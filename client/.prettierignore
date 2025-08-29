@@ -4,3 +4,6 @@ dist
 # IGNORE MODULE DIRECTORIES
 node_modules
 .next
+
+# IGNORE PUBLIC ASSETS
+public

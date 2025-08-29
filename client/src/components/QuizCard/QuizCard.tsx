@@ -4,7 +4,11 @@ import React, { ReactElement } from 'react';
 import { QuizCardProps } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 
-export default function MainQuizCard({ quiz, selected, onSelect }: QuizCardProps): ReactElement {
+export default function MainQuizCard({
+  quiz,
+  selected,
+  onSelect,
+}: QuizCardProps): ReactElement {
   return (
     // QUIZ CARD CONTAINER
     <motion.div
@@ -23,7 +27,9 @@ export default function MainQuizCard({ quiz, selected, onSelect }: QuizCardProps
       </div>
 
       {/* DESCRIPTION */}
-      <p className={`${selected} ? 'text-white' : 'text-black'`}>{quiz.description}</p>
+      <p className={`${selected} ? 'text-white' : 'text-black'`}>
+        {quiz.description}
+      </p>
     </motion.div>
   );
 }

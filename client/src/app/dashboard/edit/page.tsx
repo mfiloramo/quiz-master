@@ -18,7 +18,9 @@ export default function EditQuiz(): ReactElement {
 
   // STATE HOOKS
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(null);
+  const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(
+    null
+  );
   const [modalMode, setModalMode] = useState<'edit' | 'add'>('edit');
   const [form, setForm] = useState({
     id: 0,
@@ -54,14 +56,18 @@ export default function EditQuiz(): ReactElement {
 
     try {
       // SEND GET REQUEST TO FETCH QUESTIONS FOR SELECTED QUIZ
-      const { data } = await axiosInstance.get(`/questions/quiz/${selectedQuiz.id}`);
+      const { data } = await axiosInstance.get(
+        `/questions/quiz/${selectedQuiz.id}`
+      );
       console.log('data', data);
 
       // FORMAT OPTIONS IF THEY ARE STORED AS STRINGS
       const formattedData = data.map((question: any) => ({
         ...question,
         options:
-          typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
+          typeof question.options === 'string'
+            ? JSON.parse(question.options)
+            : question.options,
       }));
 
       // UPDATE STATE WITH FORMATTED QUESTIONS
@@ -76,7 +82,9 @@ export default function EditQuiz(): ReactElement {
   // UPDATE QUESTIONS LISTING & OPEN MODAL
   const updateQuestionsModal = (updatedQuestion: QuizQuestion): void => {
     if (modalMode === 'edit') {
-      setQuestions((prev) => prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)));
+      setQuestions((prev) =>
+        prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
+      );
     } else if (modalMode === 'add') {
       setQuestions((prev) => [...prev, updatedQuestion]);
     }
@@ -84,7 +92,9 @@ export default function EditQuiz(): ReactElement {
   };
 
   // HANDLE VISIBILITY CHECKBOX CHANGE
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleCheckboxChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     const isChecked = e.target.checked;
     setForm((prev) => ({
       ...prev,
@@ -123,7 +133,9 @@ export default function EditQuiz(): ReactElement {
   const handleDelete = async (questionId: string | number): Promise<void> => {
     // OPTIMISTIC UPDATE: REMOVE LOCALLY FIRST
     const prev = questions;
-    setQuestions((curr) => curr.filter((q) => String(q.id) !== String(questionId)));
+    setQuestions((curr) =>
+      curr.filter((q) => String(q.id) !== String(questionId))
+    );
 
     try {
       // SEND DELETE REQUEST TO SERVER
@@ -225,7 +237,9 @@ export default function EditQuiz(): ReactElement {
           />
         ))
       ) : (
-        <div className={'text-xl text-black'}>No questions in this quiz yet. Add some!</div>
+        <div className={'text-xl text-black'}>
+          No questions in this quiz yet. Add some!
+        </div>
       )}
     </div>
   );

@@ -4,11 +4,15 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { RegisterContextType } from '@/types/contexts/RegisterContext.type';
 
 // CREATE CONTEXT
-const RegisterContext = createContext<RegisterContextType | undefined>(undefined);
+const RegisterContext = createContext<RegisterContextType | undefined>(
+  undefined
+);
 
 // PROVIDER WRAPPER
 export function RegisterProvider({ children }: { children: ReactNode }) {
-  const [accountType, setAccountType] = useState<'student' | 'teacher' | null>(null);
+  const [accountType, setAccountType] = useState<'student' | 'teacher' | null>(
+    null
+  );
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');

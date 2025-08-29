@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import { io, Socket } from 'socket.io-client';
 import { WebSocketContextType } from '@/types/contexts/WebSocketContext.type';
 
@@ -45,12 +51,15 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <WebSocketContext.Provider value={{ socket, disconnect }}>{children}</WebSocketContext.Provider>
+    <WebSocketContext.Provider value={{ socket, disconnect }}>
+      {children}
+    </WebSocketContext.Provider>
   );
 }
 
 export function useWebSocket() {
   const context = useContext(WebSocketContext);
-  if (!context) throw new Error('useWebSocket must be used within a WebSocketProvider');
+  if (!context)
+    throw new Error('useWebSocket must be used within a WebSocketProvider');
   return context;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { QuizModuleProps } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import { useQuiz } from '@/contexts/QuizContext';

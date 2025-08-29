@@ -16,7 +16,11 @@ export const metadata: Metadata = {
   description: 'A Simple Quiz Platform for Learning',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang='en' className={`${poppins.className} h-full bg-white`}>
       <body className='h-full overflow-hidden bg-white antialiased'>
@@ -27,7 +31,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Navbar />
 
               {/* MAIN CONTENT AREA SCROLLS */}
-              <main className='mt-16 flex-1 overflow-y-auto overscroll-contain'>{children}</main>
+              <main className='mt-16 flex-1 overflow-y-auto overscroll-contain'>
+                {children}
+              </main>
 
               {/* TOAST NOTIFICATION VIEWPORT (PORTAL) */}
               <ToastNotification />

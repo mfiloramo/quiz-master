@@ -21,7 +21,9 @@ export default function FinalScoreboard(): JSX.Element {
   }
 
   // SORT PLAYERS LIST BY NAME (LATER SCORE)
-  const sortedPlayers: Player[] = [...players].sort((a, b) => b.score - a.score);
+  const sortedPlayers: Player[] = [...players].sort(
+    (a, b) => b.score - a.score
+  );
   const playerFinalists: Player[] = sortedPlayers.slice(0, 3);
 
   // RENDER COMPONENT
@@ -47,8 +49,12 @@ export default function FinalScoreboard(): JSX.Element {
                 className={`flex w-32 min-w-24 max-w-36 flex-col items-center justify-end rounded-xl ${barColors[displayOrder.indexOf(i)]} text-white shadow-xl`}
               >
                 <div className='p-2 text-center'>
-                  <div className='text-lg font-semibold'>{playerFinalists[i].username}</div>
-                  <div className='text-sm'>Score: {playerFinalists[i].score}</div>
+                  <div className='text-lg font-semibold'>
+                    {playerFinalists[i].username}
+                  </div>
+                  <div className='text-sm'>
+                    Score: {playerFinalists[i].score}
+                  </div>
                 </div>
               </motion.div>
             )

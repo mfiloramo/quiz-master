@@ -1,9 +1,18 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
-import { AuthContextType, DecodedUser } from '@/types/contexts/AuthContext.types';
+import {
+  AuthContextType,
+  DecodedUser,
+} from '@/types/contexts/AuthContext.types';
 
 // CREATE CONTEXT
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -90,7 +99,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // RENDER PROVIDER
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, isHost, setIsHost, login, logout }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, user, isHost, setIsHost, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

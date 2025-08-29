@@ -91,10 +91,16 @@ export default function HostPage() {
       {/* SESSION CONFIGURATION CONTAINER */}
       <h2 className='mb-2 text-2xl'>Game Session Options</h2>
       <div
-        className={'flex h-fit w-[70vw] max-w-2xl flex-col rounded-xl bg-slate-400 p-3 shadow-xl'}
+        className={
+          'flex h-fit w-[70vw] max-w-2xl flex-col rounded-xl bg-slate-400 p-3 shadow-xl'
+        }
       >
         {/* ROUND TIMER CONFIGURATION */}
-        <div className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}>
+        <div
+          className={
+            'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'
+          }
+        >
           Round Timer (seconds)
           <select
             value={roundTimer}

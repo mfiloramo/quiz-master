@@ -20,6 +20,9 @@ body {
 }
 
 /* TEMP: DISABLE NEXT.JS ERROR OVERLAY*/
-nextjs-portal { display: none; }
-body > iframe { display: none; }
-
+nextjs-portal {
+  display: none;
+}
+body > iframe {
+  display: none;
+}

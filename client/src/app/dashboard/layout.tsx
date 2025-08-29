@@ -10,7 +10,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { AudioProvider } from '@/contexts/AudioContext';
 import React from 'react';
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // CUSTOM HOOKS
   const { isLoggedIn, user } = useAuth();
   const pathname = usePathname();
@@ -23,7 +27,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { path: '/dashboard/discover', label: '🧭 Discover' },
     { path: '/dashboard/library', label: '📚 My Quizzes' },
     { path: '/dashboard/settings', label: '⚙️ Settings' },
-    user?.account_type === 'admin' && { path: '/dashboard/admin', label: '🔑 Admin' },
+    user?.account_type === 'admin' && {
+      path: '/dashboard/admin',
+      label: '🔑 Admin',
+    },
   ].filter(Boolean) as DashboardItem[];
 
   const isLobbyPage = pathname.startsWith('/dashboard/lobby');

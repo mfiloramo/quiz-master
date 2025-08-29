@@ -3,7 +3,12 @@ import { useAudio } from '@/contexts/AudioContext';
 import { AudioToggleType } from '@/types/AudioToggle.type';
 
 export default function AudioToggle(): ReactElement {
-  const { music, handleToggleMusic, sound, handleToggleSound }: AudioToggleType = useAudio();
+  const {
+    music,
+    handleToggleMusic,
+    sound,
+    handleToggleSound,
+  }: AudioToggleType = useAudio();
 
   return (
     <div className='inline-flex items-center gap-6 text-center text-2xl font-bold leading-none'>

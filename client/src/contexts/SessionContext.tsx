@@ -28,7 +28,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <SessionContext.Provider value={{ sessionId, setSessionId, clearSession, players, setPlayers }}>
+    <SessionContext.Provider
+      value={{ sessionId, setSessionId, clearSession, players, setPlayers }}
+    >
       {children}
     </SessionContext.Provider>
   );

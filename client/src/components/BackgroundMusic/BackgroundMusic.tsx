@@ -10,7 +10,9 @@ type Props = {
 
 export default function BackgroundMusic({ tracks, onStart }: Props) {
   // SELECT ONE RANDOM TRACK ONCE
-  const selectedTrack = useRef(tracks[Math.floor(Math.random() * tracks.length)]);
+  const selectedTrack = useRef(
+    tracks[Math.floor(Math.random() * tracks.length)]
+  );
 
   // SETUP LOOPING SOUND
   const [play, { sound }] = useSound(selectedTrack.current, {

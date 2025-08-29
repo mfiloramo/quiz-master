@@ -58,7 +58,9 @@ export class WebSocketController {
     }
 
     // CHECK IF USERNAME ALREADY EXISTS IN SESSION
-    const nameExists = session.players.some((player: Player) => player.username === username);
+    const nameExists = session.players.some(
+      (player: Player) => player.username === username
+    );
     if (nameExists) {
       socket.emit('error', 'Player with this username already joined the game.');
       return;
@@ -97,7 +99,14 @@ export class WebSocketController {
   }
 
   // START GAME SESSION
-  public async startSession(socket: Socket, { sessionId }: { sessionId: string }): Promise<void> {
+  public async startSession(
+    socket: Socket,
+    {
+      sessionId,
+    }: {
+      sessionId: string;
+    }
+  ): Promise<void> {
     // FETCH SESSION BY ID
     const session = SessionManager.getSession(sessionId);
     if (!session) {
@@ -131,19 +140,22 @@ export class WebSocketController {
         questions = JSON.parse(cached);
       } else {
         // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
-        // TODO: THIS SHOULD BE CALLED FROM THE QUESTION CONTROLLER
-        // TODO: THE LOGIC ASSOCIATED CHECKING FOR A CACHE HIT/MISS SHOULD BE HANDLED BY THE QUESTION CONTROLLER
+        // TODO: THE LOGIC ASSOCIATED WITH CHECKING FOR A CACHE HIT/MISS SHOULD BE HANDLED BY THE QUESTION CONTROLLER
         console.log('Cache miss: Quiz questions...');
 
         const result = await sequelize.query('EXECUTE GetQuestionsByQuizId :quizId', {
-          replacements: { quizId: session.quizId },
+          replacements: {
+            quizId: session.quizId,
+          },
         });
 
         // FORMAT RAW DATABASE QUESTION DATA
         questions = (result[0] as QuestionAttributes[]).map((question: any) => ({
           ...question,
           options:
-            typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
+            typeof question.options === 'string'
+              ? JSON.parse(question.options)
+              : question.options,
         }));
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
@@ -169,7 +181,12 @@ export class WebSocketController {
   }
 
   // CHECK FOR EXISTING SESSION
-  public async checkSession(socket: Socket, data: { sessionId: string }): Promise<void> {
+  public async checkSession(
+    socket: Socket,
+    data: {
+      sessionId: string;
+    }
+  ): Promise<void> {
     const { sessionId } = data;
 
     // LOOK UP SESSION IN SESSION MANAGER
@@ -197,10 +214,18 @@ export class WebSocketController {
   }
 
   // RETURN CURRENT QUESTION TO REQUESTING CLIENT
-  public getCurrentQuestion(socket: Socket, { sessionId }: { sessionId: string }): void {
+  public getCurrentQuestion(
+    socket: Socket,
+    {
+      sessionId,
+    }: {
+      sessionId: string;
+    }
+  ): void {
     // FETCH SESSION AND VALIDATE
     const session = SessionManager.getSession(sessionId);
     if (!session || !session.questions.length) {
+      // TODO: ADD SOCKET EVENT HANDLERS FOR SERVER ERROR TO CLIENT
       socket.emit('error', 'No current question found.');
       return;
     }
@@ -239,7 +264,14 @@ export class WebSocketController {
   }
 
   // GET FULL PLAYER LIST FOR CLIENT THAT JOINED MIDWAY
-  public getPlayers(socket: Socket, { sessionId }: { sessionId: string }): void {
+  public getPlayers(
+    socket: Socket,
+    {
+      sessionId,
+    }: {
+      sessionId: string;
+    }
+  ): void {
     const session = SessionManager.getSession(sessionId);
     if (!session) return;
 
@@ -319,7 +351,13 @@ export class WebSocketController {
   // HOST-ONLY: EJECT SPECIFIC PLAYER FROM SESSION
   public handleEjectPlayer(
     socket: Socket,
-    { id, sessionId }: { id: number; sessionId: string }
+    {
+      id,
+      sessionId,
+    }: {
+      id: number;
+      sessionId: string;
+    }
   ): void {
     // FETCH SESSION
     const session = SessionManager.getSession(sessionId);

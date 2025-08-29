@@ -27,7 +27,9 @@ export default function RegisterSignupOptionsPage(): ReactElement {
   const { toastSuccess, toastError } = useToast();
 
   // HANDLE FORM SUBMIT
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
 
     // VALIDATE INPUT
@@ -76,7 +78,10 @@ export default function RegisterSignupOptionsPage(): ReactElement {
           return;
         });
     } catch (error: any) {
-      toastError('Registration Error:', error.response?.data?.message || error.message);
+      toastError(
+        'Registration Error:',
+        error.response?.data?.message || error.message
+      );
     }
   };
 

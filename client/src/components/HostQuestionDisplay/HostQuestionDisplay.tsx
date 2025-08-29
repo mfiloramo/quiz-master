@@ -1,4 +1,4 @@
-import React, { JSX } from 'react';
+import React, { JSX, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 // TODO: EXTRACT TO EXPORTED TYPE
@@ -19,6 +19,7 @@ export default function HostQuestionDisplay({
   correctAnswer,
   colorMap,
 }: Props): JSX.Element {
+  // RENDER COMPONENT
   return (
     <div className='my-8 w-full max-w-3xl rounded-xl bg-slate-200 p-7 text-center text-5xl font-bold text-slate-900 shadow-xl'>
       <h2 className='mb-2 text-xl font-bold text-gray-700'>

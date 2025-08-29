@@ -27,7 +27,8 @@ export default function PlayerAnswerSummary({
         <p className='text-green-700'>CORRECT!</p>
       ) : (
         <p className='text-red-700'>
-          Incorrect -- the correct answer is: <span className='font-bold'>{correctAnswer}</span>.
+          Incorrect -- the correct answer is:{' '}
+          <span className='font-bold'>{correctAnswer}</span>.
         </p>
       )}
     </>

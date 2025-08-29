@@ -2,7 +2,11 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { DashboardCardType } from '@/types/DashboardCard.type';
 
-export default function DashboardCard({ label, description, href }: DashboardCardType) {
+export default function DashboardCard({
+  label,
+  description,
+  href,
+}: DashboardCardType) {
   return (
     <Link href={href}>
       <motion.div

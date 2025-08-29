@@ -60,7 +60,9 @@ export default function QuizPage(): JSX.Element {
   const { music, sound } = useAudio();
 
   // MOUNT GONG SOUND
-  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', { volume: 0.1 });
+  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', {
+    volume: 0.1,
+  });
 
   // ON MOUNT, REQUEST CURRENT QUESTION
   useEffect(() => {
@@ -71,7 +73,9 @@ export default function QuizPage(): JSX.Element {
   // ON MOUNT, REQUEST PLAYER LIST
   useEffect(() => {
     if (!socket || !sessionId) return;
-    socket.emit('get-players', { sessionId });
+    socket.emit('get-players', {
+      sessionId,
+    });
   }, [socket, sessionId]);
 
   // TIMER COUNTDOWN DURING QUESTION PHASE
@@ -191,7 +195,10 @@ export default function QuizPage(): JSX.Element {
     // PHASE: ANSWER SUMMARY -> LEADERBOARD
     if (phase === QuizPhase.AnswerSummary) {
       timer = setTimeout(() => setPhase(QuizPhase.Leaderboard), timeout);
-      if (press) socket!.emit('skip', { sessionId });
+      if (press)
+        socket!.emit('skip', {
+          sessionId,
+        });
     }
 
     // PHASE: LEADERBOARD -> NEXT QUESTION / FINAL SCORES
@@ -249,14 +256,18 @@ export default function QuizPage(): JSX.Element {
 
     switch (phase) {
       case QuizPhase.Question:
-        socket.emit('skip-question', { sessionId });
+        socket.emit('skip-question', {
+          sessionId,
+        });
         break;
       case QuizPhase.AnswerSummary:
         setPhase(QuizPhase.Leaderboard);
         break;
       case QuizPhase.Leaderboard:
         setLoading(true);
-        socket.emit('next-question', { sessionId });
+        socket.emit('next-question', {
+          sessionId,
+        });
         break;
     }
   };
@@ -265,7 +276,9 @@ export default function QuizPage(): JSX.Element {
   const handleLeave = (): void => {
     if (isHost) {
       setIsHost(false);
-      socket?.emit('host-left', { sessionId });
+      socket?.emit('host-left', {
+        sessionId,
+      });
     }
 
     disconnect();
@@ -297,7 +310,8 @@ export default function QuizPage(): JSX.Element {
             </div>
           )}
           {/* SESSION ID DISPLAY */}
-          Join with session ID:<span className={'text-center font-bold'}>{sessionId}</span>
+          Join with session ID:
+          <span className={'text-center font-bold'}>{sessionId}</span>
         </div>
       )}
 
@@ -381,15 +395,23 @@ export default function QuizPage(): JSX.Element {
       {/* FINAL SCOREBOARD (HOST DISPLAY) */}
       {phase === QuizPhase.FinalScoreboard && isHost && <FinalScoreboard />}
 
+      {/* SKIP PHASE BUTTON */}
       <div className={'flex flex-row items-center justify-between gap-3'}>
-        {/* SKIP PHASE BUTTON */}
         {isHost && (
           <motion.button
             className='mt-7 h-16 w-40 rounded-lg bg-slate-100 font-bold text-black transition hover:bg-slate-200 active:bg-slate-300'
             onClick={handleSkip}
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.005 }}
+            initial={{
+              x: -100,
+              opacity: 0,
+            }}
+            animate={{
+              x: 0,
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.005,
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -401,9 +423,14 @@ export default function QuizPage(): JSX.Element {
         <motion.button
           className='mt-7 h-16 w-40 rounded-lg bg-red-500 font-bold text-white transition hover:bg-red-400 active:bg-red-300'
           onClick={handleLeave}
-          initial={{ x: -100, opacity: 0 }}
+          initial={{
+            x: -100,
+            opacity: 0,
+          }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.005 }}
+          transition={{
+            duration: 0.005,
+          }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
