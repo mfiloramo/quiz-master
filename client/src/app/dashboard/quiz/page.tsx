@@ -32,26 +32,17 @@ import { QuizQuestion } from '@/types/Quiz.types';
 import { Player } from '@/interfaces/PlayerListProps.interface';
 
 // PAGE CONSTANTS
-const colorMap: string[] = [
-  'bg-red-500',
-  'bg-blue-500',
-  'bg-yellow-400',
-  'bg-green-500',
-];
+const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
 // QUIZ BACKGROUND MUSIC TRACKS
 const quizTracks = ['/audio/countdown-a.mp3', '/audio/countdown-b.mp3'];
 
 export default function QuizPage(): JSX.Element {
-  const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(
-    null
-  );
+  const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
-  const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(
-    null
-  );
+  const [roundTimerSetting, setRoundTimerSetting] = useState<number | null>(null);
   const [phase, setPhase] = useState<QuizPhase>(QuizPhase.Question);
   const [playerAnswersCount, setPlayerAnswersCount] = useState<number>(0);
   const [error] = useState<string | null>(null);
@@ -134,10 +125,7 @@ export default function QuizPage(): JSX.Element {
       if (Array.isArray(answers)) {
         setPlayerAnswers(answers);
       } else {
-        console.warn(
-          'Received undefined or invalid player answers from server:',
-          answers
-        );
+        console.warn('Received undefined or invalid player answers from server:', answers);
         setPlayerAnswers([]);
       }
     });
@@ -248,10 +236,7 @@ export default function QuizPage(): JSX.Element {
     if (phase !== QuizPhase.Question) return;
 
     setUserAnswer(answer);
-    setPlayerAnswers((previousAnswers: string[]) => [
-      ...previousAnswers,
-      answer,
-    ]);
+    setPlayerAnswers((previousAnswers: string[]) => [...previousAnswers, answer]);
     socket?.emit('submit-answer', {
       sessionId,
       id: user?.id,
@@ -381,10 +366,7 @@ export default function QuizPage(): JSX.Element {
       {/* HOST ANSWER SUMMARY VIEW */}
       {phase === QuizPhase.AnswerSummary && currentQuestion && isHost && (
         <>
-          <PlayerAnswerGraph
-            playerAnswers={playerAnswers}
-            options={currentQuestion.options}
-          />
+          <PlayerAnswerGraph playerAnswers={playerAnswers} options={currentQuestion.options} />
           <HostQuestionDisplay
             question={currentQuestion.question}
             options={currentQuestion.options}
@@ -400,10 +382,7 @@ export default function QuizPage(): JSX.Element {
       {phase === QuizPhase.AnswerSummary && currentQuestion && !isHost && (
         <div className='min-w-2xl my-8 rounded-xl bg-white p-6 text-center text-2xl font-medium text-gray-900 shadow-md'>
           {userAnswer ? (
-            <PlayerAnswerSummary
-              userAnswer={userAnswer}
-              correctAnswer={currentQuestion.correct}
-            />
+            <PlayerAnswerSummary userAnswer={userAnswer} correctAnswer={currentQuestion.correct} />
           ) : (
             <p>Time&apos;s up!</p>
           )}
@@ -416,8 +395,8 @@ export default function QuizPage(): JSX.Element {
       {/* FINAL SCOREBOARD (HOST DISPLAY) */}
       {phase === QuizPhase.FinalScoreboard && isHost && <FinalScoreboard />}
 
+      {/* SKIP PHASE BUTTON */}
       <div className={'flex flex-row items-center justify-between gap-3'}>
-        {/* SKIP PHASE BUTTON */}
         {isHost && (
           <motion.button
             className='mt-7 h-16 w-40 rounded-lg bg-slate-100 font-bold text-black transition hover:bg-slate-200 active:bg-slate-300'

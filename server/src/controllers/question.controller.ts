@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
 import { sequelize } from '../config/sequelize';
 import { redis } from '../config/redis';
-import Question from '../models/Question';
-import Quiz from '../models/Quiz';
-import question from '../models/Question';
 
 export class QuestionController {
   // ADD NEW QUESTION TO DATABASE
@@ -63,10 +60,10 @@ export class QuestionController {
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         console.log('Cache miss: User quizzes...');
-        await redis.set(cacheKey, JSON.stringify(questions[0]));
+        await redis.set(cacheKey, JSON.stringify(questions));
 
         // SEND QUERIED DATA FROM DATABASE
-        res.send(questions[0]);
+        res.send(questions);
       }
     } catch (error: any) {
       console.error('Error executing Stored Procedure:', error.message);

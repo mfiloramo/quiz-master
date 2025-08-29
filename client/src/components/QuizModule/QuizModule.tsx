@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { QuizModuleProps } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import { useQuiz } from '@/contexts/QuizContext';
@@ -60,9 +60,7 @@ export default function QuizModule({
       {lockedIn && (
         <LoadingSpinner
           color={'#000000'}
-          loadingMessage={
-            'Answer submitted. Waiting for other players to answer...'
-          }
+          loadingMessage={'Answer submitted. Waiting for other players to answer...'}
           size={60}
         />
       )}
