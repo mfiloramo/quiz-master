@@ -292,9 +292,9 @@ export default function QuizPage(): JSX.Element {
   return (
     <div className='flex flex-col items-center justify-center'>
       {/* QUIZ BACKGROUND MUSIC */}
-      {isHost && music && phase === QuizPhase.Question && (
-        <BackgroundMusic key={musicKey} tracks={quizTracks} />
-      )}
+      {/*{isHost && music && phase === QuizPhase.Question && (*/}
+      {/*  <BackgroundMusic key={musicKey} tracks={quizTracks} />*/}
+      {/*)}*/}
 
       {/* HOST CONTROLS */}
       {isHost && sessionId && (
