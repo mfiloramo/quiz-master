@@ -11,16 +11,14 @@ import axiosInstance from '@/utils/axios';
 import { QuizQuestion } from '@/types/Quiz.types';
 
 export default function EditQuiz(): ReactElement {
-  // CUSTOM HOOKS
+  // CONTEXT HOOKS/CUSTOM HOOKS
   const { selectedQuiz } = useQuiz();
   const { toastSuccess, toastError } = useToast();
   const router = useRouter();
 
   // STATE HOOKS
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(
-    null
-  );
+  const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(null);
   const [modalMode, setModalMode] = useState<'edit' | 'add'>('edit');
   const [form, setForm] = useState({
     id: 0,
@@ -45,35 +43,29 @@ export default function EditQuiz(): ReactElement {
   // LOAD ONCE QUIZ SELECTED
   useEffect(() => {
     // DO NOT AWAIT HERE; FIRE AND FORGET IS FINE FOR INITIAL LOAD
-    fetchQuestions().then((r) => r);
+    fetchQuestions().then((response: any): void => response);
   }, [selectedQuiz]);
 
   // FETCH ALL QUESTIONS FOR QUIZ
   const fetchQuestions = async (): Promise<void> => {
-    console.log('fetchQuestions hit...');
     // RETURN EARLY IF NO QUIZ SELECTED
     if (!selectedQuiz?.id) return;
 
     try {
       // SEND GET REQUEST TO FETCH QUESTIONS FOR SELECTED QUIZ
-      const { data } = await axiosInstance.get(
-        `/questions/quiz/${selectedQuiz.id}`
-      );
-      console.log('data', data);
+      const { data } = await axiosInstance.get(`/questions/quiz/${selectedQuiz.id}`);
 
       // FORMAT OPTIONS IF THEY ARE STORED AS STRINGS
       const formattedData = data.map((question: any) => ({
         ...question,
         options:
-          typeof question.options === 'string'
-            ? JSON.parse(question.options)
-            : question.options,
+          typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
       }));
 
       // UPDATE STATE WITH FORMATTED QUESTIONS
       setQuestions(formattedData);
-    } catch (error) {
-      const errorMsg: string = `Error fetching quizzes: ${error}`;
+    } catch (error: any) {
+      const errorMsg: string = `Error fetching questions: ${error}`;
       toastError(errorMsg);
       console.error(error);
     }
@@ -82,9 +74,7 @@ export default function EditQuiz(): ReactElement {
   // UPDATE QUESTIONS LISTING & OPEN MODAL
   const updateQuestionsModal = (updatedQuestion: QuizQuestion): void => {
     if (modalMode === 'edit') {
-      setQuestions((prev) =>
-        prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
-      );
+      setQuestions((prev) => prev.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)));
     } else if (modalMode === 'add') {
       setQuestions((prev) => [...prev, updatedQuestion]);
     }
@@ -92,9 +82,7 @@ export default function EditQuiz(): ReactElement {
   };
 
   // HANDLE VISIBILITY CHECKBOX CHANGE
-  const handleCheckboxChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const isChecked = e.target.checked;
     setForm((prev) => ({
       ...prev,
@@ -133,9 +121,7 @@ export default function EditQuiz(): ReactElement {
   const handleDelete = async (questionId: string | number): Promise<void> => {
     // OPTIMISTIC UPDATE: REMOVE LOCALLY FIRST
     const prev = questions;
-    setQuestions((curr) =>
-      curr.filter((q) => String(q.id) !== String(questionId))
-    );
+    setQuestions((curr) => curr.filter((q) => String(q.id) !== String(questionId)));
 
     try {
       // SEND DELETE REQUEST TO SERVER
@@ -219,27 +205,25 @@ export default function EditQuiz(): ReactElement {
 
       {/* LIST QUESTIONS */}
       {questions.length ? (
-        // CHILD COMPONENT NOW CALLS onDelete(id) INSTEAD OF FORWARDING DOM EVENTS
-        questions.map((question, index) => (
-          <QuestionListing
-            key={question.id}
-            id={question.id}
-            question={question.question}
-            options={question.options}
-            correct={question.correct}
-            index={index}
-            onEditAction={() => {
-              setModalMode('edit');
-              setEditingQuestion(question);
-            }}
-            // PASS HANDLER; CHILD WILL CALL IT WITH THE ID
-            onDeleteAction={handleDelete}
-          />
-        ))
+        questions.map(
+          (question: QuizQuestion, index: number): ReactElement => (
+            <QuestionListing
+              key={question.id}
+              id={question.id}
+              question={question.question}
+              options={question.options}
+              correct={question.correct}
+              index={index}
+              onEditAction={() => {
+                setModalMode('edit');
+                setEditingQuestion(question);
+              }}
+              onDeleteAction={handleDelete}
+            />
+          )
+        )
       ) : (
-        <div className={'text-xl text-black'}>
-          No questions in this quiz yet. Add some!
-        </div>
+        <div className={'text-xl text-black'}>No questions in this quiz yet. Add some!</div>
       )}
     </div>
   );

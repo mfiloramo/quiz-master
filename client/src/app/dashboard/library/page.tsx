@@ -5,7 +5,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
-// CUSTOM HOOKS
+// CONTEXT HOOK/CUSTOM HOOKSS
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -24,12 +24,12 @@ export default function LibraryPage(): ReactElement {
   // STATE HOOKS
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
 
-  // CONTEXT HOOKS
+  // CONTEXT HOOKS/CUSTOM HOOKS
   const { user } = useAuth();
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
   const { toastSuccess, toastError } = useToast();
 
-  // CUSTOM HOOKS
+  // CONTEXT HOOKS/CUSTOM HOOKS
   const router = useRouter();
 
   // FETCH QUIZZES ON LOAD
@@ -48,9 +48,7 @@ export default function LibraryPage(): ReactElement {
 
     const fetchQuizzes = async (): Promise<void> => {
       try {
-        const { data } = await axiosInstance.get<Quiz[]>(
-          `/quizzes/user/${user.id}`
-        );
+        const { data } = await axiosInstance.get<Quiz[]>(`/quizzes/user/${user.id}`);
         setQuizzes(data);
       } catch (error: any) {
         const errorMsg: string = `Error fetching quizzes: ${error}`;
@@ -102,12 +100,7 @@ export default function LibraryPage(): ReactElement {
   // SHOW LOADING STATE WHILE USER IS BEING RESOLVED
   // DEBUG: ADD  NOT OPERATOR TO user
   if (!user) {
-    return (
-      <LoadingSpinner
-        color={'#ffffff'}
-        loadingMessage={'Loading your quizzes...'}
-      />
-    );
+    return <LoadingSpinner color={'#ffffff'} loadingMessage={'Loading your quizzes...'} />;
   }
 
   // RENDER PAGE

@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import useSound from 'use-sound';
 
-// CUSTOM HOOKS
+// CONTEXT HOOKS/CUSTOM HOOKS
 import { useWebSocket } from '@/contexts/WebSocketContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAudio } from '@/contexts/AudioContext';
@@ -51,7 +51,7 @@ export default function QuizPage(): JSX.Element {
   const [musicKey, setMusicKey] = useState<number>(Date.now());
   const [press] = useState<boolean>(false);
 
-  // CUSTOM HOOKS/CONTEXTS
+  // CONTEXT HOOKS/CUSTOM HOOKS
   const router = useRouter();
   const { user, isHost, setIsHost } = useAuth();
   const { socket, disconnect } = useWebSocket();

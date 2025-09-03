@@ -10,12 +10,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { AudioProvider } from '@/contexts/AudioContext';
 import React from 'react';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // CUSTOM HOOKS
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  // CONTEXT HOOKS/CUSTOM HOOKS
   const { isLoggedIn, user } = useAuth();
   const pathname = usePathname();
 

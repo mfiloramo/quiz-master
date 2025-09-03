@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { QuizModuleProps } from '@/types/Quiz.types';
 import { motion } from 'framer-motion';
 import { useQuiz } from '@/contexts/QuizContext';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
-// import { PacmanLoader } from 'react-spinners';
 
 const colorMap = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
@@ -18,7 +17,7 @@ export default function QuizModule({
   // STATE HOOKS
   const [selected, setSelected] = useState<string | null>(null);
 
-  // CUSTOM HOOKS
+  // CONTEXT HOOKS/CUSTOM HOOKS
   const { lockedIn, setLockedIn } = useQuiz();
 
   // HANDLER FUNCTIONS
