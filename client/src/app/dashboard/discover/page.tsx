@@ -12,7 +12,7 @@ export default function DiscoverPage(): ReactElement {
   // STATE FOR ALL QUIZZES
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
 
-  // CONTEXT HOOKS
+  // CONTEXT HOOKS/CUSTOM HOOKS
   const { selectedQuiz, setSelectedQuiz } = useQuiz();
   const { toastError } = useToast();
   const router = useRouter();
