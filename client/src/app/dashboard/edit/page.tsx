@@ -43,7 +43,7 @@ export default function EditQuiz(): ReactElement {
   // LOAD ONCE QUIZ SELECTED
   useEffect(() => {
     // DO NOT AWAIT HERE; FIRE AND FORGET IS FINE FOR INITIAL LOAD
-    fetchQuestions().then((r) => r);
+    fetchQuestions().then((response: any): void => response);
   }, [selectedQuiz]);
 
   // FETCH ALL QUESTIONS FOR QUIZ
@@ -56,7 +56,7 @@ export default function EditQuiz(): ReactElement {
       const { data } = await axiosInstance.get(`/questions/quiz/${selectedQuiz.id}`);
 
       // FORMAT OPTIONS IF THEY ARE STORED AS STRINGS
-      const formattedData = data[0].map((question: any) => ({
+      const formattedData = data.map((question: any) => ({
         ...question,
         options:
           typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
@@ -65,7 +65,7 @@ export default function EditQuiz(): ReactElement {
       // UPDATE STATE WITH FORMATTED QUESTIONS
       setQuestions(formattedData);
     } catch (error: any) {
-      const errorMsg: string = `Error fetching quizzes: ${error}`;
+      const errorMsg: string = `Error fetching questions: ${error}`;
       toastError(errorMsg);
       console.error(error);
     }
@@ -205,21 +205,23 @@ export default function EditQuiz(): ReactElement {
 
       {/* LIST QUESTIONS */}
       {questions.length ? (
-        questions.map((question, index) => (
-          <QuestionListing
-            key={question.id}
-            id={question.id}
-            question={question.question}
-            options={question.options}
-            correct={question.correct}
-            index={index}
-            onEditAction={() => {
-              setModalMode('edit');
-              setEditingQuestion(question);
-            }}
-            onDeleteAction={handleDelete}
-          />
-        ))
+        questions.map(
+          (question: QuizQuestion, index: number): ReactElement => (
+            <QuestionListing
+              key={question.id}
+              id={question.id}
+              question={question.question}
+              options={question.options}
+              correct={question.correct}
+              index={index}
+              onEditAction={() => {
+                setModalMode('edit');
+                setEditingQuestion(question);
+              }}
+              onDeleteAction={handleDelete}
+            />
+          )
+        )
       ) : (
         <div className={'text-xl text-black'}>No questions in this quiz yet. Add some!</div>
       )}

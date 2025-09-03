@@ -60,10 +60,10 @@ export class QuestionController {
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         console.log('Cache miss: User quizzes...');
-        await redis.set(cacheKey, JSON.stringify(questions));
+        await redis.set(cacheKey, JSON.stringify(questions[0]));
 
         // SEND QUERIED DATA FROM DATABASE
-        res.send(questions);
+        res.send(questions[0]);
       }
     } catch (error: any) {
       console.error('Error executing Stored Procedure:', error.message);

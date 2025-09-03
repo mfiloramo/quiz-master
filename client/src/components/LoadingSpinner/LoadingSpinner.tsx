@@ -13,9 +13,7 @@ export default function LoadingSpinner({
   // RENDER COMPONENT
   return (
     // MAIN CONTAINER
-    <div
-      className={`flex flex-col items-center text-center font-bold ${className}`}
-    >
+    <div className={`flex flex-col items-center text-center ${className}`}>
       {/* LOADING MESSAGE */}
       <motion.p
         className='p-6 text-2xl'

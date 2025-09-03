@@ -23,6 +23,7 @@ export default function QuestionListing({
   onDeleteAction,
   onEditAction,
 }: QuestionListingStrongProps) {
+  // RENDER COMPONENT
   return (
     <div className='mb-4 max-w-3xl rounded-lg border border-gray-300 bg-white p-4 shadow-md'>
       <div className='mb-2 flex justify-between'>
@@ -30,24 +31,15 @@ export default function QuestionListing({
           Q{(index ?? 0) + 1}: {question}
         </span>
         <div className='flex gap-2'>
-          <Pencil
-            className='cursor-pointer text-blue-500'
-            onClick={onEditAction}
-          />
+          <Pencil className='cursor-pointer text-blue-500' onClick={onEditAction} />
           {/* PASS ID DIRECTLY */}
-          <Trash2
-            className='cursor-pointer text-red-500'
-            onClick={() => onDeleteAction(id)}
-          />
+          <Trash2 className='cursor-pointer text-red-500' onClick={() => onDeleteAction(id)} />
         </div>
       </div>
 
       <ul className='list-disc pl-5 text-gray-700'>
         {options.map((option, idx) => (
-          <li
-            key={idx}
-            className={option === correct ? 'font-bold text-green-600' : ''}
-          >
+          <li key={idx} className={option === correct ? 'font-bold text-green-600' : ''}>
             {option}
           </li>
         ))}
