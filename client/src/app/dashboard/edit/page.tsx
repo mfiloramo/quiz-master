@@ -11,7 +11,6 @@ import axiosInstance from '@/utils/axios';
 import { QuizQuestion } from '@/types/Quiz.types';
 
 export default function EditQuiz(): ReactElement {
-  // CONTEXT HOOKS/CUSTOM HOOKS
   const { selectedQuiz } = useQuiz();
   const { toastSuccess, toastError } = useToast();
   const router = useRouter();
@@ -24,20 +23,19 @@ export default function EditQuiz(): ReactElement {
     id: 0,
     title: '',
     description: '',
-    visibility: modalMode === 'add' ? 'public' : null,
+    isPrivate: false,
   });
 
-  // SET INITIAL QUIZ FORM DATA
+  // HYDRATE FORM FROM selectedQuiz (NORMALIZE VISIBILITY)
   useEffect(() => {
-    if (selectedQuiz) {
-      const newForm = {
-        id: selectedQuiz.id!,
-        title: selectedQuiz.title,
-        description: selectedQuiz.description,
-        visibility: selectedQuiz.visibility,
-      };
-      setForm(newForm);
-    }
+    if (!selectedQuiz) return;
+
+    setForm({
+      id: selectedQuiz.id!,
+      title: selectedQuiz.title ?? '',
+      description: selectedQuiz.description ?? '',
+      isPrivate: selectedQuiz.visibility === 'private',
+    });
   }, [selectedQuiz]);
 
   // LOAD ONCE QUIZ SELECTED
@@ -71,6 +69,11 @@ export default function EditQuiz(): ReactElement {
     }
   };
 
+  // HANDLE CHECKBOX CHANGE
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((prev) => ({ ...prev, isPrivate: e.target.checked }));
+  };
+
   // UPDATE QUESTIONS LISTING & OPEN MODAL
   const updateQuestionsModal = (updatedQuestion: QuizQuestion): void => {
     if (modalMode === 'edit') {
@@ -81,24 +84,16 @@ export default function EditQuiz(): ReactElement {
     setEditingQuestion(null);
   };
 
-  // HANDLE VISIBILITY CHECKBOX CHANGE
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const isChecked = e.target.checked;
-    setForm((prev) => ({
-      ...prev,
-      visibility: isChecked ? 'private' : 'public',
-    }));
-  };
-
-  // HANDLE QUIZ SAVING
+  // HANDLE QUIZ SAVE
   const handleSave = async () => {
     try {
       // PREPARE PAYLOAD WITH UPDATED QUIZ DATA
       const payload = {
+        userId: selectedQuiz?.user_id,
         id: form.id,
         title: form.title,
         description: form.description,
-        visibility: form.visibility,
+        visibility: form.isPrivate ? 'private' : 'public',
       };
 
       // SEND PUT REQUEST TO UPDATE THE QUIZ
@@ -166,9 +161,10 @@ export default function EditQuiz(): ReactElement {
         {selectedQuiz && form.id !== 0 && (
           <div className='m-4 flex h-12 items-center rounded bg-cyan-800 px-4 text-xs font-bold text-white shadow-lg sm:text-lg'>
             <input
+              id='visibility'
               name='visibility'
               type='checkbox'
-              checked={form.visibility === 'private'}
+              checked={form.isPrivate}
               onChange={handleCheckboxChange}
               className='mr-2 h-4 w-4'
             />

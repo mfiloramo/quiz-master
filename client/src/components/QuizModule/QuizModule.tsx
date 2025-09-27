@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useQuiz } from '@/contexts/QuizContext';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 
-const colorMap = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
+const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500'];
 
 export default function QuizModule({
   question,

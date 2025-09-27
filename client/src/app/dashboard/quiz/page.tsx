@@ -60,7 +60,7 @@ export default function QuizPage(): JSX.Element {
   const { music, sound } = useAudio();
 
   // MOUNT GONG SOUND
-  const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', {
+  const [playGong, { sound: gongSound }] = useSound('/audio/g ong-sound.mp3', {
     volume: 0.1,
   });
 

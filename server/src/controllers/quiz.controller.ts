@@ -3,6 +3,7 @@ import { sequelize } from '../config/sequelize';
 import { redis } from '../config/redis';
 import { QueryTypes } from 'sequelize';
 import { QuizAttributes } from '../interfaces/QuizAttributes.interface';
+import user from '../models/User';
 
 export class QuizController {
   // CREATE NEW QUIZ
@@ -24,7 +25,9 @@ export class QuizController {
       const cacheKeyAllQuizzes: string = `discover:all:quizzes`;
 
       // DELETE CACHE KEY ASSOCIATED WITH USER'S QUIZZES
-      await redis.del(cacheKeyUser).then(() => console.log('User quizzes deleted in cache...'));
+      await redis
+        .del(cacheKeyUser)
+        .then(() => console.log('User quizzes deleted in cache...'));
 
       // DELETE CACHE KEY ASSOCIATED WITH ALL QUIZZES (DISCOVER)
       await redis
@@ -130,7 +133,7 @@ export class QuizController {
   static async updateQuiz(req: Request, res: Response): Promise<void> {
     try {
       // DESTRUCTURE DATA FROM REQUEST BODY
-      const { id, title, description, visibility } = req.body;
+      const { userId, id, title, description, visibility } = req.body;
 
       // EXECUTE STORED PROCEDURE TO QUERY DATABASE WITH UPDATED QUIZ DATA
       await sequelize
@@ -138,6 +141,9 @@ export class QuizController {
           replacements: { id, title, description, visibility },
         })
         .then(() => {
+          // CLEAR QUIZ METADATA FROM CACHE
+          redis.del(`user:${userId}:quizzes`);
+
           // CLEAR QUIZ FROM CACHE
           redis.del(`quiz:${id}:questions`);
           console.log('Quiz updated in cache successfully...');
