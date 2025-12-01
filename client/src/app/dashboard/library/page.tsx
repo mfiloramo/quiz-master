@@ -5,7 +5,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
-// CONTEXT HOOK/CUSTOM HOOKSS
+// CONTEXT HOOK/CUSTOM HOOKS
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -33,7 +33,7 @@ export default function LibraryPage(): ReactElement {
   const router = useRouter();
 
   // FETCH QUIZZES ON LOAD
-  // IMPORTANT: EFFECT DEPENDS ON USER.ID SO IT RE-RUNS AFTER AUTH POPULATES
+  // IMPORTANT: EFFECT DEPENDS ON user.id SO IT RE-RUNS AFTER AUTH POPULATES
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {

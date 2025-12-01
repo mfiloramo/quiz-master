@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { path: '/dashboard/join', label: '🎮 Join Game' },
     { path: '/dashboard/discover', label: '🧭 Discover' },
     { path: '/dashboard/library', label: '📚 My Quizzes' },
-    { path: '/dashboard/settings', label: '⚙️ Settings' },
+    // { path: '/dashboard/settings', label: '⚙️ Settings' },
     user?.account_type === 'admin' && {
       path: '/dashboard/admin',
       label: '🔑 Admin',

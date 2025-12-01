@@ -53,6 +53,11 @@ export default function DiscoverPage(): ReactElement {
   // RENDER PAGE
   return (
     <div className='flex flex-col items-start'>
+      {/* QUIZ SEARCH BOX */}
+      <div className={'w-xl my-4 rounded-xl bg-sky-100 px-24 py-12 shadow-xl'}>
+        <input className={'rounded-md p-2'} />
+      </div>
+
       {/* QUIZ LIST */}
       <div className='flex flex-col items-start'>
         {quizzes.map((quiz) =>
@@ -67,14 +72,16 @@ export default function DiscoverPage(): ReactElement {
         )}
       </div>
       {/* ACTION BUTTONS */}
-      <div className='mt-8 flex gap-4'>
-        <button
-          className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400'
-          onClick={navToPlayQuiz}
-        >
-          HOST QUIZ
-        </button>
-      </div>
+      {selectedQuiz && (
+        <div className='mt-8 flex gap-4'>
+          <button
+            className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400'
+            onClick={navToPlayQuiz}
+          >
+            HOST QUIZ
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 import AudioToggle from '@/components/AudioToggle/AudioToggle';
 
-// LOAD LOBBY BACKGROUND MUSIC TRACKS
+// LOAD LOBBY BACKGROUN nD MUSIC TRACKS
 const lobbyTracks = ['/audio/lobby-groove-a.mp3', '/audio/lobby-groove-b.mp3'];
 const hasStartedMusic =
   typeof window !== 'undefined' && sessionStorage.getItem('lobby-music-started') === 'true';
@@ -118,7 +118,7 @@ export default function LobbyPage() {
       <div className='mb-10 text-5xl font-bold'>Game Lobby</div>
 
       {/* BACKGROUND MUSIC (ONLY HOST PLAYS IT ONCE) */}
-      {isHost && music && !hasStartedMusic && <BackgroundMusic tracks={lobbyTracks} />}
+      {/*{isHost && music && !hasStartedMusic && <BackgroundMusic tracks={lobbyTracks} />}*/}
 
       {/* JOIN SESSION CODE */}
       {isHost && (
