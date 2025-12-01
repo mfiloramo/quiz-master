@@ -35,11 +35,11 @@ export default function DashboardHome(): JSX.Element {
       href: '/dashboard/library',
       description: 'Access all your saved and created quizzes.',
     },
-    {
-      label: '⚙️ Settings',
-      href: '/dashboard/settings',
-      description: 'Manage your profile and preferences.',
-    },
+    // {
+    //   label: '⚙️ Settings',
+    //   href: '/dashboard/settings',
+    //   description: 'Manage your profile and preferences.',
+    // },
     user?.account_type === 'admin' && {
       label: '🔑 Admin',
       href: '/dashboard/admin',
@@ -63,12 +63,10 @@ export default function DashboardHome(): JSX.Element {
   // RENDER PAGE
   return (
     <div className='flex w-fit flex-col gap-6'>
-      <h1 className='text-4xl font-bold text-sky-950'>
-        Welcome to Your Dashboard
-      </h1>
+      <h1 className='text-4xl font-bold text-sky-950'>Welcome to Your Dashboard</h1>
       <p className='max-w-2xl rounded-xl bg-sky-50/50 p-5 text-lg text-slate-950'>
-        Use the sidebar to navigate through your dashboard features like
-        discovering new quizzes, managing your library, or adjusting settings.
+        Use the sidebar to navigate through your dashboard features like discovering new quizzes,
+        managing your library, or adjusting settings.
       </p>
       <ul className='mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3'>
         {DashboardCards.map((card: DashboardCardType, index: number) => (

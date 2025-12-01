@@ -4,13 +4,8 @@ import React, { ReactElement, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
+import { MenuPhase } from '@/enums/MenuPhase.enum';
 import { motion } from 'framer-motion';
-
-// ENUM FOR SETTINGS MENU PHASE
-enum MenuPhase {
-  InitialScreen = 'INITIAL-SCREEN',
-  ConfirmationScreen = 'CONFIRMATION-SCREEN',
-}
 
 export default function Settings(): ReactElement {
   // PAGE STATE
