@@ -18,6 +18,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // COMPONENT VARIABLES
   const dashboardLinks: DashboardItem[] = [
     { path: '/', label: '🏠 Home' },
+    { path: '/dashboard', label: '🎛️ Dashboard' },
     { path: '/dashboard/create', label: '✨ Create' },
     { path: '/dashboard/join', label: '🎮 Join Game' },
     { path: '/dashboard/discover', label: '🧭 Discover' },
