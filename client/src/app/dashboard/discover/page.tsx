@@ -54,9 +54,9 @@ export default function DiscoverPage(): ReactElement {
   return (
     <div className='flex flex-col items-start'>
       {/* QUIZ SEARCH BOX */}
-      <div className={'w-xl my-4 rounded-xl bg-sky-100 px-24 py-12 shadow-xl'}>
-        <input className={'rounded-md p-2'} />
-      </div>
+      {/*<div className={'w-xl my-4 rounded-xl bg-sky-100 px-2 py-12 shadow-xl'}>*/}
+      {/*  <input className={'rounded-md p-2'} />*/}
+      {/*</div>*/}
 
       {/* QUIZ LIST */}
       <div className='flex flex-col items-start'>

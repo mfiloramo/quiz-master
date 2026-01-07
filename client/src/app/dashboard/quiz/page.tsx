@@ -38,6 +38,7 @@ const colorMap: string[] = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-gr
 const quizTracks = ['/audio/countdown-a.mp3', '/audio/countdown-b.mp3'];
 
 export default function QuizPage(): JSX.Element {
+  // STATE HOOKS
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
