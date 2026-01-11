@@ -75,12 +75,12 @@ export default function CreateQuiz(): ReactElement {
       {/* FORM AND IMAGE MODULE CONTAINER */}
       <div className='my-3 flex max-w-6xl flex-col justify-items-start rounded-xl md:flex-row'>
         {/* IMAGE UPLOAD STUB */}
-        <div className='mx-auto mb-3 h-[50vh] w-full content-center rounded-lg bg-white p-3 text-center text-4xl sm:max-w-sm md:mb-0'>
+        <div className='mx-auto mb-3 h-[42vh] w-full content-center rounded-lg bg-white p-3 text-center text-4xl sm:max-w-sm md:mb-0'>
           Cover Image Module
         </div>
 
         {/* FORM SECTION */}
-        <div className='min-w-5xl flex h-[50vh] w-full max-w-5xl flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'>
+        <div className='min-w-5xl flex h-[42vh] w-full max-w-5xl flex-col items-start rounded-lg bg-slate-300 p-3 md:mx-4'>
           <form className='my-2 w-full' onSubmit={handleSubmit}>
             {/* TITLE INPUT */}
             <div className='w-full text-2xl'>
@@ -97,7 +97,7 @@ export default function CreateQuiz(): ReactElement {
             </div>
 
             {/* DESCRIPTION INPUT */}
-            <div className='mt-5 w-full text-2xl'>
+            <div className='mt-5 w-full flex-wrap text-2xl'>
               Description
               <input
                 name='description'
