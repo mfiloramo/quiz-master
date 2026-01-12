@@ -7,6 +7,7 @@ import { useSession } from '@/contexts/SessionContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useAudio } from '@/contexts/AudioContext';
+import { useToast } from '@/contexts/ToastContext';
 import { motion } from 'framer-motion';
 import BackgroundMusic from '@/components/BackgroundMusic/BackgroundMusic';
 import AudioToggle from '@/components/AudioToggle/AudioToggle';
@@ -24,6 +25,7 @@ export default function LobbyPage() {
   const { isHost } = useAuth();
   const { selectedQuiz, resetQuiz } = useQuiz();
   const { music } = useAudio();
+  const { toastError } = useToast();
 
   // EMIT check-session WHEN NON-HOST JOINS
   useEffect(() => {
@@ -87,6 +89,12 @@ export default function LobbyPage() {
 
   // HANDLE START SESSION
   const handleStart = () => {
+    // PREVENT HOST FROM STARTING QUIZ WITHOUT PLAYERS
+    if (!players.length) {
+      toastError('You must have at least one player to start quiz');
+      return;
+    }
+    toastError('At least 1 player must be in game session to begin.', 7000);
     resetQuiz(); // RESET QUIZ STATE IF CARRYING OVER FROM PREVIOUS SESSION
     socket?.emit('start-session', {
       sessionId,
