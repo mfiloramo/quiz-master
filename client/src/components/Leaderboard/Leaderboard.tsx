@@ -12,13 +12,14 @@ export default function Leaderboard(): ReactElement {
   // RENDER COMPONENT
   return (
     // MAIN CONTAINER
+    // TODO: ADD TOP MARGIN TO LEADERBOARD
     <div className='flex h-fit flex-col items-center justify-center'>
       <h1 className='mb-6 text-5xl font-bold'>Player Leaderboard</h1>
 
       {/* MAIN DISPLAY */}
       <div
         className={
-          'flex min-h-[40vh] w-[70vw] max-w-2xl flex-col rounded bg-slate-400 p-3 shadow-xl'
+          'mt-2 flex min-h-[40vh] w-[70vw] max-w-2xl flex-col rounded bg-slate-400 p-3 shadow-xl'
         }
       >
         {/* PLAYER RANKING */}
