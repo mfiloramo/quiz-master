@@ -22,7 +22,11 @@ export default function Navbar(): JSX.Element {
 
   // HAMBURGER MENU LINKS (MOBILE VIEWPORTS)
   const navLinksForHamburger: NavLinkType[] = isLoggedIn
-    ? [...navLinksLeft, { path: '/', label: 'Logout', onClick: logout }]
+    ? [
+        ...navLinksLeft,
+        { path: '/dashboard/join', label: 'Join Game' },
+        { path: '/', label: 'Logout', onClick: logout },
+      ]
     : [
         ...navLinksLeft,
         { path: '/dashboard/join', label: 'Join Game' },
