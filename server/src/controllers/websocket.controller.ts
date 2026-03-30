@@ -6,17 +6,17 @@ import { sequelize } from '../config/sequelize';
 import { redis } from '../config/redis';
 import { GameSessionAttributes } from '../interfaces/GameSessionAttributes.interface';
 import { QuestionAttributes } from '../interfaces/QuestionAttributes.interface';
+import { shuffleQuestions } from '../utils/shuffleQuestions';
 
 // MAIN SOCKET CONTROLLER CLASS
 export class WebSocketController {
   constructor(private io: Server) {}
 
   /** PUBLIC METHODS **/
-
   // CREATE NEW GAME SESSION
   public createSession(socket: Socket, data: GameSessionAttributes): void {
     // DESTRUCTURE SESSION DATA
-    const { sessionId, hostUserName, quizId, roundTimer } = data;
+    const { sessionId, hostUserName, quizId, roundTimer, shuffleQuestions } = data;
 
     // CHECK FOR EXISTING SESSION
     if (SessionManager.getSession(sessionId)) {
@@ -25,7 +25,12 @@ export class WebSocketController {
     }
 
     // CREATE NEW SESSION INSTANCE
-    const session = SessionManager.createSession(sessionId, socket.id, hostUserName);
+    const session = SessionManager.createSession(
+      sessionId,
+      socket.id,
+      hostUserName,
+      shuffleQuestions
+    );
 
     // CLEANUP: RESET QUESTIONS ARRAY IN CASE OF ANY STALE STATE
     session.questions = [];
@@ -138,6 +143,10 @@ export class WebSocketController {
         // CACHE HIT: PARSE QUIZZES FROM REDIS
         console.log('Cache hit: Quiz questions...');
         questions = JSON.parse(cached);
+        // APPLY QUESTION SHUFFLE IF SELECTED BY HOST
+        if (session.shuffleQuestions) {
+          questions = shuffleQuestions(questions);
+        }
       } else {
         // CACHE MISS: QUERY DATABASE FOR QUESTIONS IN SELECTED QUIZ
         // TODO: THE LOGIC ASSOCIATED WITH CHECKING FOR A CACHE HIT/MISS SHOULD BE HANDLED BY THE QUESTION CONTROLLER
@@ -157,6 +166,11 @@ export class WebSocketController {
               ? JSON.parse(question.options)
               : question.options,
         }));
+
+        // APPLY QUESTION SHUFFLE IF SELECTED BY HOST
+        if (session.shuffleQuestions) {
+          questions = shuffleQuestions(questions);
+        }
 
         // CACHE MISS CONTINUED — STORE FORMATTED QUESTIONS IN REDIS
         await redis.set(cacheKey, JSON.stringify(questions));

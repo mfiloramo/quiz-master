@@ -12,8 +12,9 @@ import { useToast } from '@/contexts/ToastContext';
 export default function HostPage() {
   // STATE HOOKS
   const [roundTimer, setRoundTimer] = useState<number>(15);
+  const [shuffleQuestions, setShuffleQuestions] = useState<boolean>(false);
 
-  // CONTEXT HOOKS/CUSTOM HOOKS
+  // CONTEXT/CUSTOM HOOKS
   const router = useRouter();
   const { socket } = useWebSocket();
   const { setSessionId } = useSession();
@@ -38,6 +39,7 @@ export default function HostPage() {
       hostUserName: user!.username,
       quizId: selectedQuiz.id,
       roundTimer,
+      shuffleQuestions,
     });
 
     // SET PAGE STATE
@@ -55,39 +57,6 @@ export default function HostPage() {
       {/* INNER CONTAINER */}
       <h1 className='mb-10 text-5xl font-bold'>Host Quiz</h1>
 
-      {/* GAME MODE SELECTION HEADER */}
-      {/*<h2 className='mb-4 text-2xl'>Game Modes</h2>*/}
-
-      {/* GAME MODE SELECTION */}
-      {/*<div*/}
-      {/*  className={*/}
-      {/*    'col-span-3 mx-4 mb-14 flex flex-wrap justify-center gap-6 rounded-xl bg-slate-300/35 px-8 py-7 text-4xl'*/}
-      {/*  }*/}
-      {/*>*/}
-      {/*  <motion.div*/}
-      {/*    whileHover={{ scale: 1.03 }}*/}
-      {/*    whileTap={{ scale: 0.97 }}*/}
-      {/*    transition={{ duration: 0.001 }}*/}
-      {/*    onClick={() => {}} // THIS WILL SET GAME MODE*/}
-      {/*    className={*/}
-      {/*      'h-md min-w-72 cursor-pointer rounded-xl bg-sky-900 p-5 text-center text-slate-100 shadow-xl transition hover:bg-sky-700'*/}
-      {/*    }*/}
-      {/*  >*/}
-      {/*    Classic Mode*/}
-      {/*  </motion.div>*/}
-      {/*  <motion.div*/}
-      {/*    whileHover={{ scale: 1.03 }}*/}
-      {/*    whileTap={{ scale: 0.97 }}*/}
-      {/*    transition={{ duration: 0.001 }}*/}
-      {/*    onClick={() => {}} // THIS WILL SET GAME MODE*/}
-      {/*    className={*/}
-      {/*      'h-md min-w-72 cursor-pointer rounded-xl bg-sky-900 p-5 text-center text-slate-100 shadow-xl transition hover:bg-sky-700'*/}
-      {/*    }*/}
-      {/*  >*/}
-      {/*    Desk Wars*/}
-      {/*  </motion.div>*/}
-      {/*</div>*/}
-
       {/* SESSION CONFIGURATION CONTAINER */}
       <h2 className='mb-2 text-2xl'>Game Session Options</h2>
       <div
@@ -95,7 +64,7 @@ export default function HostPage() {
       >
         {/* ROUND TIMER CONFIGURATION */}
         <div className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}>
-          Round Timer (seconds)
+          ⏲️ Round Timer (seconds)
           <select
             value={roundTimer}
             onChange={(e) => setRoundTimer(parseInt(e.target.value))}
@@ -107,6 +76,17 @@ export default function HostPage() {
               </option>
             ))}
           </select>
+        </div>
+
+        {/* SHUFFLE QUESTIONS OPTION */}
+        <div className={'my-2 flex flex-row justify-between rounded bg-slate-300 p-3 px-6 py-4'}>
+          🎲 Shuffle Questions
+          <input
+            className={'h-6 w-6'}
+            type={'checkbox'}
+            checked={shuffleQuestions}
+            onChange={(e) => setShuffleQuestions(e.target.checked)}
+          />
         </div>
       </div>
 

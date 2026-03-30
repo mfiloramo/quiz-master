@@ -71,6 +71,7 @@ export class UserController {
       // CREATE CACHE KEY FOR USER TO BE UPDATED
       const cacheKey: string = `user:${userId}`;
 
+      // GET USER INFO BY CACHE KEY
       const cached = await redis.get(cacheKey);
 
       // EXECUTE STORED PROCEDURE TO UPDATE USER IN DATABASE
@@ -106,7 +107,9 @@ export class UserController {
       await redis
         .del(cacheKey)
         .then((): void => console.log('User cacheKey deleted...'))
-        .catch((error: any): void => console.log(`Error deleting user from Redis cache: ${error}`));
+        .catch((error: any): void =>
+          console.log(`Error deleting user from Redis cache: ${error}`)
+        );
 
       // SEND CONFIRMATION RESPONSE TO USER
       res.json(`User with ID ${userId} deleted successfully`);

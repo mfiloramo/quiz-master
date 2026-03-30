@@ -7,7 +7,8 @@ export class SessionManager {
   public static createSession(
     sessionId: string,
     hostSocketId: string,
-    hostUsername: string
+    hostUsername: string,
+    shuffleQuestions: boolean
   ): GameSession {
     // IF SESSION ALREADY EXISTS, DELETE STALE DATA
     const existing = this.sessions.get(sessionId);
@@ -16,7 +17,12 @@ export class SessionManager {
     }
 
     // CREATE NEW SESSION INSTANCE
-    const session = new GameSession(sessionId, hostSocketId, hostUsername);
+    const session = new GameSession(
+      sessionId,
+      hostSocketId,
+      hostUsername,
+      shuffleQuestions
+    );
     this.sessions.set(sessionId, session);
     return session;
   }
@@ -29,7 +35,9 @@ export class SessionManager {
     this.sessions.delete(sessionId);
   }
 
-  public static getSessionBySocketId(socketId: string): [string, GameSession] | undefined {
+  public static getSessionBySocketId(
+    socketId: string
+  ): [string, GameSession] | undefined {
     for (const [sessionId, session] of this.sessions.entries()) {
       if (
         session.hostSocketId === socketId ||

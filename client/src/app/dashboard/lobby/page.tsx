@@ -90,11 +90,12 @@ export default function LobbyPage() {
   // HANDLE START SESSION
   const handleStart = () => {
     // PREVENT HOST FROM STARTING QUIZ WITHOUT PLAYERS
-    if (!players.length) {
-      toastError('You must have at least one player to start quiz');
-      return;
-    }
-    toastError('At least 1 player must be in game session to begin.', 7000);
+    // TODO: DISABLE THIS (DEBUGGING)
+    // if (!players.length) {
+    //   toastError('You must have at least one player to start quiz');
+    //   return;
+    // }
+    // toastError('At least 1 player must be in game session to begin.', 7000);
     resetQuiz(); // RESET QUIZ STATE IF CARRYING OVER FROM PREVIOUS SESSION
     socket?.emit('start-session', {
       sessionId,
