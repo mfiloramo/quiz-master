@@ -17,7 +17,8 @@ export class GameSession {
   constructor(
     public sessionId: string,
     public hostSocketId: string,
-    hostUsername: string
+    hostUsername: string,
+    public shuffleQuestions: boolean
   ) {
     this.hostUsername = hostUsername;
   }
@@ -30,7 +31,9 @@ export class GameSession {
   // REMOVE PLAYER BY SOCKET ID
   public removePlayerBySocketId(socketId: string): boolean {
     const initialLength: number = this.players.length;
-    this.players = this.players.filter((player: Player): boolean => player.socketId !== socketId);
+    this.players = this.players.filter(
+      (player: Player): boolean => player.socketId !== socketId
+    );
     return this.players.length < initialLength;
   }
 
