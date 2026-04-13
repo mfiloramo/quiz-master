@@ -9,6 +9,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { motion } from 'framer-motion';
 import axiosInstance from '@/utils/axios';
 import { QuizQuestion } from '@/types/Quiz.types';
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 
 export default function EditQuiz(): ReactElement {
   const { selectedQuiz } = useQuiz();
@@ -19,6 +20,7 @@ export default function EditQuiz(): ReactElement {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(null);
   const [modalMode, setModalMode] = useState<'edit' | 'add'>('edit');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [form, setForm] = useState({
     id: 0,
     title: '',
@@ -87,6 +89,8 @@ export default function EditQuiz(): ReactElement {
   // HANDLE QUIZ SAVE
   const handleSave = async () => {
     try {
+      setIsLoading(true);
+
       // PREPARE PAYLOAD WITH UPDATED QUIZ DATA
       const payload = {
         userId: selectedQuiz?.user_id,
@@ -98,6 +102,9 @@ export default function EditQuiz(): ReactElement {
 
       // SEND PUT REQUEST TO UPDATE THE QUIZ
       await axiosInstance.put(`/quizzes/${selectedQuiz?.id}`, payload);
+
+      // SIMULATE LOADING DELAY
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // LOG SUCCESS MESSAGE
       toastSuccess(`Quiz updated successfully`);
@@ -186,6 +193,11 @@ export default function EditQuiz(): ReactElement {
         >
           Save Quiz
         </motion.button>
+      </div>
+
+      {/* DISPLAY LOADING SPINNER */}
+      <div className={'max-w-3xl pb-6'}>
+        {isLoading && <LoadingSpinner color={'#ffffff'} loadingMessage={'Saving quiz...'} />}
       </div>
 
       {/* MODAL: EDIT OR ADD */}

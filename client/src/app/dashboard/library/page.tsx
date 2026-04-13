@@ -98,7 +98,7 @@ export default function LibraryPage(): ReactElement {
   };
 
   // SHOW LOADING STATE WHILE USER IS BEING RESOLVED
-  // DEBUG: ADD  NOT OPERATOR TO user
+  // TODO: ADD NOT OPERATOR TO user (DEBUG)
   if (!user) {
     return <LoadingSpinner color={'#ffffff'} loadingMessage={'Loading your quizzes...'} />;
   }
