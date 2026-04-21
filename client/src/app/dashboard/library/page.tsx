@@ -19,6 +19,8 @@ import axiosInstance from '@/utils/axios';
 
 // TYPES
 import { Quiz } from '@/types/Quiz.types';
+import ActionButton from '@/components/ActionButton/ActionButton';
+import { AccessibilityIcon } from 'lucide-react';
 
 export default function LibraryPage(): ReactElement {
   // STATE HOOKS
@@ -129,43 +131,13 @@ export default function LibraryPage(): ReactElement {
       {/* ACTION BUTTONS */}
       <div className='mt-8 flex gap-4'>
         {/* HOST QUIZ BUTTON */}
-        <motion.button
-          className='w-sm sm:w-2xl h-16 rounded-lg bg-green-500 px-7 font-bold text-white transition hover:bg-green-400 active:bg-green-500'
-          onClick={navToHostQuiz}
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 0.005 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          HOST QUIZ
-        </motion.button>
+        <ActionButton color={'green'} text={'HOST QUIZ'} handlerFn={navToHostQuiz} />
 
         {/* EDIT QUIZ BUTTON */}
-        <motion.button
-          className='w-sm sm:w-2xl h-16 rounded-lg bg-amber-500 px-7 font-bold text-white transition hover:bg-amber-400 active:bg-amber-500'
-          onClick={navToEdit}
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 0.005 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          EDIT QUIZ
-        </motion.button>
+        <ActionButton color={'amber'} text={'EDIT QUIZ'} handlerFn={navToEdit} />
 
         {/* DELETE QUIZ BUTTON */}
-        <motion.button
-          className='w-sm sm:w-2xl h-16 rounded-lg bg-red-600 px-7 font-bold text-white transition hover:bg-red-500 active:bg-red-600'
-          onClick={handleDeleteQuiz}
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 0.005 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          DELETE QUIZ
-        </motion.button>
+        <ActionButton color={'red'} text={'DELETE QUIZ'} handlerFn={handleSelectQuiz} />
       </div>
     </div>
   );

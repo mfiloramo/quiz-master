@@ -1,12 +1,13 @@
 'use client';
 
-import { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Quiz } from '@/types/Quiz.types';
 import { useQuiz } from '@/contexts/QuizContext';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/contexts/ToastContext';
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import axiosInstance from '@/utils/axios';
+import ActionButton from '@/components/ActionButton/ActionButton';
 
 export default function DiscoverPage(): ReactElement {
   // STATE FOR ALL QUIZZES
@@ -72,16 +73,7 @@ export default function DiscoverPage(): ReactElement {
         )}
       </div>
       {/* ACTION BUTTONS */}
-      {selectedQuiz && (
-        <div className='mt-8 flex gap-4'>
-          <button
-            className='h-16 w-40 rounded-lg bg-green-500 font-bold text-white transition hover:bg-green-400'
-            onClick={navToPlayQuiz}
-          >
-            HOST QUIZ
-          </button>
-        </div>
-      )}
+      <ActionButton color={'green'} text={'HOST QUIZ'} handlerFn={navToPlayQuiz} />
     </div>
   );
 }
