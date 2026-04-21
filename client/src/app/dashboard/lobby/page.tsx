@@ -94,7 +94,6 @@ export default function LobbyPage() {
       toastError('You must have at least one player to start quiz');
       return;
     }
-    toastError('At least 1 player must be in game session to begin.', 7000);
     resetQuiz(); // RESET QUIZ STATE IF CARRYING OVER FROM PREVIOUS SESSION
     socket?.emit('start-session', {
       sessionId,
