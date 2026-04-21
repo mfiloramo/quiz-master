@@ -85,6 +85,13 @@ export default function LibraryPage(): ReactElement {
       toastError('Please select a quiz to host');
       return;
     }
+
+    console.log(selectedQuiz);
+
+    // if (selectedQuiz.questions === 0) {
+    //   toastError('Quiz does not yet have questions. Please add at least 1 question to host quiz.');
+    //   return;
+    // }
     router.push('/dashboard/host');
   };
 

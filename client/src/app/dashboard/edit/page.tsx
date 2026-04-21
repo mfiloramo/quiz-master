@@ -196,7 +196,7 @@ export default function EditQuiz(): ReactElement {
       </div>
 
       {/* DISPLAY LOADING SPINNER */}
-      <div className={'max-w-3xl pb-6'}>
+      <div className={'max-w-3xl pb-8'}>
         {isLoading && <LoadingSpinner color={'#ffffff'} loadingMessage={'Saving quiz...'} />}
       </div>
 
