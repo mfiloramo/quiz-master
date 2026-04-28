@@ -3,10 +3,12 @@
 import React, { ReactElement, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRegister } from '@/contexts/RegisterContext';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function RegisterUsernamePage(): ReactElement {
   // CONTEXT AND ROUTER
   const { setUsername } = useRegister();
+  const { toastWarning } = useToast();
   const router = useRouter();
 
   // STATE HOOKS FOR INPUT
@@ -19,7 +21,7 @@ export default function RegisterUsernamePage(): ReactElement {
       setUsername(usernameInput);
       router.push('/auth/register/signup-options');
     } else {
-      alert('Please input username to continue');
+      toastWarning('Please input username to continue');
     }
   };
 
