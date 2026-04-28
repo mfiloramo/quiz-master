@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // CHECK IF ACCOUNT IS ACTIVE
       if (!decoded.isActive) {
-        toast('Account is inactive');
+        alert('Account is inactive');
         logout(); // ENSURE CONSISTENT LOGOUT BEHAVIOR ON INACTIVE ACCOUNT
         return;
       }
