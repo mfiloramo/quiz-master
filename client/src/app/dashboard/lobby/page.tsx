@@ -25,7 +25,7 @@ export default function LobbyPage() {
   const { isHost } = useAuth();
   const { selectedQuiz, resetQuiz } = useQuiz();
   const { music } = useAudio();
-  const { toastError } = useToast();
+  const { toastWarning, toastError } = useToast();
 
   // EMIT check-session WHEN NON-HOST JOINS
   useEffect(() => {
@@ -64,13 +64,13 @@ export default function LobbyPage() {
     socket.on('player-joined', setPlayers);
     socket.on('players-list', setPlayers);
     socket.on('ejected-by-host', () => {
-      alert('You were removed from the session by the host.');
+      toastWarning('You were removed from the session by the host.');
       resetQuiz();
       disconnect();
       router.push('/dashboard');
     });
     socket.on('session-ended', () => {
-      alert('Host disconnected. Session ended.');
+      toastWarning('Host disconnected. Session ended.');
       resetQuiz();
       router.push('/dashboard');
     });

@@ -15,6 +15,7 @@ import { useQuiz } from '@/contexts/QuizContext';
 import { useAudio } from '@/contexts/AudioContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSession } from '@/contexts/SessionContext';
+import { useToast } from '@/contexts/ToastContext';
 
 // COMPONENTS
 import QuizModule from '@/components/QuizModule/QuizModule';
@@ -59,6 +60,7 @@ export default function QuizPage(): JSX.Element {
   const { sessionId, clearSession, setPlayers } = useSession();
   const { currentIndex, setCurrentIndex, resetQuiz, setLockedIn } = useQuiz();
   const { music, sound } = useAudio();
+  const { toastWarning } = useToast();
 
   // MOUNT GONG SOUND
   const [playGong, { sound: gongSound }] = useSound('/audio/gong-sound.mp3', {
@@ -138,7 +140,7 @@ export default function QuizPage(): JSX.Element {
 
     // PLAYER EJECTED FROM SESSION BY HOST
     socket.on('ejected-by-host', () => {
-      alert('You were removed from the session by the host.');
+      toastWarning('You were removed from the session by the host.');
       disconnect();
       resetQuiz();
       clearSession();
@@ -150,7 +152,7 @@ export default function QuizPage(): JSX.Element {
       setPhase(QuizPhase.FinalScoreboard);
 
       const handleEnd = () => {
-        alert('Session has ended.');
+        toastWarning('Session has ended.');
         disconnect();
         resetQuiz();
         clearSession();

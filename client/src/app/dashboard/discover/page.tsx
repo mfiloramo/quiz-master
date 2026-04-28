@@ -45,7 +45,7 @@ export default function DiscoverPage(): ReactElement {
   // NAVIGATE TO PLAY PAGE
   const navToPlayQuiz = () => {
     if (!selectedQuiz) {
-      alert('Please select a quiz to start!');
+      toastError('Please select a quiz to start');
       return;
     }
     router.push('/dashboard/host');
@@ -54,11 +54,6 @@ export default function DiscoverPage(): ReactElement {
   // RENDER PAGE
   return (
     <div className='flex flex-col items-start'>
-      {/* QUIZ SEARCH BOX */}
-      {/*<div className={'w-xl my-4 rounded-xl bg-sky-100 px-2 py-12 shadow-xl'}>*/}
-      {/*  <input className={'rounded-md p-2'} />*/}
-      {/*</div>*/}
-
       {/* QUIZ LIST */}
       <div className='flex flex-col items-start'>
         {quizzes.map((quiz) =>
