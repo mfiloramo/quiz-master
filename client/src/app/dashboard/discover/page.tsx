@@ -39,7 +39,8 @@ export default function DiscoverPage(): ReactElement {
 
   // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz) => {
-    setSelectedQuiz(quiz);
+    quiz.id === selectedQuiz?.id ? setSelectedQuiz(null) : setSelectedQuiz(quiz);
+    return;
   };
 
   // NAVIGATE TO PLAY PAGE
