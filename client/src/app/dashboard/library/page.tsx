@@ -13,14 +13,13 @@ import { useToast } from '@/contexts/ToastContext';
 // COMPONENTS
 import MainQuizCard from '@/components/QuizCard/QuizCard';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
+import ActionButton from '@/components/ActionButton/ActionButton';
 
 // UTILITIES
 import axiosInstance from '@/utils/axios';
 
 // TYPES
 import { Quiz } from '@/types/Quiz.types';
-import ActionButton from '@/components/ActionButton/ActionButton';
-import { AccessibilityIcon } from 'lucide-react';
 
 export default function LibraryPage(): ReactElement {
   // STATE HOOKS
@@ -64,7 +63,8 @@ export default function LibraryPage(): ReactElement {
 
   // HANDLE SELECTING A QUIZ
   const handleSelectQuiz = (quiz: Quiz): void => {
-    setSelectedQuiz(quiz);
+    quiz.id === selectedQuiz?.id ? setSelectedQuiz(null) : setSelectedQuiz(quiz);
+    return;
   };
 
   // HANDLE DELETING A QUIZ FROM UI AFTER DELETE
@@ -75,7 +75,7 @@ export default function LibraryPage(): ReactElement {
     }
 
     const quizId = selectedQuiz?.id;
-    setQuizzes((prev) => prev.filter((quiz) => quiz.id !== quizId));
+    setQuizzes((prev) => prev.filter((quiz: Quiz) => quiz.id !== quizId));
     await axiosInstance
       .delete(`/quizzes/${quizId}`)
       .then(() => toastSuccess(`Quiz deleted successfully`));
@@ -88,12 +88,6 @@ export default function LibraryPage(): ReactElement {
       return;
     }
 
-    console.log(selectedQuiz);
-
-    // if (selectedQuiz.questions === 0) {
-    //   toastError('Quiz does not yet have questions. Please add at least 1 question to host quiz.');
-    //   return;
-    // }
     router.push('/dashboard/host');
   };
 
@@ -137,7 +131,7 @@ export default function LibraryPage(): ReactElement {
         <ActionButton color={'amber'} text={'EDIT QUIZ'} handlerFn={navToEdit} />
 
         {/* DELETE QUIZ BUTTON */}
-        <ActionButton color={'red'} text={'DELETE QUIZ'} handlerFn={handleSelectQuiz} />
+        <ActionButton color={'red'} text={'DELETE QUIZ'} handlerFn={handleDeleteQuiz} />
       </div>
     </div>
   );
