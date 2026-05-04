@@ -112,14 +112,16 @@ export default function LibraryPage(): ReactElement {
     <div className='flex flex-col items-center md:items-start'>
       {/* QUIZ LIST */}
       <div className='flex flex-col'>
-        {quizzes.map((quiz) => (
-          <MainQuizCard
-            key={quiz.id}
-            quiz={quiz}
-            selected={selectedQuiz?.id === quiz.id}
-            onSelect={handleSelectQuiz}
-          />
-        ))}
+        {quizzes.map(
+          (quiz: Quiz): ReactElement => (
+            <MainQuizCard
+              key={quiz.id}
+              quiz={quiz}
+              selected={selectedQuiz?.id === quiz.id}
+              onSelect={handleSelectQuiz}
+            />
+          )
+        )}
       </div>
 
       {/* ACTION BUTTONS */}

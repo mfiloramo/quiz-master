@@ -57,7 +57,7 @@ export default function DiscoverPage(): ReactElement {
     <div className='flex flex-col items-start'>
       {/* QUIZ LIST */}
       <div className='flex flex-col items-start'>
-        {quizzes.map((quiz) =>
+        {quizzes.map((quiz: Quiz): ReactElement | null =>
           quiz.visibility === 'public' ? (
             <MainQuizCard
               key={quiz.id}
